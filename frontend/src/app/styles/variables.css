@@ -1,0 +1,18 @@
+:root{
+    /* Basic color */
+    --red: #8A3033;
+    --black: #231C07;
+    --beige: #FAF3E7;
+
+    /* Font size */
+    --navbar-item-font-size: 18px;
+
+    /* Div size */
+    --navbar-item-size: 110px;
+
+    /* Navbar logo */
+    --navbar-logo-height: 1.9rem;
+    --navbar-logo-padding-left: 3rem;
+
+    /* Fonts */
+}
