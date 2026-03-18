@@ -5,14 +5,18 @@
     --beige: #FAF3E7;
 
     /* Font size */
-    --navbar-item-font-size: 18px;
+    --navbar-item-font-size: 20px;
 
     /* Div size */
     --navbar-item-size: 110px;
 
+    /* Padding size */
+    --navbar-item-padding-y: 1.0rem;
+    --navbar-item-padding-x: 1.8rem;
+
     /* Navbar logo */
     --navbar-logo-height: 1.9rem;
-    --navbar-logo-padding-left: 3rem;
+    --navbar-logo-padding-left: 4rem;
 
     /* Fonts */
 }
