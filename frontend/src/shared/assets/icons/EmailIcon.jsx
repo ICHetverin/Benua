@@ -1,10 +1,10 @@
-export const EmailIcon = ({ width = 24, height = 24, color = "#001F53", className = "" }) => {
+export const EmailIcon = ({ width = 24, height = 24, color = "black", className = "" }) => {
   return (
     <svg
       width={width}
       height={height}
       viewBox="0 0 24 24"
-      fill="none"
+      fill="black"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >

@@ -15,6 +15,13 @@ body {
     background-color: var(--beige);
 }
 
+p {
+    font-family: 'Lora', 'Georgia', 'Times New Roman', serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    font-weight: 400;
+}
+
 .app {
     min-height: 100%;
     display: flex;

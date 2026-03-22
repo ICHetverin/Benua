@@ -1,10 +1,10 @@
 .generalInfo {
     text-align: center;
-    padding: 0 var(--page-padding);
+    padding: calc(var(--page-padding) / 2) var(--page-padding);
 }
 
 .generalInfoContainer {
-    gap: 0.8rem;
+    gap: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,12 +18,21 @@
 }
 
 .generalInfoText {
-    max-width: 750px;
+    max-width: 800px;
     text-align: center;
+    font-family: 'Lora', 'Georgia', 'Times New Roman', serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    font-weight: 400;
+
 }
 
 .mapInfo {
     padding: 4rem var(--page-padding);
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    align-items: center;
 }
 
 .mapInfoContainer {
@@ -32,16 +41,61 @@
 }
 
 .mapInfoContainer h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    color: #333;
+    font-size: 2.4rem;
+    margin-bottom: 2.0rem;
+    line-height: 1.2;
+    font-weight: 400;
+    color: var(--dark-red);
+    font-family: 'Literature Decor', 'Georgia', 'Times New Roman', serif;
 }
 
-.mapInfoContainer p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #666;
-    max-width: 90%;
+.mapInfoInnerContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mapInfoLeftColumn {
+    flex: 1;
+    display: flex;
+    justify-content: left;
+    align-items: flex-start;
+}
+
+.mapInfoButton {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    color: var(--dark-blue);
+}
+
+.arrowIcon {
+    color: var(--dark-blue);
+    transition: color 0.3s ease;
+}
+
+.mapInfoButton:hover .arrowIcon {
+    color: var(--white);
+}
+
+.mapInfoButtonContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.mapInfoRightColumn {
+    flex: 2;
+}
+
+.mapInfoRightColumn p {
+    text-indent: 7rem;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .mapPictureContainer {
@@ -61,20 +115,4 @@
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.mapInfo {
-    display: flex;
-    flex-direction: row;
-    gap: 4rem;
-    align-items: center;
-}
-
-.mapInfoInnerContainer {
-    grid-template-columns: 10vw 1fr;
-}
-
-.goToMapButton {
-    background-color: aquamarine;
-    border-radius: 50%;
 }
