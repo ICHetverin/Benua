@@ -1,22 +1,18 @@
-:root{
-    /* Basic color */
-    --red: #8A3033;
-    --black: #231C07;
+:root {
+    /* Basic colors */
+    --dark-red: #8A3033;
+    --dark-blue: #001F53;
     --beige: #FAF3E7;
+    --black: #231C07;
+    --white: #fff;
 
-    /* Font size */
-    --navbar-item-font-size: 20px;
-
-    /* Div size */
+    /* Navbar */
+    --navbar-item-font-size: 22px;
     --navbar-item-size: 110px;
-
-    /* Padding size */
     --navbar-item-padding-y: 1.0rem;
-    --navbar-item-padding-x: 1.8rem;
-
-    /* Navbar logo */
+    --navbar-item-padding-x: 1.0rem;
     --navbar-logo-height: 1.9rem;
-    --navbar-logo-padding-left: 4rem;
 
-    /* Fonts */
+    /* Page padding */
+    --page-padding: 4rem;
 }

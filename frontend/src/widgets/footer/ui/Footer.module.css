@@ -1,0 +1,105 @@
+.footer {
+    background-color: var(--dark-blue);
+}
+
+.container {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: calc(var(--page-padding) / 2) var(--page-padding);
+}
+
+.footerContent {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 1rem;
+    width: 100%;
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.BenuaLogo {
+    height: 227px;
+    width: auto;
+}
+
+.centerColumns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 0 4rem;
+}
+
+.footerColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.columnTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--white);
+}
+
+.columnList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.columnItem {
+    margin-bottom: 0.4rem;
+}
+
+.columnLink {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-size: 0.875rem;
+}
+
+.columnLink:hover {
+    color: var(--white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.socialIconsContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+}
+
+.socialLink {
+    background-color: var(--white);
+    border-radius: 50%;
+    padding: 8px;
+    width: 35px;
+    height: 35px;
+    transition: opacity 0.3s ease;
+}
+
+.socialLink:hover {
+    opacity: 0.7;
+    cursor:pointer;
+}
+
+.copyright {
+    font-size: 0.875rem;
+    color: var(--white);
+    margin: 0;
+    padding-top: 0.5rem;
+  }

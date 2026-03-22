@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import { NAV_ITEMS } from '../lib/constants';
+import { NAV_ITEMS } from 'shared/lib/navigation';
 import { SearchIcon } from 'shared/assets/icons/SearchIcon'
 import logo from 'shared/assets/images/logo/logo_black.png';
 import styles from './Header.module.css';
+import clsx from 'clsx';
 
 export const Header = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -38,12 +39,14 @@ export const Header = () => {
             />
         </div>
 
-        <div className={`${styles.navCollapse} ${isNavOpen ? styles.show : ''}`}>
+        <div className={clsx(styles.navCollapse, {
+          [styles.show]: isNavOpen
+        })}>
           <ul className={styles.navList}>
-            {NAV_ITEMS.map(({ path, label, className }) => (
-              <li key={path} className={styles.navItem}>
+            {NAV_ITEMS.map(({ href, label, className }) => (
+              <li key={href} className={styles.navItem}>
                 <NavLink
-                  to={path}
+                  to={href}
                   className={({ isActive }) =>
                     `${styles.navLink} ${className ? styles[className] : ''} ${isActive ? styles.active : ''}`
                   }
