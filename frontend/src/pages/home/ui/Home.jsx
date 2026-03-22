@@ -1,7 +1,7 @@
 import { ScrollingImage } from 'shared/ui/ScrollingImage'
 import { RippleButton } from 'shared/ui/RippleButton';
 import { ArrowIcon } from 'shared/assets/icons/ArrowIcon'
-import gallery from '../image1.png'
+import gallery from '../Gallery.jpg'
 import fullNameLogo from 'shared/assets/images/logo/full_name_logo.png'
 import styles from './Home.module.css';
 
@@ -28,7 +28,11 @@ export function Home() {
         <h2>Интерактивная карта по местам семьи бенуа в санкт-петербурге</h2>
         <div className={styles.mapInfoInnerContainer}>
           <div className={styles.mapInfoLeftColumn}>
-              <RippleButton href="/map" className={styles.mapInfoButton}>
+              <RippleButton
+                href="/map"
+                className={styles.mapInfoButton}
+                spanClassName={styles.customRipple}
+              >
               <span className={styles.mapInfoButtonContent}>
                   Перейти
                   <ArrowIcon width={24} height={24} className={styles.arrowIcon}/>
@@ -47,7 +51,6 @@ export function Home() {
         </div>
       </div>
       <div className={styles.mapPictureContainer}>
-        map picture
       </div>
     </section>
     </>

@@ -40,7 +40,7 @@
     height: 0;
 
     border-radius: 50%;
-    background: var(--dark-blue);
+    background: black;
 
     transform: translate(-50%, -50%);
     transition: width var(--time), padding-top var(--time);

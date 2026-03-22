@@ -68,11 +68,20 @@
     height: 100px;
     width: 100px;
     border-radius: 50%;
-    color: var(--dark-blue);
+    color: var(--dark-red);
+    border: 2px solid var(--dark-red);
+}
+
+.mapInfoButton :global(.rippleSpan) {
+    background: var(--dark-red);
+}
+
+.customRipple {
+    background: var(--dark-red) !important;
 }
 
 .arrowIcon {
-    color: var(--dark-blue);
+    color: var(--dark-red);
     transition: color 0.3s ease;
 }
 

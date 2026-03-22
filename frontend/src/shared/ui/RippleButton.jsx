@@ -1,7 +1,13 @@
 import { useRef } from 'react';
 import styles from './RippleButton.module.css';
 
-export function RippleButton({ children, onClick, href, className = '' }) {
+export function RippleButton({
+    children,
+    onClick,
+    href,
+    className = '',
+    spanClassName = ''
+}) {
     const buttonRef = useRef(null);
     const spanRef = useRef(null);
 
@@ -27,33 +33,30 @@ export function RippleButton({ children, onClick, href, className = '' }) {
         spanRef.current.style.top = `${y}px`;
     };
 
+    const content = (
+        <>
+            <span
+                ref={spanRef}
+                className={`${styles.rippleSpan} ${spanClassName}`}
+            ></span>
+            <span className={styles.buttonText}>{children}</span>
+        </>
+    );
+
+    const commonProps = {
+        ref: buttonRef,
+        className: `${styles.rippleButton} ${className}`,
+        onMouseOver: handleMouseOver,
+        onMouseOut: handleMouseOut,
+    };
+
     if (href) {
-        return (
-            <a
-                ref={buttonRef}
-                href={href}
-                className={`${styles.rippleButton} ${className}`}
-                onMouseOver={handleMouseOver}
-                onMouseOut={handleMouseOut}
-                onClick={onClick}
-            >
-                <span ref={spanRef} className={styles.rippleSpan}></span>
-                <span className={styles.buttonText}>{children}</span>
-            </a>
-        );
+        return <a {...commonProps} href={href}>{content}</a>;
     }
 
     return (
-        <button
-            ref={buttonRef}
-            type="button"
-            className={`${styles.rippleButton} ${className}`}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-            onClick={onClick}
-        >
-            <span ref={spanRef} className={styles.rippleSpan}></span>
-            <span className={styles.buttonText}>{children}</span>
+        <button {...commonProps} type="button" onClick={onClick}>
+            {content}
         </button>
     );
 }
