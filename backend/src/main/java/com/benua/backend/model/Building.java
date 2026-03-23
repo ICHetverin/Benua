@@ -2,10 +2,7 @@ package com.benua.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -38,8 +35,8 @@ public record Building(
         @Id String _id,
         @NotBlank(message="Name is required") @Size(max=255, message="Name too long (max=255)") String name,
         @NotBlank(message="Adress is required") @Size(max=255, message="Adress too long (max=255)") String address,
-        @NotBlank(message="Latitude is required") @Min(-90) @Max(90) Float latitude,
-        @NotBlank(message="Longitude is required") @Min(-90) @Max(90) Float longitude,
+        @NotNull(message="Latitude is required") @Min(40) @Max(70) Float latitude,
+        @NotNull(message="Longitude is required") @Min(20) @Max(40) Float longitude,
         @Size(max=255, message="Architect too long (max=255)") String architect,
         @Size(max=255, message="YearsBuilt too long (max=255)") @Field("years_built") String yearsBuilt,
         String history,
@@ -48,7 +45,7 @@ public record Building(
         @Valid List<Description> description,
         @Field("interesting_facts") List<String> interestingFacts,
         @DBRef(lazy=true) @Valid List<Source> sources,
-        @JsonBackReference @DBRef @Valid @Field("connected_persons") List<Person> connectedPersons,
-        @JsonBackReference @DBRef @Valid @Field("connected_objects") List<Building> connectedObjects,
+        @DBRef @Valid @Field("connected_persons") List<Person> connectedPersons,
+        @DBRef @Valid @Field("connected_objects") List<Building> connectedObjects,
         @DBRef(lazy=true) @Valid List<Image> images
 ) {}
