@@ -24,4 +24,5 @@
 
 #### Figma - там есть вся инфа про инфраструктуру сайта, работу с бд и layout для страниц
 [Figma общая](https://www.figma.com/design/EwIst6BGZJErgTf8fp69uA/Benua-project?node-id=0-1&t=P9z9LvK1Rbxt3Z5e-1)
+
 [Figma со страницами от дизайнеров](https://www.figma.com/design/PISiaeUpordwIjrqr0DiG7/BENOIS?node-id=0-1&t=an6F0l5cHlYU95Ev-1)
