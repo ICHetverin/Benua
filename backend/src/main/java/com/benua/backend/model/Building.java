@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ import java.util.List;
  * @param _id уникальный идентификатор
  * @param name название здания, обязательное, макс 255 символов
  * @param address адрес здания, обязательное, макс 255 символов
- * @param latitude географическая широта, обязательное, (-90...90)
- * @param longitude географическая долгота, обязательное, (-90...90)
+ * @param latitude географическая широта, обязательное, (-40...70)
+ * @param longitude географическая долгота, обязательное, (-20...40)
  * @param architect архитектор, макс 255 символов
  * @param yearsBuilt годы постройки, макс 255 символов
  * @param history история здания
@@ -26,7 +27,7 @@ import java.util.List;
  * @param description список описаний (topic : content) + валидация Description
  * @param interestingFacts список интересных фактов
  * @param sources источники информации, lazy (Source manyToMany Object) + валидация Source
- * @param connectedPersons связанные лица, отсутствие сериализации (Person manyToMany Object) + валидация Person
+ * @param connectedPersons связанные лица, (Person manyToMany Object) + валидация Person
  * @param connectedObjects (Object manyToMany Object) + валидация Object
  * @param images картинки, lazy (Image manyToMany Object) + валидация Image
  */
