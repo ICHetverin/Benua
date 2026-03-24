@@ -1,6 +1,7 @@
 import { ScrollingImage } from 'shared/ui/ScrollingImage'
 import { RippleButton } from 'shared/ui/RippleButton';
 import { ArrowIcon } from 'shared/assets/icons/ArrowIcon'
+import mapPreview from 'shared/assets/images/map/map_preview.jpg'
 import gallery from '../Gallery.jpg'
 import fullNameLogo from 'shared/assets/images/logo/full_name_logo.png'
 import styles from './Home.module.css';
@@ -51,6 +52,10 @@ export function Home() {
         </div>
       </div>
       <div className={styles.mapPictureContainer}>
+        <img
+          src={mapPreview}
+          className={styles.mapPreview}
+        />
       </div>
     </section>
     </>
