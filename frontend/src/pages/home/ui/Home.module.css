@@ -1,0 +1,126 @@
+.generalInfo {
+    text-align: center;
+    padding: calc(var(--page-padding) / 2) var(--page-padding);
+}
+
+.generalInfoContainer {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.fullNameLogo {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+}
+
+.generalInfoText {
+    max-width: 800px;
+    text-align: center;
+    font-family: 'Lora', 'Georgia', 'Times New Roman', serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    font-weight: 400;
+
+}
+
+.mapInfo {
+    padding: 4rem var(--page-padding);
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    align-items: center;
+}
+
+.mapInfoContainer {
+    flex: 1;
+    text-align: left;
+}
+
+.mapInfoContainer h2 {
+    font-size: 2.4rem;
+    margin-bottom: 2.0rem;
+    line-height: 1.2;
+    font-weight: 400;
+    color: var(--dark-red);
+    font-family: 'Literature Decor', 'Georgia', 'Times New Roman', serif;
+}
+
+.mapInfoInnerContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mapInfoLeftColumn {
+    flex: 1;
+    display: flex;
+    justify-content: left;
+    align-items: flex-start;
+}
+
+.mapInfoButton {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    color: var(--dark-red);
+    border: 2px solid var(--dark-red);
+}
+
+.mapInfoButton :global(.rippleSpan) {
+    background: var(--dark-red);
+}
+
+.customRipple {
+    background: var(--dark-red) !important;
+}
+
+.arrowIcon {
+    color: var(--dark-red);
+    transition: color 0.3s ease;
+}
+
+.mapInfoButton:hover .arrowIcon {
+    color: var(--white);
+}
+
+.mapInfoButtonContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.mapInfoRightColumn {
+    flex: 2;
+}
+
+.mapInfoRightColumn p {
+    text-indent: 7rem;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.mapPictureContainer {
+    max-height: 100%;
+    height: auto;
+    min-height: 400px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.mapPictureContainer img {
+    height: 100%;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

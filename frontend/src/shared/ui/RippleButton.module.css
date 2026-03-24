@@ -1,0 +1,52 @@
+.rippleButton {
+    --width: 100%;
+    --time: 2s;
+
+    position: relative;
+    display: inline-flex;
+    padding: 1em;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: transparent;
+
+    color: var(--black);
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+
+    border: 2px solid var(--dark-blue);
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.buttonText {
+    display: inline-block;
+    position: relative;
+    z-index: 5;
+    transition: color var(--time);
+}
+
+.rippleButton:hover .buttonText {
+    color: var(--white);
+}
+
+.rippleSpan {
+    position: absolute;
+    display: block;
+    z-index: 0;
+    width: 0;
+    height: 0;
+
+    border-radius: 50%;
+    background: black;
+
+    transform: translate(-50%, -50%);
+    transition: width var(--time), padding-top var(--time);
+}
+
+.rippleButton:hover .rippleSpan {
+    width: calc(var(--width) * 2.25);
+    padding-top: calc(var(--width) * 2.25);
+}

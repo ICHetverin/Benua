@@ -1,0 +1,31 @@
+:root {
+    /* Basic colors */
+    --dark-red: #8A3033;
+    --dark-blue: #001F53;
+    --beige: #FAF3E7;
+    --beige-header: rgb(250, 243, 231, 0.7);
+    --black: #231C07;
+    --white: #fff;
+
+    /* Navbar */
+    --navbar-item-font-size: 19px;
+    --navbar-item-font-family: 'Lora', 'Georgia', 'Times New Roman', serif;
+    --navbar-item-size: 110px;
+    --navbar-item-padding-y: 1.0rem;
+    --navbar-item-padding-x: 1.0rem;
+    --navbar-logo-height: 1.9rem;
+
+    /* Page padding */
+    --page-padding: 4rem;
+
+    /* Fonts */
+    --font-lora: 'Lora', 'Georgia', 'Times New Roman', serif;
+}
+
+@font-face {
+    font-family: 'Literature Decor';
+    src: url('shared/assets/fonts/Literature-Decor.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
