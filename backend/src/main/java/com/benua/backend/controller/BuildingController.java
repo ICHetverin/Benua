@@ -1,0 +1,86 @@
+package com.benua.backend.controller;
+
+import com.benua.backend.dto.BuildingCreateDto;
+import com.benua.backend.dto.BuildingDto;
+import com.benua.backend.model.Building;
+import com.benua.backend.service.BuildingService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+@RestController
+@RequestMapping("/objects")
+public class BuildingController {
+    private final BuildingService bs;
+    private static final Logger log = LoggerFactory.getLogger(BuildingController.class);
+
+    public BuildingController(BuildingService bs) {
+        this.bs = bs;
+    }
+
+    @PostMapping
+    public ResponseEntity<BuildingDto> createBuilding(@RequestBody @Valid BuildingCreateDto building) {
+        log.info("Called createBuilding with payload={}", building);
+
+        try {
+            BuildingDto saved = bs.createBuilding(building);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved); // HTTP 201
+        } catch (NoSuchElementException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            log.error("Error creating building with payload={}", building, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
+        }
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<BuildingDto>> getAllBuildings(
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        allParams.remove("page");
+        allParams.remove("size");
+
+        log.info("Called getAllBuildings with filters={}, page={}, size={}", allParams, page, size);
+
+        try {
+            List<BuildingDto> result = bs.getBuildingsDto(allParams, page, size);
+
+            if (result == null || result.isEmpty()) {
+                log.warn("getAllBuildings returned empty list for filters={}, page={}, size={}", allParams, page, size);
+                return ResponseEntity.noContent().build(); // HTTP 204
+            }
+
+            return ResponseEntity.ok(result); // HTTP 200
+        } catch (Exception e) {
+            log.error("Error in getAllBuildings with filters={}, page={}, size={}", allParams, page, size, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BuildingDto> getBuildingById(@PathVariable @NotBlank String id) {
+        log.info("Called getBuildingById: id={}", id);
+
+        try {
+            Building building = bs.getBuilding(id);
+            return ResponseEntity.ok(bs.toDto(building)); // HTTP 200
+        } catch (NoSuchElementException e) {
+            log.warn("No building found for id={}", id, e);
+            return ResponseEntity.notFound().build(); // HTTP 404
+        } catch (Exception e) {
+            log.error("Error while getting building by id={}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
+        }
+    }
+}
