@@ -1,1 +1,1 @@
-export { Persons } from './ui/Persons';
+export { Persons } from "./ui/Persons";
