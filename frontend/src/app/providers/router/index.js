@@ -11,7 +11,7 @@ import { NotFound } from 'pages/not-found';
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },

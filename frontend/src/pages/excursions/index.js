@@ -1,1 +1,1 @@
-export { Excursions } from './ui/Excursions'
+export { Excursions } from "./ui/Excursions";
