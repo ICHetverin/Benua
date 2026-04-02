@@ -1,6 +1,6 @@
-import { RouterProvider } from './providers/router';
+import { RouterProvider } from "./providers/router";
 
-import './styles/global.css';
+import "./styles/global.css";
 
 function App() {
   return <RouterProvider />;

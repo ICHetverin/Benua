@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
-import { NAV_ITEMS } from 'shared/lib/navigation';
-import { SearchIcon } from 'shared/assets/icons/SearchIcon'
-import logo from 'shared/assets/images/logo/logo_black.png';
-import styles from './Header.module.css';
-import clsx from 'clsx';
+import { useState, useEffect, useRef } from "react";
+import { NavLink } from "react-router-dom";
+import { NAV_ITEMS } from "shared/lib/navigation";
+import { SearchIcon } from "shared/assets/icons/SearchIcon";
+import logo from "shared/assets/images/logo/logo_black.png";
+import styles from "./Header.module.css";
+import clsx from "clsx";
 
 export const Header = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const inputRef = useRef(null);
   const closeNav = () => setIsNavOpen(false);
@@ -22,7 +22,7 @@ export const Header = () => {
 
   const handleToggleSearch = () => {
     if (isSearchOpen) {
-      setSearchQuery('');
+      setSearchQuery("");
     }
     setIsSearchOpen(!isSearchOpen);
   };
@@ -30,25 +30,22 @@ export const Header = () => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
-
         <div className={styles.logoContainer}>
-            <img
-            src={logo}
-            alt="Адреса Бенуа"
-            className={styles.logo}
-            />
+          <img src={logo} alt="Адреса Бенуа" className={styles.logo} />
         </div>
 
-        <div className={clsx(styles.navCollapse, {
-          [styles.show]: isNavOpen
-        })}>
+        <div
+          className={clsx(styles.navCollapse, {
+            [styles.show]: isNavOpen,
+          })}
+        >
           <ul className={styles.navList}>
             {NAV_ITEMS.map(({ href, label, className }) => (
               <li key={href} className={styles.navItem}>
                 <NavLink
                   to={href}
                   className={({ isActive }) =>
-                    `${styles.navLink} ${className ? styles[className] : ''} ${isActive ? styles.active : ''}`
+                    `${styles.navLink} ${className ? styles[className] : ""} ${isActive ? styles.active : ""}`
                   }
                   onClick={closeNav}
                 >
@@ -60,15 +57,18 @@ export const Header = () => {
         </div>
 
         <div className={styles.searchContainer}>
-          <div className={`
+          <div
+            className={`
             ${styles.searchWrapper}
-            ${isSearchOpen ? styles.searchOpen : ''}
-          `}>
-
-            <div className={`
+            ${isSearchOpen ? styles.searchOpen : ""}
+          `}
+          >
+            <div
+              className={`
               ${styles.searchInputContainer}
-              ${isSearchOpen ? styles.searchInputVisible : ''}
-            `}>
+              ${isSearchOpen ? styles.searchInputVisible : ""}
+            `}
+            >
               <input
                 ref={inputRef}
                 type="text"
@@ -88,7 +88,6 @@ export const Header = () => {
             </button>
           </div>
         </div>
-
       </div>
     </nav>
   );
