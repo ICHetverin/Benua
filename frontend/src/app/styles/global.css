@@ -16,10 +16,25 @@ body {
 }
 
 p {
-    font-family: 'Lora', 'Georgia', 'Times New Roman', serif;
+    font-family: var(--font-lora);
     font-size: 0.8rem;
     line-height: 1.4;
     font-weight: 400;
+}
+
+h1 {
+    font-family: var(--font-decor);
+    font-size: 2.3rem;
+    font-weight: 400;
+    color: var(--dark-red);
+}
+
+h2 {
+    font-family: var(--font-decor);
+    font-size: 1.7rem;
+    font-weight: 400;
+    margin-bottom: 2.0rem;
+    color: var(--dark-red);
 }
 
 .app {
@@ -33,3 +48,12 @@ p {
     flex: 1;
 }
 
+.header {
+    padding: 2rem;
+}
+
+.title {
+    position: relative;
+    align-self: center;
+    justify-self: center;
+}

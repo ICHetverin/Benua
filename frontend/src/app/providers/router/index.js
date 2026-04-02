@@ -5,6 +5,7 @@ import { Map } from 'pages/map';
 import { Objects } from 'pages/objects';
 import { Persons } from 'pages/persons';
 import { Excursions } from 'pages/excursions';
+import { ExcursionDetails } from 'pages/excursion-details';
 import { About } from 'pages/about';
 import { NotFound } from 'pages/not-found';
 
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
       { path: 'objects', element: <Objects /> },
       { path: 'persons', element: <Persons /> },
       { path: 'excursions', element: <Excursions /> },
+      { path: 'excursions/:id', element: <ExcursionDetails /> },
       { path: 'about', element: <About /> },
       { path: '*', element: <NotFound /> }
     ]
