@@ -1,4 +1,4 @@
-import './ScrollingImage.css';
+import "./ScrollingImage.css"
 
 export const ScrollingImage = ({ imageSrc, speed }) => {
 
