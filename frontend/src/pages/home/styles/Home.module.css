@@ -40,15 +40,6 @@
     text-align: left;
 }
 
-.mapInfoContainer h2 {
-    font-size: 2.4rem;
-    margin-bottom: 2.0rem;
-    line-height: 1.2;
-    font-weight: 400;
-    color: var(--dark-red);
-    font-family: 'Literature Decor', 'Georgia', 'Times New Roman', serif;
-}
-
 .mapInfoInnerContainer {
     display: flex;
     flex-direction: row;
@@ -70,10 +61,6 @@
     border-radius: 50%;
     color: var(--dark-red);
     border: 2px solid var(--dark-red);
-}
-
-.mapInfoButton :global(.rippleSpan) {
-    background: var(--dark-red);
 }
 
 .customRipple {

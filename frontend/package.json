@@ -18,7 +18,11 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up",
+    "docker:dev:build": "docker-compose -f docker-compose.dev.yml up --build",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up",
+    "docker:prod:build": "docker-compose -f docker-compose.prod.yml up --build"
   },
   "eslintConfig": {
     "extends": [

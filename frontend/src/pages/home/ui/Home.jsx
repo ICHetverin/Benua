@@ -4,7 +4,7 @@ import { ArrowIcon } from 'shared/assets/icons/ArrowIcon'
 import mapPreview from 'shared/assets/images/map/map_preview.jpg'
 import gallery from '../Gallery.jpg'
 import fullNameLogo from 'shared/assets/images/logo/full_name_logo.png'
-import styles from './Home.module.css';
+import styles from '../styles/Home.module.css';
 
 export function Home() {
   return (
@@ -55,6 +55,7 @@ export function Home() {
         <img
           src={mapPreview}
           className={styles.mapPreview}
+          alt="Map preview"
         />
       </div>
     </section>

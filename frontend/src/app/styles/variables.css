@@ -4,7 +4,9 @@
     --dark-blue: #001F53;
     --beige: #FAF3E7;
     --beige-header: rgb(250, 243, 231, 0.7);
+    --darker-beige: #F4E7CE;
     --black: #231C07;
+    --grey-stroke: #231C07;
     --white: #fff;
 
     /* Navbar */
@@ -20,6 +22,7 @@
 
     /* Fonts */
     --font-lora: 'Lora', 'Georgia', 'Times New Roman', serif;
+    --font-decor: 'Literature Decor', 'Georgia', 'Times New Roman', serif;
 }
 
 @font-face {
