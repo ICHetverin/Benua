@@ -3,8 +3,12 @@ package com.benua.backend.service;
 import com.benua.backend.dto.BuildingCreateDto;
 import com.benua.backend.dto.BuildingDto;
 import com.benua.backend.model.Building;
+import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
+import com.benua.backend.model.Source;
 import com.benua.backend.repository.BuildingRepository;
+import com.benua.backend.repository.ImageRepository;
+import com.benua.backend.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +28,16 @@ import java.util.NoSuchElementException;
 public class BuildingService {
     private final BuildingRepository br;
     private final ConnectionService cs;
+    private final ImageRepository ir;
+    private final SourceRepository sr;
     private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public BuildingService(BuildingRepository br, ConnectionService cs, MongoTemplate mongoTemplate) {
+    public BuildingService(BuildingRepository br, ConnectionService cs, ImageRepository ir, SourceRepository sr, MongoTemplate mongoTemplate) {
         this.br = br;
         this.cs = cs;
+        this.ir = ir;
+        this.sr = sr;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -64,6 +72,9 @@ public class BuildingService {
         List<Person> connectedPeople = cs.getPersonsByIds(building.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(building.connectedObjects());
 
+        List<Image> images = ValidationUtils.validateImages(building.images(), ir);
+        List<Source> sources = ValidationUtils.validateSources(building.sources(), sr);
+
         Building newBuilding = new Building(
                 null,
                 building.name(),
@@ -77,10 +88,10 @@ public class BuildingService {
                 building.connectionWithBenua(),
                 building.description(),
                 building.interestingFacts(),
-                List.of(), // затычка sources
                 connectedPeople,
                 connectedBuildings,
-                List.of() // затычка images
+                images,
+                sources
         );
 
         return toDto(br.save(newBuilding));
@@ -105,7 +116,9 @@ public class BuildingService {
                         .toList(),
                 b.connectedObjects().stream()
                         .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name()))
-                        .toList()
+                        .toList(),
+                b.images(),
+                b.sources()
         );
     }
 

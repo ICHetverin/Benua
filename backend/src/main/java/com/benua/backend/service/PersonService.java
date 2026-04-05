@@ -3,8 +3,12 @@ package com.benua.backend.service;
 import com.benua.backend.dto.PersonCreateDto;
 import com.benua.backend.dto.PersonDto;
 import com.benua.backend.model.Building;
+import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
+import com.benua.backend.model.Source;
+import com.benua.backend.repository.ImageRepository;
 import com.benua.backend.repository.PersonRepository;
+import com.benua.backend.repository.SourceRepository;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -23,13 +27,17 @@ import java.util.NoSuchElementException;
 public class PersonService {
     private final PersonRepository pr;
     private final ConnectionService cs;
+    private final ImageRepository ir;
+    private final SourceRepository sr;
     private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs) {
+    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs, ImageRepository ir, SourceRepository sr) {
         this.mongoTemplate = mongoTemplate;
         this.pr = pr;
         this.cs = cs;
+        this.ir = ir;
+        this.sr = sr;
     }
 
     public Person getPerson(@NotBlank String id) {
@@ -59,6 +67,9 @@ public class PersonService {
         List<Person> connectedPeople = cs.getPersonsByIds(person.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(person.connectedObjects());
 
+        List<Image> images = ValidationUtils.validateImages(person.images(), ir);
+        List<Source> sources = ValidationUtils.validateSources(person.sources(), sr);
+
         Person newBuilding = new Person(
                 null,
                 person.name(),
@@ -68,10 +79,10 @@ public class PersonService {
                 person.connectionWithBenua(),
                 person.description(),
                 person.interestingFacts(),
-                List.of(), // затычка sources
                 connectedPeople,
                 connectedBuildings,
-                List.of() // затычка images
+                images,
+                sources
         );
 
         return toDto(pr.save(newBuilding));
@@ -97,7 +108,9 @@ public class PersonService {
                         .toList(),
                 p.connectedObjects().stream()
                         .map(o -> new PersonDto.SimpleEntity(o._id(), o.name()))
-                        .toList()
+                        .toList(),
+                p.images(),
+                p.sources()
         );
     }
 }
