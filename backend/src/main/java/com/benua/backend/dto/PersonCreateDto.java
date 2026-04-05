@@ -1,6 +1,8 @@
 package com.benua.backend.dto;
 
 import com.benua.backend.model.Description;
+import com.benua.backend.model.Image;
+import com.benua.backend.model.Source;
 
 import java.util.List;
 
@@ -20,8 +22,8 @@ public record PersonCreateDto(
         String connectionWithBenua,
         List<Description> description,
         List<String> interestingFacts,
-        List<String> sources,
         List<String> connectedPersons,
         List<String> connectedObjects,
-        List<String> images
+        List<Image> images,
+        List<Source> sources
 ) {}

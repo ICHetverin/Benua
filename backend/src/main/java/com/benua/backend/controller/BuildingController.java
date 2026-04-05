@@ -42,7 +42,7 @@ public class BuildingController {
         }
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<BuildingDto>> getAllBuildings(
             @RequestParam Map<String, String> allParams,
             @RequestParam(defaultValue = "0") int page,
@@ -59,6 +59,8 @@ public class BuildingController {
             if (result == null || result.isEmpty()) {
                 log.warn("getAllBuildings returned empty list for filters={}, page={}, size={}", allParams, page, size);
                 return ResponseEntity.noContent().build(); // HTTP 204
+            } else {
+                log.info("Success getAll");
             }
 
             return ResponseEntity.ok(result); // HTTP 200
@@ -71,9 +73,9 @@ public class BuildingController {
     @GetMapping("/{id}")
     public ResponseEntity<BuildingDto> getBuildingById(@PathVariable @NotBlank String id) {
         log.info("Called getBuildingById: id={}", id);
-
         try {
             Building building = bs.getBuilding(id);
+            log.info("Success getById");
             return ResponseEntity.ok(bs.toDto(building)); // HTTP 200
         } catch (NoSuchElementException e) {
             log.warn("No building found for id={}", id, e);

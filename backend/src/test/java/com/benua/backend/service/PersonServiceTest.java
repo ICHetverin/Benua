@@ -74,9 +74,9 @@ class PersonServiceTest {
                 "Benua link",
                 List.of(new Description("topic", "content")),
                 List.of("fact"),
-                List.of(),
                 List.of(connectedPerson),
                 List.of(connectedObject),
+                List.of(),
                 List.of()
         );
 
@@ -89,9 +89,9 @@ class PersonServiceTest {
                 "Benua link",
                 List.of(new Description("topic", "content")),
                 List.of("fact"),
-                List.of(),
                 List.of("person-2"),
                 List.of("building-1"),
+                List.of(),
                 List.of()
         );
 
@@ -184,9 +184,9 @@ class PersonServiceTest {
                 "Benua link",
                 List.of(new Description("topic", "content")),
                 List.of("fact"),
-                List.of(),
                 List.of(connectedPerson),
                 List.of(connectedObject),
+                List.of(),
                 List.of()
         );
 

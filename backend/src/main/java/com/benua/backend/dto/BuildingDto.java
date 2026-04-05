@@ -1,6 +1,8 @@
 package com.benua.backend.dto;
 
 import com.benua.backend.model.Description;
+import com.benua.backend.model.Image;
+import com.benua.backend.model.Source;
 
 import java.util.List;
 
@@ -24,7 +26,9 @@ public record BuildingDto(
         List<Description> description,
         List<String> interestingFacts,
         List<SimpleEntity> connectedPersons,
-        List<SimpleEntity> connectedObjects
+        List<SimpleEntity> connectedObjects,
+        List<Image> images,
+        List<Source> sources
 ) {
     /**
      * Минимальный объект для вложенных связей: только _id и name

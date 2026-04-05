@@ -1,13 +1,11 @@
 package com.benua.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
@@ -26,10 +24,10 @@ import java.util.List;
  * @param connectionWithBenua связь с Бенуа
  * @param description список описаний (topic : content) + валидация Description
  * @param interestingFacts список интересных фактов
- * @param sources источники информации, lazy (Source manyToMany Object) + валидация Source
  * @param connectedPersons связанные лица, (Person manyToMany Object) + валидация Person
  * @param connectedObjects (Object manyToMany Object) + валидация Object
  * @param images картинки, lazy (Image manyToMany Object) + валидация Image
+ * @param sources источники информации, lazy (Source manyToMany Object) + валидация Source
  */
 @Document(collection = "objects")
 public record Building(
@@ -45,8 +43,8 @@ public record Building(
         @Field("connection_with_benua") String connectionWithBenua,
         @Valid List<Description> description,
         @Field("interesting_facts") List<String> interestingFacts,
-        @DBRef(lazy=true) @Valid List<Source> sources,
         @DBRef @Valid @Field("connected_persons") List<Person> connectedPersons,
         @DBRef @Valid @Field("connected_objects") List<Building> connectedObjects,
-        @DBRef(lazy=true) @Valid List<Image> images
+        @DBRef(lazy=true) @Valid List<Image> images,
+        @DBRef(lazy=true) @Valid List<Source> sources
 ) {}

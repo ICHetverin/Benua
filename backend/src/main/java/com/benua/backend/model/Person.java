@@ -21,10 +21,10 @@ import java.util.List;
  * @param connectionWithBenua связь с Бенуа
  * @param description список описаний (topic : content) + валидация Description
  * @param interestingFacts список интересных фактов
- * @param sources список источников информации, lazy (Source manyToMany Person) + валидация Source
  * @param connectedPersons связанные личности (Person manyToMany Person) + валидация Person
  * @param connectedObjects связанные здания/объекты (Object manyToMany Person) + валидация Object
  * @param images список изображений, lazy (Image manyToMany Person) + валидация Image
+ * @param sources список источников информации, lazy (Source manyToMany Person) + валидация Source
  */
 @Document(collection = "persons")
 public record Person(
@@ -37,8 +37,8 @@ public record Person(
         @Valid List<Description> description,
         @Field("interesting_facts") List<String> interestingFacts,
 
-        @DBRef(lazy = true) @Valid List<Source> sources,
         @DBRef @Valid @Field("connected_persons") List<Person> connectedPersons,
         @DBRef @Valid @Field("connected_objects") List<Building> connectedObjects,
-        @DBRef(lazy = true) @Valid List<Image> images
+        @DBRef(lazy = true) @Valid List<Image> images,
+        @DBRef(lazy = true) @Valid List<Source> sources
 ) {}

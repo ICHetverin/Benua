@@ -1,6 +1,7 @@
 package com.benua.backend.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,5 +17,5 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public record Image (
     @Id String _id,
     @NotBlank(message = "Text cannot be blank") String text,
-    @NotBlank(message = "S3 URL cannot be blank") @Field("url_to_s3") String urlToS3
+    @Pattern(regexp = "^(https?|s3)://.+", message = "Must be a valid URL") @NotBlank(message = "S3 URL cannot be blank") @Field("url_to_s3") String urlToS3
 ) {}
