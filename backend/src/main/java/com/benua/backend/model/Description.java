@@ -12,5 +12,5 @@ import org.springframework.stereotype.Component;
  */
 public record Description (
     @NotBlank(message = "Topic cannot be blank") @Size(max=255, message="Text too long (max=255)") String topic,
-    @NotBlank(message = "Content cannot be blank") @Size(max=2000, message="Content tpp long (max=2000)") String content
+    @NotBlank(message = "Content cannot be blank") @Size(max=2000, message="Content too long (max=2000)") String content
 ) {}
