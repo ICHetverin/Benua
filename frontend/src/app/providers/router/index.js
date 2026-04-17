@@ -10,6 +10,7 @@ import { Persons } from "pages/persons";
 import { Excursions } from "pages/excursions";
 import { ExcursionDetails } from "pages/excursion-details";
 import { About } from "pages/about";
+import { ObjectDetail } from "pages/object-detail";
 import { NotFound } from "pages/not-found";
 
 export const router = createBrowserRouter([
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "map", element: <Map /> },
       { path: "objects", element: <Objects /> },
+      { path: "objects/:id", element: <ObjectDetail /> },
       { path: "persons", element: <Persons /> },
       { path: "excursions", element: <Excursions /> },
       { path: "excursions/:id", element: <ExcursionDetails /> },
