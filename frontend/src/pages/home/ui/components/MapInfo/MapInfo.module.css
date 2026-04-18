@@ -82,3 +82,60 @@
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+@media (max-width: 768px) {
+
+  .mapInfo {
+    flex-direction: column; /* ← КЛЮЧ */
+    gap: 2rem;
+    padding: 2rem 10px;
+  }
+
+  .mapInfoInnerContainer {
+    flex-direction: column; /* ← КЛЮЧ */
+    gap: 1rem;
+  }
+
+  .mapInfoRightColumn p {
+    text-indent: 0; /* ← убираем отступ */
+  }
+
+  .mapPictureContainer {
+    min-height: auto;
+    width: 100%;
+  }
+
+  .mapPictureContainer img {
+    width: 100%; /* ← КЛЮЧ */
+    height: auto;
+  }
+
+}
+
+@media (max-width: 1090px) {
+
+  .mapInfo {
+    flex-direction: column; /* ← как mobile */
+    gap: 2rem;
+    padding: 3rem 20px;
+  }
+
+  .mapInfoInnerContainer {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .mapInfoRightColumn p {
+    text-indent: 0;
+  }
+
+  .mapPictureContainer {
+    width: 100%;
+  }
+
+  .mapPictureContainer img {
+    width: 100%;
+    height: auto;
+  }
+
+}
