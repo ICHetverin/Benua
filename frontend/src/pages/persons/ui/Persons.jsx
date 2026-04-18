@@ -1,8 +1,17 @@
-export const Persons = () => {
+import { useState } from "react";
+import { PersonList } from "widgets/person-list";
+import { getPersons } from "entities/persons";
+
+export function Persons() {
+  const [persons] = useState(getPersons());
+
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>Персоналии</h1>
-      <p>Здесь будет контент главной страницы</p>
+    <div className="page">
+      <div className="header">
+        <h1 className="title">Персоналии</h1>
+      </div>
+
+      <PersonList persons={persons} />
     </div>
   );
 };

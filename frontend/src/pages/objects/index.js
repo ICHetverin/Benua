@@ -1,1 +1,1 @@
-export { Objects } from "./ui/Objects";
+export { Objects } from './ui/Objects';
