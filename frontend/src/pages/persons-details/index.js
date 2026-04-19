@@ -1,0 +1,1 @@
+export { PersonDetails } from './ui/PersonDetails';

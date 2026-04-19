@@ -1,0 +1,1 @@
+export { ObjectDetails } from './ui/ObjectDetails';
