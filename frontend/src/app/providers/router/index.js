@@ -11,6 +11,7 @@ import { Excursions } from "pages/excursions";
 import { ExcursionDetails } from "pages/excursion-details";
 import { About } from "pages/about";
 import { ObjectDetail } from "pages/object-detail";
+import { Catalog } from "pages/catalog";
 import { NotFound } from "pages/not-found";
 
 export const router = createBrowserRouter([
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
       { path: "persons", element: <Persons /> },
       { path: "excursions", element: <Excursions /> },
       { path: "excursions/:id", element: <ExcursionDetails /> },
+      { path: "catalog", element: <Catalog /> },
       { path: "about", element: <About /> },
       { path: "*", element: <NotFound /> },
     ],

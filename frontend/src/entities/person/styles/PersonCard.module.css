@@ -67,3 +67,10 @@
 .card:hover .description {
   color: var(--beige);
 }
+
+@media (max-width: 768px) {
+  .photoWrapper {
+    width: 90px;
+    height: 90px;
+  }
+}
