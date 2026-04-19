@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ObjectCard, useObjectById } from 'entities/object';
-import { PersonCard, usePersons } from 'entities/person';
-import { getPersonById } from 'entities/person';
+import { useObjectById } from 'entities/object';
+import { PersonCard, usePersons, getPersonById } from 'entities/person';
 import styles from '../styles/ObjectDetail.module.css';
 
 export function ObjectDetail() {

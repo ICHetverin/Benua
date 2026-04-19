@@ -4,8 +4,25 @@ import styles from '../styles/ObjectCard.module.css';
 export function ObjectCard({ object }) {
   const navigate = useNavigate();
 
+  const handleNavigate = () => {
+    navigate(`/objects/${object.id}`);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleNavigate();
+    }
+  };
+
   return (
-    <article className={styles.card} onClick={() => navigate(`/objects/${object.id}`)}>
+    <article
+      className={styles.card}
+      onClick={handleNavigate}
+      onKeyDown={handleKeyDown}
+      role="link"
+      tabIndex={0}
+    >
       <div className={styles.imageWrapper}>
         {object.images?.[0]
           ? <img className={styles.image} src={object.images[0]} alt={object.name} loading="lazy" />

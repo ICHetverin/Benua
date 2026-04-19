@@ -25,6 +25,7 @@ export function Catalog() {
         {TABS.map((tab) => (
           <button
             key={tab.id}
+            type="button"
             className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
             onClick={() => setActiveTab(tab.id)}
           >

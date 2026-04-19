@@ -74,6 +74,7 @@
   color: var(--dark-red);
 }
 
+
 .related {
   margin-top: 2rem;
 }
@@ -93,9 +94,26 @@
 }
 
 @media (max-width: 768px) {
-  .page { padding: 1.5rem; }
-  .hero { flex-direction: column; gap: 1.5rem; }
-  .photoWrapper { width: 140px; height: 140px; }
-  .name { font-size: 1.5rem; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+  .page {
+    padding: 1.5rem;
+  }
+
+  .hero {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .photoWrapper {
+    width: 140px;
+    height: 140px;
+  }
+
+  .name {
+    font-size: 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
 }

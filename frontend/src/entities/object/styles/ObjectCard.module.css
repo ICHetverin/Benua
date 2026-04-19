@@ -68,3 +68,9 @@
 .card:hover .description {
   color: var(--beige);
 }
+
+@media (max-width: 768px) {
+  .imageWrapper {
+    aspect-ratio: 4 / 3;
+  }
+}

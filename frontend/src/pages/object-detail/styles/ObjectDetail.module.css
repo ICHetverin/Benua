@@ -64,6 +64,7 @@
   color: var(--dark-red);
 }
 
+
 .related {
   margin-top: 1rem;
 }
@@ -83,8 +84,20 @@
 }
 
 @media (max-width: 768px) {
-  .page { padding: 1.5rem; }
-  .name { font-size: 1.5rem; }
-  .gallery { grid-template-columns: 1fr; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+  .page {
+    padding: 1.5rem;
+  }
+
+  .name {
+    font-size: 1.5rem;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
 }

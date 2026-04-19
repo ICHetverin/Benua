@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePersonById } from 'entities/person';
-import { ObjectCard, useObjects } from 'entities/object';
-import { getObjectById } from 'entities/object';
+import { usePersonById, getPersonById } from 'entities/person';
+import { ObjectCard, useObjects, getObjectById } from 'entities/object';
 import styles from '../styles/PersonDetail.module.css';
 
 export function PersonDetail() {
@@ -20,7 +19,7 @@ export function PersonDetail() {
 
   return (
     <div className={styles.page}>
-      <button className={styles.back} onClick={() => navigate(-1)}>← Назад</button>
+      <button type="button" className={styles.back} onClick={() => navigate(-1)}>← Назад</button>
 
       <div className={styles.hero}>
         <div className={styles.photoWrapper}>
