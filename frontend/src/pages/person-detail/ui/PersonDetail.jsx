@@ -22,7 +22,7 @@ export function PersonDetail() {
 
   return (
     <div className={styles.page}>
-      <button className={styles.back} onClick={() => navigate(-1)}>← Назад</button>
+      <button type="button" className={styles.back} onClick={() => navigate(-1)}>← Назад</button>
 
       <div className={styles.hero}>
         <div className={styles.photoWrapper}>
