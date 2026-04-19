@@ -7,8 +7,8 @@ export function ObjectCard({ object }) {
   return (
     <article className={styles.card} onClick={() => navigate(`/objects/${object.id}`)}>
       <div className={styles.imageWrapper}>
-        {object.image
-          ? <img className={styles.image} src={object.image} alt={object.name} loading="lazy" />
+        {object.images?.[0]
+          ? <img className={styles.image} src={object.images[0]} alt={object.name} loading="lazy" />
           : <div className={styles.imagePlaceholder} />
         }
       </div>
