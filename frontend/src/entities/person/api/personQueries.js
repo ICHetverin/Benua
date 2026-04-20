@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { getPersons, getPersonById } from 'shared/api/benuaApi';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getPersons, getPersonById, createPerson } from 'shared/api/benuaApi';
 
 export const personKeys = {
   all: ['persons'],
@@ -18,3 +18,13 @@ export const usePersonById = (id) =>
     queryFn: () => getPersonById(id),
     enabled: !!id,
   });
+
+export const useCreatePerson = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createPerson,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: personKeys.all });
+    },
+  });
+};

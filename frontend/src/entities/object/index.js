@@ -1,3 +1,3 @@
 export { ObjectCard } from './ui/ObjectCard';
-export { useObjects, useObjectById } from './api/objectQueries';
+export { useObjects, useObjectById, useCreateObject } from './api/objectQueries';
 export { getObjectById } from './model/object';

@@ -16,4 +16,7 @@ export const getPersonById = (id) => api.get(`/persons/${id}`);
 export const getObjects = () => api.get('/objects');
 export const getObjectById = (id) => api.get(`/objects/${id}`);
 
+export const createPerson = (data) => api.post('/persons', data);
+export const createObject = (data) => api.post('/objects', data);
+
 export const search = (query) => api.get('/search', { params: { q: query } });

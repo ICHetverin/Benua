@@ -1,8 +1,6 @@
 package com.benua.backend.dto;
 
 import com.benua.backend.model.Description;
-import com.benua.backend.model.Image;
-import com.benua.backend.model.Source;
 
 import java.util.List;
 
@@ -10,8 +8,8 @@ import java.util.List;
  * DTO для create Person
  * Сущность, принимаемая при Post
  * Создана для избегания циклов в JSON
- * связанные личности, объекты, картинки, ресурсы передаются как id
- * внутри в service уже подтягиваются объекты по id
+ * связанные личности и объекты передаются как id
+ * источники и изображения передаются как inline-данные и сохраняются сервисом
  */
 public record PersonCreateDto(
         String _id,
@@ -24,6 +22,6 @@ public record PersonCreateDto(
         List<String> interestingFacts,
         List<String> connectedPersons,
         List<String> connectedObjects,
-        List<Image> images,
-        List<Source> sources
+        List<ImageCreateDto> images,
+        List<SourceCreateDto> sources
 ) {}

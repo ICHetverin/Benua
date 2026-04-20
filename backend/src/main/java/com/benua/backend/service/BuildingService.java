@@ -1,6 +1,8 @@
 package com.benua.backend.service;
 
 import com.benua.backend.dto.BuildingCreateDto;
+import com.benua.backend.dto.ImageCreateDto;
+import com.benua.backend.dto.SourceCreateDto;
 import com.benua.backend.dto.BuildingDto;
 import com.benua.backend.model.Building;
 import com.benua.backend.model.Image;
@@ -71,9 +73,8 @@ public class BuildingService {
     public BuildingDto createBuilding(BuildingCreateDto building) {
         List<Person> connectedPeople = cs.getPersonsByIds(building.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(building.connectedObjects());
-
-        List<Image> images = ValidationUtils.validateImages(building.images(), ir);
-        List<Source> sources = ValidationUtils.validateSources(building.sources(), sr);
+        List<Image> images = saveImages(building.images());
+        List<Source> sources = saveSources(building.sources());
 
         Building newBuilding = new Building(
                 null,
@@ -95,6 +96,20 @@ public class BuildingService {
         );
 
         return toDto(br.save(newBuilding));
+    }
+
+    private List<Image> saveImages(List<ImageCreateDto> images) {
+        if (images == null || images.isEmpty()) return List.of();
+        return images.stream()
+                .map(img -> ir.save(new Image(null, img.text(), img.urlToS3())))
+                .toList();
+    }
+
+    private List<Source> saveSources(List<SourceCreateDto> sources) {
+        if (sources == null || sources.isEmpty()) return List.of();
+        return sources.stream()
+                .map(src -> sr.save(new Source(null, src.text(), src.url())))
+                .toList();
     }
 
     public BuildingDto toDto(Building b) {

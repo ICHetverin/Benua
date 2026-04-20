@@ -1,6 +1,8 @@
 package com.benua.backend.service;
 
+import com.benua.backend.dto.ImageCreateDto;
 import com.benua.backend.dto.PersonCreateDto;
+import com.benua.backend.dto.SourceCreateDto;
 import com.benua.backend.dto.PersonDto;
 import com.benua.backend.model.Building;
 import com.benua.backend.model.Image;
@@ -66,11 +68,10 @@ public class PersonService {
     public PersonDto createPerson(PersonCreateDto person) {
         List<Person> connectedPeople = cs.getPersonsByIds(person.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(person.connectedObjects());
+        List<Image> images = saveImages(person.images());
+        List<Source> sources = saveSources(person.sources());
 
-        List<Image> images = ValidationUtils.validateImages(person.images(), ir);
-        List<Source> sources = ValidationUtils.validateSources(person.sources(), sr);
-
-        Person newBuilding = new Person(
+        Person newPerson = new Person(
                 null,
                 person.name(),
                 person.lifeYears(),
@@ -85,7 +86,21 @@ public class PersonService {
                 sources
         );
 
-        return toDto(pr.save(newBuilding));
+        return toDto(pr.save(newPerson));
+    }
+
+    private List<Image> saveImages(List<ImageCreateDto> images) {
+        if (images == null || images.isEmpty()) return List.of();
+        return images.stream()
+                .map(img -> ir.save(new Image(null, img.text(), img.urlToS3())))
+                .toList();
+    }
+
+    private List<Source> saveSources(List<SourceCreateDto> sources) {
+        if (sources == null || sources.isEmpty()) return List.of();
+        return sources.stream()
+                .map(src -> sr.save(new Source(null, src.text(), src.url())))
+                .toList();
     }
 
     public List<PersonDto> getPersonDto(Map<String, String> filters, int offset, int limit) {
