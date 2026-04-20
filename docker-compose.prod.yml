@@ -1,0 +1,54 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: benua-mongodb
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: benua
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - benua-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: benua-backend
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - benua-net
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: benua-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - benua-net
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
+networks:
+  benua-net:
+    driver: bridge
