@@ -3,16 +3,6 @@ spring:
     name: backend
   jackson:
     property-naming-strategy: SNAKE_CASE
-<<<<<<< HEAD
-  data:
-    mongodb:
-      host: ${MONGO_HOST:mongodb}
-      port: ${MONGO_PORT:27017}
-      database: ${MONGO_DATABASE:benua}
-      username: ${MONGO_USERNAME}
-      password: ${MONGO_PASSWORD}
-      authentication-database: ${MONGO_AUTH_DB:admin}
-=======
   mongodb:
     host: ${MONGO_HOST:localhost}
     port: ${MONGO_PORT:27017}
@@ -20,7 +10,6 @@ spring:
     username: ${MONGO_USERNAME:}
     password: ${MONGO_PASSWORD:}
     authentication-database: ${MONGO_AUTH_DB:admin}
->>>>>>> 5fdbbd6dfb17c439f32e4fcb45aef8031f45cc6c
 
 server:
   port: ${SERVER_PORT:8080}
