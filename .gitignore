@@ -1,3 +1,5 @@
 .*
 *.class
 !.git*
+!.env.example
+!.dockerignore

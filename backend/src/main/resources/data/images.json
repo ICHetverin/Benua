@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "img-1",
+    "text": "Певческая капелла Санкт-Петербурга, фасад со стороны набережной Мойки",
+    "url_to_s3": "https://s3.benua.example/images/capella-facade.jpg"
+  },
+  {
+    "_id": "img-2",
+    "text": "Интерьер Большого зала Певческой капеллы",
+    "url_to_s3": "https://s3.benua.example/images/capella-interior.jpg"
+  },
+  {
+    "_id": "img-3",
+    "text": "Портрет Леона Николаевича Бенуа",
+    "url_to_s3": "https://s3.benua.example/images/leon-benua-portrait.jpg"
+  },
+  {
+    "_id": "img-4",
+    "text": "Александр Николаевич Бенуа за работой",
+    "url_to_s3": "https://s3.benua.example/images/alexandre-benua-portrait.jpg"
+  },
+  {
+    "_id": "img-5",
+    "text": "Государственный Русский музей, главный фасад",
+    "url_to_s3": "https://s3.benua.example/images/russian-museum-facade.jpg"
+  }
+]
