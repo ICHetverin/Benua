@@ -1,7 +1,5 @@
 package com.benua.backend.migration;
 
-import com.benua.backend.dto.BuildingCreateDto;
-import com.benua.backend.dto.PersonCreateDto;
 import com.benua.backend.model.*;
 import com.benua.backend.repository.*;
 import org.slf4j.Logger;
@@ -54,8 +52,8 @@ public class DataMigrationService {
         migrateImages();
         migrateSources();
 
-        List<PersonCreateDto> personDtos = readJson("data/persons.json", new TypeReference<>() {});
-        List<BuildingCreateDto> buildingDtos = readJson("data/buildings.json", new TypeReference<>() {});
+        List<PersonSeedDto> personDtos = readJson("data/persons.json", new TypeReference<>() {});
+        List<BuildingSeedDto> buildingDtos = readJson("data/buildings.json", new TypeReference<>() {});
 
         savePersonsWithoutConnections(personDtos);
         saveBuildingsWithoutConnections(buildingDtos);
@@ -90,15 +88,15 @@ public class DataMigrationService {
         }
     }
 
-    private void savePersonsWithoutConnections(List<PersonCreateDto> dtos) {
-        for (PersonCreateDto dto : dtos) {
-            if (personRepository.existsById(dto._id())) {
-                log.warn("Person already exists, skipping: {}", dto._id());
+    private void savePersonsWithoutConnections(List<PersonSeedDto> dtos) {
+        for (PersonSeedDto dto : dtos) {
+            if (personRepository.existsById(dto.id())) {
+                log.warn("Person already exists, skipping: {}", dto.id());
                 continue;
             }
             try {
                 personRepository.save(new Person(
-                        dto._id(),
+                        dto.id(),
                         dto.name(),
                         dto.lifeYears(),
                         dto.birthPlace(),
@@ -108,25 +106,25 @@ public class DataMigrationService {
                         dto.interestingFacts(),
                         List.of(),
                         List.of(),
-                        dto.images(),
-                        dto.sources()
+                        dto.images() != null ? dto.images() : List.of(),
+                        dto.sources() != null ? dto.sources() : List.of()
                 ));
-                log.info("Saved person (pass 1): {}", dto._id());
+                log.info("Saved person (pass 1): {}", dto.id());
             } catch (Exception e) {
-                log.error("Failed to save person {}: {}", dto._id(), e.getMessage());
+                log.error("Failed to save person {}: {}", dto.id(), e.getMessage());
             }
         }
     }
 
-    private void saveBuildingsWithoutConnections(List<BuildingCreateDto> dtos) {
-        for (BuildingCreateDto dto : dtos) {
-            if (buildingRepository.existsById(dto._id())) {
-                log.warn("Building already exists, skipping: {}", dto._id());
+    private void saveBuildingsWithoutConnections(List<BuildingSeedDto> dtos) {
+        for (BuildingSeedDto dto : dtos) {
+            if (buildingRepository.existsById(dto.id())) {
+                log.warn("Building already exists, skipping: {}", dto.id());
                 continue;
             }
             try {
                 buildingRepository.save(new Building(
-                        dto._id(),
+                        dto.id(),
                         dto.name(),
                         dto.address(),
                         dto.latitude(),
@@ -140,22 +138,22 @@ public class DataMigrationService {
                         dto.interestingFacts(),
                         List.of(),
                         List.of(),
-                        dto.images(),
-                        dto.sources()
+                        dto.images() != null ? dto.images() : List.of(),
+                        dto.sources() != null ? dto.sources() : List.of()
                 ));
-                log.info("Saved building (pass 1): {}", dto._id());
+                log.info("Saved building (pass 1): {}", dto.id());
             } catch (Exception e) {
-                log.error("Failed to save building {}: {}", dto._id(), e.getMessage());
+                log.error("Failed to save building {}: {}", dto.id(), e.getMessage());
             }
         }
     }
 
-    private void updatePersonConnections(List<PersonCreateDto> dtos) {
-        for (PersonCreateDto dto : dtos) {
+    private void updatePersonConnections(List<PersonSeedDto> dtos) {
+        for (PersonSeedDto dto : dtos) {
             if (!hasConnections(dto.connectedPersons(), dto.connectedObjects())) continue;
             try {
-                Person existing = personRepository.findById(dto._id())
-                        .orElseThrow(() -> new IllegalArgumentException("Person not found: " + dto._id()));
+                Person existing = personRepository.findById(dto.id())
+                        .orElseThrow(() -> new IllegalArgumentException("Person not found: " + dto.id()));
 
                 personRepository.save(new Person(
                         existing._id(),
@@ -171,19 +169,19 @@ public class DataMigrationService {
                         existing.images(),
                         existing.sources()
                 ));
-                log.info("Updated person connections: {}", dto._id());
+                log.info("Updated person connections: {}", dto.id());
             } catch (Exception e) {
-                log.error("Failed to update person connections {}: {}", dto._id(), e.getMessage());
+                log.error("Failed to update person connections {}: {}", dto.id(), e.getMessage());
             }
         }
     }
 
-    private void updateBuildingConnections(List<BuildingCreateDto> dtos) {
-        for (BuildingCreateDto dto : dtos) {
+    private void updateBuildingConnections(List<BuildingSeedDto> dtos) {
+        for (BuildingSeedDto dto : dtos) {
             if (!hasConnections(dto.connectedPersons(), dto.connectedObjects())) continue;
             try {
-                Building existing = buildingRepository.findById(dto._id())
-                        .orElseThrow(() -> new IllegalArgumentException("Building not found: " + dto._id()));
+                Building existing = buildingRepository.findById(dto.id())
+                        .orElseThrow(() -> new IllegalArgumentException("Building not found: " + dto.id()));
 
                 buildingRepository.save(new Building(
                         existing._id(),
@@ -203,9 +201,9 @@ public class DataMigrationService {
                         existing.images(),
                         existing.sources()
                 ));
-                log.info("Updated building connections: {}", dto._id());
+                log.info("Updated building connections: {}", dto.id());
             } catch (Exception e) {
-                log.error("Failed to update building connections {}: {}", dto._id(), e.getMessage());
+                log.error("Failed to update building connections {}: {}", dto.id(), e.getMessage());
             }
         }
     }
