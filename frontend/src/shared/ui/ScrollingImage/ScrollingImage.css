@@ -1,0 +1,30 @@
+.scrolling-container {
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.scrolling-content {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.scrolling-content::after {
+  content: "";
+  display: inline-block;
+}
+
+@keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+}
+
+.scrolling-content img {
+    display: block;
+    width: auto;
+    height: auto;
+}

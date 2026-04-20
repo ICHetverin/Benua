@@ -1,0 +1,1 @@
+export { ScrollingImage } from "./ScrollingImage";

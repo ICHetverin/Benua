@@ -1,1 +1,5 @@
-.DS_Store
+.*
+*.class
+!.git*
+!.env.example
+!.dockerignore

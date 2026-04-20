@@ -1,0 +1,63 @@
+.title {
+  font-family: var(--font-lora);
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--black);
+  margin: 0 0 2rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  border-bottom: 1.5px solid var(--grey-stroke);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.6rem 1.5rem;
+  font-family: var(--font-lora);
+  font-size: 1rem;
+  color: var(--black);
+  cursor: pointer;
+  margin-bottom: -1.5px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tab:hover {
+  color: var(--dark-red);
+}
+
+.tabActive {
+  color: var(--dark-red);
+  border-bottom-color: var(--dark-red);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.status {
+  font-family: var(--font-lora);
+  color: var(--black);
+}
+
+.statusError {
+  font-family: var(--font-lora);
+  color: var(--dark-red);
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,26 @@
+name: Java CI
+
+on:
+  push:
+    branches: [ "backend-feature/add-api" ]
+  pull_request:
+    branches: [ "backend-feature/add-api" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '24'
+          cache: maven
+
+      - name: Run tests
+        working-directory: backend
+        run: ./mvnw test

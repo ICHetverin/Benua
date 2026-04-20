@@ -1,0 +1,28 @@
+.generalInfo {
+    text-align: center;
+    padding: calc(var(--page-padding) / 2) var(--page-padding);
+}
+
+.generalInfoContainer {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.fullNameLogo {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+}
+
+.generalInfoText {
+    max-width: 800px;
+    text-align: center;
+    font-family: 'Lora', 'Georgia', 'Times New Roman', serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    font-weight: 400;
+
+}

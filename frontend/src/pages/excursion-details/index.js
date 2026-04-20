@@ -1,0 +1,1 @@
+export { ExcursionDetails } from './ui/ExcursionDetails'
