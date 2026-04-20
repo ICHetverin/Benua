@@ -43,8 +43,8 @@ public record Building(
         @Field("connection_with_benua") String connectionWithBenua,
         @Valid List<Description> description,
         @Field("interesting_facts") List<String> interestingFacts,
-        @DBRef @Valid @Field("connected_persons") List<Person> connectedPersons,
-        @DBRef @Valid @Field("connected_objects") List<Building> connectedObjects,
+        @DBRef(lazy=true) @Valid @Field("connected_persons") List<Person> connectedPersons,
+        @DBRef(lazy=true) @Valid @Field("connected_objects") List<Building> connectedObjects,
         @DBRef(lazy=true) @Valid List<Image> images,
         @DBRef(lazy=true) @Valid List<Source> sources
 ) {}
