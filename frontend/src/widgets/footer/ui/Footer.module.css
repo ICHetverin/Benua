@@ -111,4 +111,69 @@
     color: var(--white);
     margin: 0;
     padding-top: 0.5rem;
-  }
+}
+
+/* ── Tablet (≤ 1024px) ─────────────────────────── */
+@media (max-width: 1024px) {
+    .container {
+        padding: 2.5rem 2rem;
+    }
+
+    .footerContent {
+        grid-template-columns: auto 1fr auto;
+        gap: 1.5rem;
+    }
+
+    .centerColumns {
+        padding: 0 1.5rem;
+    }
+
+    .BenuaLogo {
+        height: 180px;
+    }
+}
+
+/* ── Mobile (≤ 768px) ──────────────────────────── */
+@media (max-width: 768px) {
+    .container {
+        padding: 2rem 1.5rem;
+    }
+
+    .footerContent {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .leftColumn {
+        align-items: center;
+    }
+
+    .BenuaLogo {
+        height: 140px;
+    }
+
+    .centerColumns {
+        padding: 0;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        justify-items: center;
+    }
+
+    .columnTitle {
+        text-align: center;
+    }
+
+    .columnList {
+        text-align: center;
+    }
+
+    .rightColumn {
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .copyright {
+        text-align: center;
+    }
+}
