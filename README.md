@@ -14,43 +14,10 @@
 - `bugfix/` (для исправления ошибок)
 - `hotfix/` (для исправления критических ошибок, непосредственно из `main`)
 
-## для малышариков в работе с гитхабом
+## Сайты
+[Бенуа старый сайт](http:/89.169.129.161)
 
-рабочий цикл будет выглядеть следующим образом:
+#### Figma - там есть вся инфа про инфраструктуру сайта, работу с бд и layout для страниц
+[Figma общая](https://www.figma.com/design/EwIst6BGZJErgTf8fp69uA/Benua-project?node-id=0-1&t=P9z9LvK1Rbxt3Z5e-1)
 
-- в ide подтягиваете изменения из develop
-  ```
-  git checkout develop
-  git pull
-  ```
-- создаете ветку\
-  пример
-  ```
-  git checkout -b feature/frontend-login
-  ```
-- пишем код, коммитим (желательно делать мелкие коммиты, один коммит - одна логическая часть)
-- пушим коммит
-- создаем PR из вашей ветки в develop
-
-### немного о коммитах
-
-струтура:
-
-```
-заголовок (<тип>: короткое описание)
-
-Подробное (но не слишком) описание выполненной работы (зачем делали)
-```
-
-основные типы:
-
-- feat (new feature)
-- fix (bug fix)
-- docs (documentation)
-- style (formatting)
-- refactor (code restructuring)
-- perf (performance)
-- test (tests)
-- chore (maintenance)
-
----
+[Figma со страницами от дизайнеров](https://www.figma.com/design/PISiaeUpordwIjrqr0DiG7/BENOIS?node-id=0-1&t=an6F0l5cHlYU95Ev-1)
