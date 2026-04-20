@@ -1,6 +1,6 @@
 [
   {
-    "_id": "person-1",
+    "id": "person-1",
     "name": "Леон Николаевич Бенуа",
     "life_years": "1856–1928",
     "birth_place": "Петергоф, Российская империя",
@@ -25,21 +25,21 @@
     "connected_objects": ["building-1"],
     "images": [
       {
-        "_id": "img-3",
+        "id": "img-3",
         "text": "Портрет Леона Николаевича Бенуа",
         "url_to_s3": "https://s3.benua.example/images/leon-benua-portrait.jpg"
       }
     ],
     "sources": [
       {
-        "_id": "src-1",
+        "id": "src-1",
         "text": "Статья о Леоне Николаевиче Бенуа в Википедии",
         "url": "https://ru.wikipedia.org/wiki/%D0%91%D0%B5%D0%BD%D1%83%D0%B0,_%D0%9B%D0%B5%D0%BE%D0%BD_%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0%D0%B5%D0%B2%D0%B8%D1%87"
       }
     ]
   },
   {
-    "_id": "person-2",
+    "id": "person-2",
     "name": "Александр Николаевич Бенуа",
     "life_years": "1870–1960",
     "birth_place": "Санкт-Петербург, Российская империя",
@@ -64,14 +64,14 @@
     "connected_objects": ["building-2"],
     "images": [
       {
-        "_id": "img-4",
+        "id": "img-4",
         "text": "Александр Николаевич Бенуа за работой",
         "url_to_s3": "https://s3.benua.example/images/alexandre-benua-portrait.jpg"
       }
     ],
     "sources": [
       {
-        "_id": "src-3",
+        "id": "src-3",
         "text": "Статья об Александре Николаевиче Бенуа в Википедии",
         "url": "https://ru.wikipedia.org/wiki/%D0%91%D0%B5%D0%BD%D1%83%D0%B0,_%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%80_%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0%D0%B5%D0%B2%D0%B8%D1%87"
       }
