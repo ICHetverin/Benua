@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     container_name: benua-backend
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://admin:benuaadmin@mongodb:27017/benua?authSource=admin
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/benua?authSource=admin
     ports:
       - "8080:8080"
     depends_on:

@@ -1,16 +1,11 @@
 spring:
   application:
     name: backend
-  # jackson:
-  #   property-naming-strategy: SNAKE_CASE
-  # data:
-  #   mongodb:
-  #     host: ${MONGO_HOST:localhost}
-  #     port: ${MONGO_PORT:27017}
-  #     database: ${MONGO_DATABASE:benua}
-  #     username: ${MONGO_USERNAME}
-  #     password: ${MONGO_PASSWORD}
-  #     authentication-database: ${MONGO_AUTH_DB:admin}
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/benua}
 
 server:
   port: ${SERVER_PORT:8080}
