@@ -15,6 +15,10 @@ export function PersonCard({ person }) {
     }
   };
 
+  const descriptionText = typeof person.description === 'string'
+    ? person.description
+    : person.description?.content || person.description?.topic || '';
+
   return (
     <article
       className={styles.card}
@@ -31,7 +35,7 @@ export function PersonCard({ person }) {
       </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{person.name}</h3>
-        <p className={styles.description}>{person.description}</p>
+        <p className={styles.description}>{descriptionText}</p>
       </div>
     </article>
   );

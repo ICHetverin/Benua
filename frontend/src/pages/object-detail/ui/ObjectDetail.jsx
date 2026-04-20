@@ -17,6 +17,18 @@ export function ObjectDetail() {
     .map((pid) => getPersonById(pid, allPersons))
     .filter(Boolean);
 
+  const getDescriptionText = (description) => {
+    if (!description) return 'Нет описания';
+    if (typeof description === 'string') return description;
+    if (typeof description === 'object') {
+      if (description.content) return description.content;
+      if (description.topic) return description.topic;
+
+      return JSON.stringify(description);
+    }
+    return String(description);
+  };
+
   return (
     <div className={styles.page}>
       <button className={styles.back} onClick={() => navigate(-1)}>← Назад</button>
@@ -32,7 +44,7 @@ export function ObjectDetail() {
         }
       </div>
 
-      <p className={styles.description}>{object.description}</p>
+      <p className={styles.description}>{getDescriptionText(object.description)}</p>
 
       {relatedPersons.length > 0 && (
         <section className={styles.related}>
