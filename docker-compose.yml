@@ -2,6 +2,8 @@ services:
   mongodb:
     image: mongo:7
     container_name: benua-mongodb
+    env_file:
+      - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
@@ -23,8 +25,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: benua-backend
-    environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/benua?authSource=admin
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     depends_on:
