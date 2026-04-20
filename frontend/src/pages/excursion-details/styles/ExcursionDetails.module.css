@@ -1,3 +1,13 @@
 .headSection {
     background-color: var(--dark-red);
 }
+
+.page {
+    padding: var(--page-padding);
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 1.5rem;
+    }
+}
