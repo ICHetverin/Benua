@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PersonCard, usePersons } from 'entities/person';
 import { ObjectCard, useObjects } from 'entities/object';
+import { CatalogGrid } from 'widgets/catalog-grid';
 import styles from '../styles/Catalog.module.css';
 
 const TABS = [
@@ -16,11 +17,13 @@ export function Catalog() {
 
   const isLoading = activeTab === 'persons' ? personsLoading : objectsLoading;
   const isError = activeTab === 'persons' ? personsError : objectsError;
+  const items = activeTab === 'persons' ? persons : objects;
+  const renderCard = activeTab === 'persons'
+    ? (person) => <PersonCard key={person.id} person={person} />
+    : (obj) => <ObjectCard key={obj.id} object={obj} />;
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Каталог</h1>
-
       <div className={styles.tabs}>
         {TABS.map((tab) => (
           <button
@@ -34,17 +37,7 @@ export function Catalog() {
         ))}
       </div>
 
-      {isLoading && <p className={styles.status}>Загрузка...</p>}
-      {isError && <p className={styles.statusError}>Ошибка загрузки данных</p>}
-
-      {!isLoading && !isError && (
-        <div className={styles.grid}>
-          {activeTab === 'persons' &&
-            persons.map((person) => <PersonCard key={person.id} person={person} />)}
-          {activeTab === 'objects' &&
-            objects.map((object) => <ObjectCard key={object.id} object={object} />)}
-        </div>
-      )}
+      <CatalogGrid items={items} renderCard={renderCard} isLoading={isLoading} isError={isError} />
     </div>
   );
 }

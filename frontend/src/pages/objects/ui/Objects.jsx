@@ -1,9 +1,17 @@
-import { Catalog } from "pages/catalog";
+import { ObjectCard, useObjects } from 'entities/object';
+import { CatalogGrid } from 'widgets/catalog-grid';
 
-export const Objects = () => {
+export function Objects() {
+  const { data: objects = [], isLoading, isError } = useObjects();
+
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <Catalog />
+    <div style={{ padding: 'var(--page-padding)' }}>
+      <CatalogGrid
+        items={objects}
+        renderCard={(obj) => <ObjectCard key={obj.id} object={obj} />}
+        isLoading={isLoading}
+        isError={isError}
+      />
     </div>
   );
-};
+}

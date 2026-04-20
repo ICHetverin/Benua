@@ -18,14 +18,6 @@
   text-decoration: underline;
 }
 
-.name {
-  font-family: var(--font-lora);
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--black);
-  margin: 0 0 2rem;
-}
-
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -46,12 +38,102 @@
   grid-column: 1 / -1;
 }
 
-.description {
+.name {
+  font-family: var(--font-lora);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--black);
+  margin: 0 0 1.5rem;
+}
+
+.mainInfo {
+  margin-bottom: 2rem;
+}
+
+.infoRow {
+  font-size: 1rem;
+  color: var(--black);
+  margin: 0 0 0.5rem;
+}
+
+.infoLabel {
+  font-weight: 600;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-lora);
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--black);
+  margin: 0 0 1.2rem;
+}
+
+.text {
   font-size: 1rem;
   line-height: 1.7;
   color: var(--black);
-  margin: 0 0 3rem;
+  margin: 0;
   max-width: 720px;
+}
+
+.topic {
+  margin-bottom: 2rem;
+}
+
+.topicTitle {
+  font-family: var(--font-lora);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--black);
+  margin: 0 0 0.6rem;
+}
+
+.topicContent {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--black);
+  margin: 0;
+  max-width: 720px;
+}
+
+.factsList {
+  padding-left: 1.5rem;
+  margin: 0;
+  max-width: 720px;
+}
+
+.factsItem {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--black);
+  margin-bottom: 0.5rem;
+}
+
+.sourcesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sourceLink {
+  font-family: var(--font-lora);
+  font-size: 0.95rem;
+  color: var(--dark-red);
+  text-decoration: none;
+}
+
+.sourceLink:hover {
+  text-decoration: underline;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
 }
 
 .status {
@@ -62,25 +144,6 @@
 .statusError {
   font-family: var(--font-lora);
   color: var(--dark-red);
-}
-
-
-.related {
-  margin-top: 1rem;
-}
-
-.relatedTitle {
-  font-family: var(--font-lora);
-  font-size: 1.3rem;
-  font-weight: 300;
-  color: var(--black);
-  margin: 0 0 1.5rem;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
 }
 
 @media (max-width: 768px) {
