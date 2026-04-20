@@ -1,7 +1,3 @@
-.page {
-  padding: var(--page-padding);
-}
-
 .title {
   font-family: var(--font-lora);
   font-size: 2rem;
