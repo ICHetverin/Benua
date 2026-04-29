@@ -30,7 +30,7 @@ export function ObjectCard({ object }) {
     >
       <div className={styles.imageWrapper}>
         {object.images?.[0]
-          ? <img className={styles.image} src={object.images[0]} alt={object.name} loading="lazy" />
+          ? <img className={styles.image} src={object.images[0].url_to_s3} alt={object.name} loading="lazy" />
           : <div className={styles.imagePlaceholder} />
         }
       </div>

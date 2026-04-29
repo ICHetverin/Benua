@@ -109,6 +109,14 @@ public class PersonService {
     }
 
     public PersonDto toDto(Person p) {
+        List<PersonDto.SimpleEntity> persons = p.connectedPersons() == null ? List.of() :
+                p.connectedPersons().stream()
+                        .map(l -> new PersonDto.SimpleEntity(l._id(), l.name()))
+                        .toList();
+        List<PersonDto.SimpleEntity> objects = p.connectedObjects() == null ? List.of() :
+                p.connectedObjects().stream()
+                        .map(o -> new PersonDto.SimpleEntity(o._id(), o.name()))
+                        .toList();
         return new PersonDto(
                 p._id(),
                 p.name(),
@@ -118,12 +126,8 @@ public class PersonService {
                 p.connectionWithBenua(),
                 p.description(),
                 p.interestingFacts(),
-                p.connectedPersons().stream()
-                        .map(l -> new PersonDto.SimpleEntity(l._id(), l.name()))
-                        .toList(),
-                p.connectedObjects().stream()
-                        .map(o -> new PersonDto.SimpleEntity(o._id(), o.name()))
-                        .toList(),
+                persons,
+                objects,
                 p.images(),
                 p.sources()
         );

@@ -23,8 +23,16 @@ export function PersonDetail() {
           <h1 className={styles.name}>{person.name}</h1>
           {person.life_years && <p className={styles.meta}>{person.life_years}</p>}
           {person.profession && <p className={styles.meta}>{person.profession}</p>}
+          {person.birth_place && <p className={styles.meta}>Место рождения: {person.birth_place}</p>}
         </div>
       </div>
+
+      {person.connection_with_benua && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Связь с Бенуа</h2>
+          <p className={styles.text}>{person.connection_with_benua}</p>
+        </section>
+      )}
 
       {person.description?.length > 0 && (
         <section className={styles.section}>

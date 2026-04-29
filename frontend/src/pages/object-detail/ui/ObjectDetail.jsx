@@ -46,6 +46,13 @@ export function ObjectDetail() {
         </section>
       )}
 
+      {object.connection_with_benua && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Связь с Бенуа</h2>
+          <p className={styles.text}>{object.connection_with_benua}</p>
+        </section>
+      )}
+
       {object.description?.length > 0 && (
         <section className={styles.section}>
           {object.description.map((d, i) => (
