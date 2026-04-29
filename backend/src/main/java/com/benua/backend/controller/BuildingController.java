@@ -46,7 +46,7 @@ public class BuildingController {
     public ResponseEntity<List<BuildingDto>> getAllBuildings(
             @RequestParam Map<String, String> allParams,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "1000") int size) {
 
         allParams.remove("page");
         allParams.remove("size");

@@ -29,7 +29,7 @@ public class PersonController {
     @GetMapping()
     public ResponseEntity<List<PersonDto>> getAllPersons(@RequestParam Map<String, String> allParams,
                                                       @RequestParam(defaultValue = "0") int offset,
-                                                      @RequestParam(defaultValue = "10") int limit) {
+                                                      @RequestParam(defaultValue = "1000") int limit) {
         allParams.remove("offset");
         allParams.remove("limit");
 

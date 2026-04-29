@@ -178,13 +178,13 @@ class BuildingServiceTest {
         ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
         when(mongoTemplate.find(any(Query.class), eq(Building.class))).thenReturn(List.of(building));
 
-        buildingService.getBuildingsDto(Map.of(), -1, 200);
+        buildingService.getBuildingsDto(Map.of(), -1, 2000);
 
         verify(mongoTemplate).find(queryCaptor.capture(), eq(Building.class));
         Query query = queryCaptor.getValue();
 
         assertEquals(0L, query.getSkip());
-        assertEquals(10, query.getLimit());
+        assertEquals(1000, query.getLimit());
     }
 
     @Test

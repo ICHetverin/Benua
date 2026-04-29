@@ -49,7 +49,7 @@ public class BuildingService {
 
     private List<Building> getBuildings(Map<String, String> filters, int page, int size) {
         if (page < 0) page = 0;
-        if (size <= 0 || size > 100) size = 10;
+        if (size <= 0 || size > 1000) size = 1000;
 
         Query query = new Query();
 
