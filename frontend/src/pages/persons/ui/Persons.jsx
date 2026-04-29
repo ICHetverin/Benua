@@ -16,7 +16,7 @@ export function Persons() {
       </div>
       <CatalogGrid
         items={persons}
-        renderCard={(person) => <PersonCard key={person.id} person={person} />}
+        renderCard={(person) => <PersonCard key={person._id} person={person} />}
         isLoading={isLoading}
         isError={isError}
       />

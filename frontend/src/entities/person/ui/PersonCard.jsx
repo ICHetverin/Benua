@@ -5,7 +5,7 @@ export function PersonCard({ person }) {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/persons/${person.id}`);
+    navigate(`/persons/${person._id}`);
   };
 
   const handleKeyDown = (event) => {

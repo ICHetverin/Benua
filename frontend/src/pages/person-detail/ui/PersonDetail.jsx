@@ -53,7 +53,7 @@ export function PersonDetail() {
           <h2 className={styles.sectionTitle}>Источники</h2>
           <ul className={styles.sourcesList}>
             {person.sources.map((src) => (
-              <li key={src.id}>
+              <li key={src._id}>
                 <a href={src.url} className={styles.sourceLink} target="_blank" rel="noopener noreferrer">
                   {src.text}
                 </a>
@@ -68,7 +68,7 @@ export function PersonDetail() {
           <h2 className={styles.sectionTitle}>Связанные персоны</h2>
           <div className={styles.grid}>
             {person.connected_persons.map((p) => (
-              <PersonCard key={p.id} person={p} />
+              <PersonCard key={p._id} person={p} />
             ))}
           </div>
         </section>
@@ -79,7 +79,7 @@ export function PersonDetail() {
           <h2 className={styles.sectionTitle}>Связанные объекты</h2>
           <div className={styles.grid}>
             {person.connected_objects.map((obj) => (
-              <ObjectCard key={obj.id} object={obj} />
+              <ObjectCard key={obj._id} object={obj} />
             ))}
           </div>
         </section>

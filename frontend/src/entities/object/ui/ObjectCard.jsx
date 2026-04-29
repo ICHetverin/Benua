@@ -5,7 +5,7 @@ export function ObjectCard({ object }) {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/objects/${object.id}`);
+    navigate(`/objects/${object._id}`);
   };
 
   const handleKeyDown = (event) => {

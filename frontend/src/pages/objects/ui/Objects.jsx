@@ -16,7 +16,7 @@ export function Objects() {
       </div>
       <CatalogGrid
         items={objects}
-        renderCard={(obj) => <ObjectCard key={obj.id} object={obj} />}
+        renderCard={(obj) => <ObjectCard key={obj._id} object={obj} />}
         isLoading={isLoading}
         isError={isError}
       />
