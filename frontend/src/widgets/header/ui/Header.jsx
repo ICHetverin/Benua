@@ -20,6 +20,13 @@ export const Header = () => {
     }
   }, [isSearchOpen]);
 
+  useEffect(() => {
+    document.body.style.overflow = isNavOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isNavOpen]);
+
   const handleToggleSearch = () => {
     if (isSearchOpen) {
       setSearchQuery("");
@@ -55,6 +62,17 @@ export const Header = () => {
             ))}
           </ul>
         </div>
+
+        <button
+          className={clsx(styles.burgerButton, { [styles.open]: isNavOpen })}
+          onClick={() => setIsNavOpen(!isNavOpen)}
+          aria-label={isNavOpen ? "Закрыть меню" : "Открыть меню"}
+          aria-expanded={isNavOpen}
+        >
+          <span className={styles.burgerLine} />
+          <span className={styles.burgerLine} />
+          <span className={styles.burgerLine} />
+        </button>
 
         <div className={styles.searchContainer}>
           <div

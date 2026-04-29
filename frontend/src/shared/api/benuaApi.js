@@ -16,7 +16,7 @@ export const getPersonById = (id) => api.get(`/persons/${id}`);
 export const getObjects = () => api.get('/objects', { params: { size: 1000 } });
 export const getObjectById = (id) => api.get(`/objects/${id}`);
 
-export const createPerson = (data) => api.post('/persons', data);
-export const createObject = (data) => api.post('/objects', data);
+export const createPerson = (data) => api.post('/api/persons', data);
+export const createObject = (data) => api.post('/api/objects', data);
 
-export const search = (query) => api.get('/search', { params: { q: query } });
+export const search = (query) => api.get('/api/search', { params: { q: query } });

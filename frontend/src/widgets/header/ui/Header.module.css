@@ -164,3 +164,126 @@
     background-color: var(--dark-blue);
     color: white;
 }
+
+/* ── Burger button ─────────────────────────────── */
+.burgerButton {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    gap: 5px;
+    order: 3;
+}
+
+.burgerLine {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: var(--black);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: center;
+}
+
+.burgerButton.open .burgerLine:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.burgerButton.open .burgerLine:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.burgerButton.open .burgerLine:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Tablet (≤ 1024px) ─────────────────────────── */
+@media (max-width: 1024px) {
+    .navbarContainer {
+        grid-template-columns: 12vw 1fr 12vw;
+    }
+
+    .navLink {
+        font-size: 16px;
+        padding: var(--navbar-item-padding-y) 0.65rem;
+    }
+
+    .searchWrapper.searchOpen {
+        width: 260px;
+    }
+}
+
+/* ── Mobile (≤ 768px) ──────────────────────────── */
+@media (max-width: 768px) {
+    .navbarContainer {
+        grid-template-columns: 1fr auto;
+        padding: 0 1.5rem;
+    }
+
+    .logoContainer {
+        grid-column: 1;
+    }
+
+    /* Nav dropdown — hidden by default on mobile */
+    .navCollapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--beige);
+        max-height: 0;
+        overflow: hidden;
+        border-top: 1px solid transparent;
+        transition: max-height 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        /* ensure it sits above page content */
+        z-index: 999;
+    }
+
+    .navCollapse.show {
+        max-height: 420px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-top-color: var(--darker-beige);
+    }
+
+    .navList {
+        flex-direction: column;
+        height: auto;
+        padding: 0.4rem 0 0.8rem;
+        align-items: stretch;
+        grid-column: unset;
+    }
+
+    .navItem {
+        height: auto;
+    }
+
+    .navLink {
+        padding: 0.85rem 2rem;
+        font-size: 1rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(35, 28, 7, 0.07);
+    }
+
+    .navItem:last-child .navLink {
+        border-bottom: none;
+    }
+
+    /* Hide search bar on mobile */
+    .searchContainer {
+        display: none;
+    }
+
+    /* Show burger button */
+    .burgerButton {
+        display: flex;
+        grid-column: 2;
+        justify-self: end;
+    }
+}
