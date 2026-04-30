@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePersons, useCreatePerson } from 'entities/person';
 import { useObjects } from 'entities/object';
@@ -18,8 +18,25 @@ const EMPTY = {
   connected_objects: [],
 };
 
+const STORAGE_KEY = 'personFormDraft';
+
+const loadDraft = () => {
+  if (typeof window === 'undefined') {
+    return EMPTY;
+  }
+  try {
+    const saved = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!saved) {
+      return EMPTY;
+    }
+    return { ...EMPTY, ...JSON.parse(saved) };
+  } catch {
+    return EMPTY;
+  }
+};
+
 export function PersonForm() {
-  const [form, setForm] = useState(EMPTY);
+  const [form, setForm] = useState(loadDraft);
   const [step, setStep] = useState('form');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -27,6 +44,13 @@ export function PersonForm() {
   const { data: allPersons = [] } = usePersons();
   const { data: allObjects = [] } = useObjects();
   const mutation = useCreatePerson();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+  }, [form]);
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
 
@@ -92,6 +116,9 @@ export function PersonForm() {
         images: form.images.filter(img => img.url_to_s3.trim()),
       };
       const result = await mutation.mutateAsync(payload);
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.removeItem(STORAGE_KEY);
+      }
       navigate(`/persons/${result._id}`);
     } catch (e) {
       console.error('PersonForm submit error:', e);
