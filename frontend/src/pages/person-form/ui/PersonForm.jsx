@@ -143,6 +143,7 @@ export function PersonForm() {
   };
 
   const togglePerson = (id) => {
+    if (!id) return;
     const next = form.connected_persons.includes(id)
       ? form.connected_persons.filter(x => x !== id)
       : [...form.connected_persons, id];
@@ -150,6 +151,7 @@ export function PersonForm() {
   };
 
   const toggleObject = (id) => {
+    if (!id) return;
     const next = form.connected_objects.includes(id)
       ? form.connected_objects.filter(x => x !== id)
       : [...form.connected_objects, id];
@@ -170,6 +172,8 @@ export function PersonForm() {
     try {
       const payload = {
         ...form,
+        connected_persons: form.connected_persons.filter(Boolean),
+        connected_objects: form.connected_objects.filter(Boolean),
         description: form.description.filter(d => d.topic.trim() || d.content.trim()),
         interesting_facts: form.interesting_facts.filter(f => f.trim()),
         sources: form.sources.filter(s => s.text.trim() && s.url.trim()),
