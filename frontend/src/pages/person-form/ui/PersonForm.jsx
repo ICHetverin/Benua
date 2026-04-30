@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePersons, useCreatePerson } from 'entities/person';
 import { useObjects } from 'entities/object';
@@ -58,13 +58,14 @@ const loadDraft = () => {
     if (typeof window !== 'undefined') {
       window.sessionStorage.removeItem(STORAGE_KEY);
     }
-    console.error('PersonForm draft load error; cleared stored draft:', error);
+    console.error('Failed to load saved form data. Starting with empty form.', error);
     return EMPTY;
   }
 };
 
 export function PersonForm() {
   const [form, setForm] = useState(loadDraft);
+  const formRef = useRef(form);
   const [step, setStep] = useState('form');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -72,6 +73,10 @@ export function PersonForm() {
   const { data: allPersons = [] } = usePersons();
   const { data: allObjects = [] } = useObjects();
   const mutation = useCreatePerson();
+
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -82,6 +87,17 @@ export function PersonForm() {
     }, 500);
     return () => window.clearTimeout(handle);
   }, [form]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const handleBeforeUnload = () => {
+      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(formRef.current));
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
 
