@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePersons, useCreatePerson } from 'entities/person';
 import { useObjects } from 'entities/object';
@@ -18,8 +18,62 @@ const EMPTY = {
   connected_objects: [],
 };
 
+const STORAGE_KEY = 'personFormDraft';
+
+const normalizeDraft = (draft) => {
+  const isPlainObject = (value) => Object.prototype.toString.call(value) === '[object Object]';
+  if (!isPlainObject(draft)) {
+    return EMPTY;
+  }
+  const stringValue = (value) => (typeof value === 'string' ? value : '');
+  const listValue = (value) => (Array.isArray(value) ? value : []);
+  return {
+    ...EMPTY,
+    ...draft,
+    name: stringValue(draft.name),
+    life_years: stringValue(draft.life_years),
+    birth_place: stringValue(draft.birth_place),
+    profession: stringValue(draft.profession),
+    connection_with_benua: stringValue(draft.connection_with_benua),
+    description: listValue(draft.description),
+    interesting_facts: listValue(draft.interesting_facts),
+    sources: listValue(draft.sources),
+    images: listValue(draft.images),
+    connected_persons: listValue(draft.connected_persons),
+    connected_objects: listValue(draft.connected_objects),
+  };
+};
+
+const loadDraft = () => {
+  if (typeof window === 'undefined') {
+    return EMPTY;
+  }
+  try {
+    const saved = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!saved) {
+      return EMPTY;
+    }
+    return normalizeDraft(JSON.parse(saved));
+  } catch (error) {
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+    }
+    console.error('Failed to load saved form data. Starting with empty form.', error);
+    return EMPTY;
+  }
+};
+
+const saveDraft = (draft) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+};
+
 export function PersonForm() {
-  const [form, setForm] = useState(EMPTY);
+  const [form, setForm] = useState(loadDraft);
+  const formRef = useRef(form);
+  const saveTimeoutRef = useRef(null);
   const [step, setStep] = useState('form');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -27,6 +81,36 @@ export function PersonForm() {
   const { data: allPersons = [] } = usePersons();
   const { data: allObjects = [] } = useObjects();
   const mutation = useCreatePerson();
+
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const handle = window.setTimeout(() => {
+      saveDraft(form);
+      saveTimeoutRef.current = null;
+    }, 500);
+    saveTimeoutRef.current = handle;
+    return () => window.clearTimeout(handle);
+  }, [form]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const handleBeforeUnload = () => {
+      if (saveTimeoutRef.current) {
+        window.clearTimeout(saveTimeoutRef.current);
+      }
+      saveDraft(formRef.current);
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
 
@@ -96,7 +180,10 @@ export function PersonForm() {
         images: form.images.filter(img => img.url_to_s3.trim()),
       };
       const result = await mutation.mutateAsync(payload);
-      navigate(result?._id ? `/persons/${result._id}` : '/persons');
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.removeItem(STORAGE_KEY);
+      }
+      navigate(`/persons/${result._id}`);
     } catch (e) {
       console.error('PersonForm submit error:', e);
       setError(e?.message || 'Ошибка при сохранении данных');
