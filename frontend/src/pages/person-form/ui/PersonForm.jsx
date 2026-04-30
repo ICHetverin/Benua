@@ -20,6 +20,29 @@ const EMPTY = {
 
 const STORAGE_KEY = 'personFormDraft';
 
+const normalizeDraft = (draft) => {
+  if (!draft || typeof draft !== 'object' || Array.isArray(draft)) {
+    return EMPTY;
+  }
+  const stringValue = (value) => (typeof value === 'string' ? value : '');
+  const listValue = (value) => (Array.isArray(value) ? value : []);
+  return {
+    ...EMPTY,
+    ...draft,
+    name: stringValue(draft.name),
+    life_years: stringValue(draft.life_years),
+    birth_place: stringValue(draft.birth_place),
+    profession: stringValue(draft.profession),
+    connection_with_benua: stringValue(draft.connection_with_benua),
+    description: listValue(draft.description),
+    interesting_facts: listValue(draft.interesting_facts),
+    sources: listValue(draft.sources),
+    images: listValue(draft.images),
+    connected_persons: listValue(draft.connected_persons),
+    connected_objects: listValue(draft.connected_objects),
+  };
+};
+
 const loadDraft = () => {
   if (typeof window === 'undefined') {
     return EMPTY;
@@ -29,7 +52,7 @@ const loadDraft = () => {
     if (!saved) {
       return EMPTY;
     }
-    return { ...EMPTY, ...JSON.parse(saved) };
+    return normalizeDraft(JSON.parse(saved));
   } catch {
     return EMPTY;
   }
