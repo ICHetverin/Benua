@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Бизнес логика для работы API с Building
@@ -47,14 +48,18 @@ public class BuildingService {
         return br.findById(id).orElseThrow(() -> new NoSuchElementException("Not found building by id: " + id));
     }
 
+    private static final Set<String> ALLOWED_FILTERS = Set.of(
+            "name", "address", "architect", "years_built", "history", "design", "connection_with_benua"
+    );
+
     private List<Building> getBuildings(Map<String, String> filters, int page, int size) {
         if (page < 0) page = 0;
-        if (size <= 0 || size > 100) size = 10;
+        if (size <= 0 || size > 10_000) size = 10;
 
         Query query = new Query();
 
         for (Map.Entry<String, String> entry : filters.entrySet()) {
-            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+            if (ALLOWED_FILTERS.contains(entry.getKey()) && entry.getValue() != null && !entry.getValue().isEmpty()) {
                 query.addCriteria(Criteria.where(entry.getKey()).is(entry.getValue()));
             }
         }

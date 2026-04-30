@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Бизнес логика для работы API с Person
@@ -46,11 +47,18 @@ public class PersonService {
         return pr.findById(id).orElseThrow(() -> new NoSuchElementException("Not found person by id: " + id));
     }
 
+    private static final Set<String> ALLOWED_FILTERS = Set.of(
+            "name", "life_years", "birth_place", "profession", "connection_with_benua"
+    );
+
     public List<Person> getPersons(Map<String, String> params, int offset, int limit) {
+        if (offset < 0) offset = 0;
+        if (limit <= 0 || limit > 10_000) limit = 10;
+
         Query query = new Query();
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+            if (ALLOWED_FILTERS.contains(entry.getKey()) && entry.getValue() != null && !entry.getValue().isEmpty()) {
                 query.addCriteria(Criteria.where(entry.getKey()).is(entry.getValue()));
             }
         }
@@ -101,11 +109,6 @@ public class PersonService {
         return sources.stream()
                 .map(src -> sr.save(new Source(null, src.text(), src.url())))
                 .toList();
-    }
-
-    public List<PersonDto> getPersonDto(Map<String, String> filters, int offset, int limit) {
-        List<Person> persons = getPersons(filters, offset, limit);
-        return persons.stream().map(this::toDto).toList();
     }
 
     public PersonDto toDto(Person p) {
