@@ -21,7 +21,8 @@ const EMPTY = {
 const STORAGE_KEY = 'personFormDraft';
 
 const normalizeDraft = (draft) => {
-  if (!draft || typeof draft !== 'object' || Array.isArray(draft)) {
+  const isPlainObject = (value) => Object.prototype.toString.call(value) === '[object Object]';
+  if (!isPlainObject(draft)) {
     return EMPTY;
   }
   const stringValue = (value) => (typeof value === 'string' ? value : '');
@@ -53,7 +54,8 @@ const loadDraft = () => {
       return EMPTY;
     }
     return normalizeDraft(JSON.parse(saved));
-  } catch {
+  } catch (error) {
+    console.error('PersonForm draft load error:', error);
     return EMPTY;
   }
 };
@@ -72,7 +74,10 @@ export function PersonForm() {
     if (typeof window === 'undefined') {
       return;
     }
-    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+    const handle = window.setTimeout(() => {
+      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+    }, 300);
+    return () => window.clearTimeout(handle);
   }, [form]);
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
