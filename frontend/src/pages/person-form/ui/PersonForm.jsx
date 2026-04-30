@@ -63,9 +63,17 @@ const loadDraft = () => {
   }
 };
 
+const saveDraft = (draft) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+};
+
 export function PersonForm() {
   const [form, setForm] = useState(loadDraft);
   const formRef = useRef(form);
+  const saveTimeoutRef = useRef(null);
   const [step, setStep] = useState('form');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -83,8 +91,10 @@ export function PersonForm() {
       return;
     }
     const handle = window.setTimeout(() => {
-      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+      saveDraft(form);
+      saveTimeoutRef.current = null;
     }, 500);
+    saveTimeoutRef.current = handle;
     return () => window.clearTimeout(handle);
   }, [form]);
 
@@ -93,7 +103,10 @@ export function PersonForm() {
       return;
     }
     const handleBeforeUnload = () => {
-      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(formRef.current));
+      if (saveTimeoutRef.current) {
+        window.clearTimeout(saveTimeoutRef.current);
+      }
+      saveDraft(formRef.current);
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
