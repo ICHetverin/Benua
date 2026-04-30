@@ -113,6 +113,14 @@ public class BuildingService {
     }
 
     public BuildingDto toDto(Building b) {
+        List<BuildingDto.SimpleEntity> persons = b.connectedPersons() == null ? List.of() :
+                b.connectedPersons().stream()
+                        .map(p -> new BuildingDto.SimpleEntity(p._id(), p.name()))
+                        .toList();
+        List<BuildingDto.SimpleEntity> objects = b.connectedObjects() == null ? List.of() :
+                b.connectedObjects().stream()
+                        .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name()))
+                        .toList();
         return new BuildingDto(
                 b._id(),
                 b.name(),
@@ -126,12 +134,8 @@ public class BuildingService {
                 b.connectionWithBenua(),
                 b.description(),
                 b.interestingFacts(),
-                b.connectedPersons().stream()
-                        .map(p -> new BuildingDto.SimpleEntity(p._id(), p.name()))
-                        .toList(),
-                b.connectedObjects().stream()
-                        .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name()))
-                        .toList(),
+                persons,
+                objects,
                 b.images(),
                 b.sources()
         );
