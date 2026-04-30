@@ -5,7 +5,7 @@ export function ObjectCard({ object }) {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/objects/${object.id}`);
+    navigate(`/objects/${object._id}`);
   };
 
   const handleKeyDown = (event) => {
@@ -15,9 +15,9 @@ export function ObjectCard({ object }) {
     }
   };
 
-  const descriptionText = typeof object.description === 'string'
-    ? object.description
-    : object.description?.content || object.description?.topic || '';
+  const descriptionText = Array.isArray(object.description)
+    ? (object.description[0]?.content || object.description[0]?.topic || '')
+    : (object.description || '');
 
 
   return (

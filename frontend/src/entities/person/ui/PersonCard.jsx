@@ -5,7 +5,7 @@ export function PersonCard({ person }) {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/persons/${person.id}`);
+    navigate(`/persons/${person._id}`);
   };
 
   const handleKeyDown = (event) => {
@@ -15,9 +15,9 @@ export function PersonCard({ person }) {
     }
   };
 
-  const descriptionText = typeof person.description === 'string'
-    ? person.description
-    : person.description?.content || person.description?.topic || '';
+  const descriptionText = Array.isArray(person.description)
+    ? (person.description[0]?.content || person.description[0]?.topic || '')
+    : (person.description || '');
 
   return (
     <article
@@ -28,8 +28,8 @@ export function PersonCard({ person }) {
       tabIndex={0}
     >
       <div className={styles.photoWrapper}>
-        {person.photo
-          ? <img className={styles.photo} src={person.photo} alt={person.name} loading="lazy" />
+        {person.images?.[0]?.url_to_s3
+          ? <img className={styles.photo} src={person.images[0].url_to_s3} alt={person.name} loading="lazy" />
           : <div className={styles.photoPlaceholder} />
         }
       </div>

@@ -95,7 +95,7 @@ export function ObjectDetail() {
           <h2 className={styles.sectionTitle}>Связанные персоны</h2>
           <div className={styles.grid}>
             {object.connected_persons.map((p) => (
-              <PersonCard key={p.id} person={p} />
+              <PersonCard key={p._id} person={p} />
             ))}
           </div>
         </section>
@@ -106,7 +106,7 @@ export function ObjectDetail() {
           <h2 className={styles.sectionTitle}>Связанные объекты</h2>
           <div className={styles.grid}>
             {object.connected_objects.map((obj) => (
-              <ObjectCard key={obj.id} object={obj} />
+              <ObjectCard key={obj._id} object={obj} />
             ))}
           </div>
         </section>

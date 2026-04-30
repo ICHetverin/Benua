@@ -92,9 +92,10 @@ export function PersonForm() {
         images: form.images.filter(img => img.url_to_s3.trim()),
       };
       const result = await mutation.mutateAsync(payload);
-      navigate(`/persons/${result.id}`);
-    } catch {
-      setError('Ошибка при сохранении данных');
+      navigate(`/persons/${result._id}`);
+    } catch (e) {
+      console.error('PersonForm submit error:', e);
+      setError(e?.message || 'Ошибка при сохранении данных');
       setStep('form');
     }
   };
@@ -207,9 +208,9 @@ export function PersonForm() {
             ? <p className={styles.hint}>Нет доступных персон</p>
             : <div className={styles.chips}>
                 {allPersons.map(p => (
-                  <button key={p.id} type="button"
-                    className={`${styles.chip} ${form.connected_persons.includes(p.id) ? styles.chipActive : ''}`}
-                    onClick={() => togglePerson(p.id)}>
+                  <button key={p._id} type="button"
+                    className={`${styles.chip} ${form.connected_persons.includes(p._id) ? styles.chipActive : ''}`}
+                    onClick={() => togglePerson(p._id)}>
                     {p.name}
                   </button>
                 ))}
@@ -223,9 +224,9 @@ export function PersonForm() {
             ? <p className={styles.hint}>Нет доступных объектов</p>
             : <div className={styles.chips}>
                 {allObjects.map(obj => (
-                  <button key={obj.id} type="button"
-                    className={`${styles.chip} ${form.connected_objects.includes(obj.id) ? styles.chipActive : ''}`}
-                    onClick={() => toggleObject(obj.id)}>
+                  <button key={obj._id} type="button"
+                    className={`${styles.chip} ${form.connected_objects.includes(obj._id) ? styles.chipActive : ''}`}
+                    onClick={() => toggleObject(obj._id)}>
                     {obj.name}
                   </button>
                 ))}
@@ -245,9 +246,9 @@ export function PersonForm() {
 
 function PersonPreview({ form, allPersons, allObjects, onConfirm, onEdit, isPending, error }) {
   const connectedPersonNames = form.connected_persons
-    .map(id => allPersons.find(p => p.id === id)?.name).filter(Boolean);
+    .map(id => allPersons.find(p => p._id === id)?.name).filter(Boolean);
   const connectedObjectNames = form.connected_objects
-    .map(id => allObjects.find(o => o.id === id)?.name).filter(Boolean);
+    .map(id => allObjects.find(o => o._id === id)?.name).filter(Boolean);
 
   const cleanDescription = form.description.filter(d => d.topic.trim() || d.content.trim());
   const cleanFacts = form.interesting_facts.filter(f => f.trim());
