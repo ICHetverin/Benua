@@ -165,7 +165,7 @@ class PersonServiceTest {
         Person person = person("person-1", "Alice");
         when(mongoTemplate.find(any(Query.class), eq(Person.class))).thenReturn(List.of(person));
 
-        List<PersonDto> result = personService.getPersonDto(Map.of(), 0, 10);
+        List<PersonDto> result = personService.getPersonsDto(Map.of(), 0, 10);
 
         assertEquals(1, result.size());
         assertEquals("person-1", result.getFirst()._id());
