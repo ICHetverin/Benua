@@ -63,6 +63,7 @@ export function ObjectForm() {
   };
 
   const togglePerson = (id) => {
+    if (!id) return;
     const next = form.connected_persons.includes(id)
       ? form.connected_persons.filter(x => x !== id)
       : [...form.connected_persons, id];
@@ -70,6 +71,7 @@ export function ObjectForm() {
   };
 
   const toggleObject = (id) => {
+    if (!id) return;
     const next = form.connected_objects.includes(id)
       ? form.connected_objects.filter(x => x !== id)
       : [...form.connected_objects, id];
@@ -94,6 +96,8 @@ export function ObjectForm() {
     try {
       const payload = {
         ...form,
+        connected_persons: form.connected_persons.filter(Boolean),
+        connected_objects: form.connected_objects.filter(Boolean),
         latitude: form.latitude ? parseFloat(form.latitude) : null,
         longitude: form.longitude ? parseFloat(form.longitude) : null,
         description: form.description.filter(d => d.topic.trim() || d.content.trim()),

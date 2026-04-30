@@ -10,13 +10,22 @@ api.interceptors.response.use(
   (error) => Promise.reject(error?.response?.data ?? error),
 );
 
-export const getPersons = () => api.get('/persons', { params: { limit: 1000 } });
-export const getPersonById = (id) => api.get(`/persons/${id}`);
+const normalizeId = (entity) => {
+  if (!entity || typeof entity !== 'object') return entity;
+  if (entity._id) return entity;
+  if (entity.id) return { ...entity, _id: entity.id };
+  return entity;
+};
 
-export const getObjects = () => api.get('/objects', { params: { size: 1000 } });
-export const getObjectById = (id) => api.get(`/objects/${id}`);
+const normalizeList = (items) => (Array.isArray(items) ? items.map(normalizeId) : items);
 
-export const createPerson = (data) => api.post('/persons', data);
-export const createObject = (data) => api.post('/objects', data);
+export const getPersons = () => api.get('/persons', { params: { limit: 1000 } }).then(normalizeList);
+export const getPersonById = (id) => api.get(`/persons/${id}`).then(normalizeId);
+
+export const getObjects = () => api.get('/objects', { params: { size: 1000 } }).then(normalizeList);
+export const getObjectById = (id) => api.get(`/objects/${id}`).then(normalizeId);
+
+export const createPerson = (data) => api.post('/persons', data).then(normalizeId);
+export const createObject = (data) => api.post('/objects', data).then(normalizeId);
 
 export const search = (query) => api.get('/search', { params: { q: query } });
