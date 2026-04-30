@@ -19,8 +19,8 @@ export function Catalog() {
   const isError = activeTab === 'persons' ? personsError : objectsError;
   const items = activeTab === 'persons' ? persons : objects;
   const renderCard = activeTab === 'persons'
-    ? (person) => <PersonCard key={person.id} person={person} />
-    : (obj) => <ObjectCard key={obj.id} object={obj} />;
+    ? (person) => <PersonCard key={person._id} person={person} />
+    : (obj) => <ObjectCard key={obj._id} object={obj} />;
 
   return (
     <div className={styles.page}>

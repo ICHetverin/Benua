@@ -3,3 +3,14 @@
 !.git*
 !.env.example
 !.dockerignore
+!.mvn
+
+node_modules/
+build/
+target/
+*.iml
+.idea/
+.vscode/
+.DS_Store
+*.log
+*.log.*

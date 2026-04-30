@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePersons, useCreatePerson } from 'entities/person';
 import { useObjects } from 'entities/object';
@@ -18,8 +18,62 @@ const EMPTY = {
   connected_objects: [],
 };
 
+const STORAGE_KEY = 'personFormDraft';
+
+const normalizeDraft = (draft) => {
+  const isPlainObject = (value) => Object.prototype.toString.call(value) === '[object Object]';
+  if (!isPlainObject(draft)) {
+    return EMPTY;
+  }
+  const stringValue = (value) => (typeof value === 'string' ? value : '');
+  const listValue = (value) => (Array.isArray(value) ? value : []);
+  return {
+    ...EMPTY,
+    ...draft,
+    name: stringValue(draft.name),
+    life_years: stringValue(draft.life_years),
+    birth_place: stringValue(draft.birth_place),
+    profession: stringValue(draft.profession),
+    connection_with_benua: stringValue(draft.connection_with_benua),
+    description: listValue(draft.description),
+    interesting_facts: listValue(draft.interesting_facts),
+    sources: listValue(draft.sources),
+    images: listValue(draft.images),
+    connected_persons: listValue(draft.connected_persons),
+    connected_objects: listValue(draft.connected_objects),
+  };
+};
+
+const loadDraft = () => {
+  if (typeof window === 'undefined') {
+    return EMPTY;
+  }
+  try {
+    const saved = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!saved) {
+      return EMPTY;
+    }
+    return normalizeDraft(JSON.parse(saved));
+  } catch (error) {
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+    }
+    console.error('Failed to load saved form data. Starting with empty form.', error);
+    return EMPTY;
+  }
+};
+
+const saveDraft = (draft) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+};
+
 export function PersonForm() {
-  const [form, setForm] = useState(EMPTY);
+  const [form, setForm] = useState(loadDraft);
+  const formRef = useRef(form);
+  const saveTimeoutRef = useRef(null);
   const [step, setStep] = useState('form');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -27,6 +81,36 @@ export function PersonForm() {
   const { data: allPersons = [] } = usePersons();
   const { data: allObjects = [] } = useObjects();
   const mutation = useCreatePerson();
+
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const handle = window.setTimeout(() => {
+      saveDraft(form);
+      saveTimeoutRef.current = null;
+    }, 500);
+    saveTimeoutRef.current = handle;
+    return () => window.clearTimeout(handle);
+  }, [form]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const handleBeforeUnload = () => {
+      if (saveTimeoutRef.current) {
+        window.clearTimeout(saveTimeoutRef.current);
+      }
+      saveDraft(formRef.current);
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
 
@@ -59,6 +143,7 @@ export function PersonForm() {
   };
 
   const togglePerson = (id) => {
+    if (!id) return;
     const next = form.connected_persons.includes(id)
       ? form.connected_persons.filter(x => x !== id)
       : [...form.connected_persons, id];
@@ -66,6 +151,7 @@ export function PersonForm() {
   };
 
   const toggleObject = (id) => {
+    if (!id) return;
     const next = form.connected_objects.includes(id)
       ? form.connected_objects.filter(x => x !== id)
       : [...form.connected_objects, id];
@@ -86,15 +172,21 @@ export function PersonForm() {
     try {
       const payload = {
         ...form,
+        connected_persons: form.connected_persons.filter(Boolean),
+        connected_objects: form.connected_objects.filter(Boolean),
         description: form.description.filter(d => d.topic.trim() || d.content.trim()),
         interesting_facts: form.interesting_facts.filter(f => f.trim()),
         sources: form.sources.filter(s => s.text.trim() && s.url.trim()),
         images: form.images.filter(img => img.url_to_s3.trim()),
       };
       const result = await mutation.mutateAsync(payload);
-      navigate(`/persons/${result.id}`);
-    } catch {
-      setError('Ошибка при сохранении данных');
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.removeItem(STORAGE_KEY);
+      }
+      navigate(`/persons/${result._id}`);
+    } catch (e) {
+      console.error('PersonForm submit error:', e);
+      setError(e?.message || 'Ошибка при сохранении данных');
       setStep('form');
     }
   };
@@ -207,9 +299,9 @@ export function PersonForm() {
             ? <p className={styles.hint}>Нет доступных персон</p>
             : <div className={styles.chips}>
                 {allPersons.map(p => (
-                  <button key={p.id} type="button"
-                    className={`${styles.chip} ${form.connected_persons.includes(p.id) ? styles.chipActive : ''}`}
-                    onClick={() => togglePerson(p.id)}>
+                  <button key={p._id} type="button"
+                    className={`${styles.chip} ${form.connected_persons.includes(p._id) ? styles.chipActive : ''}`}
+                    onClick={() => togglePerson(p._id)}>
                     {p.name}
                   </button>
                 ))}
@@ -223,9 +315,9 @@ export function PersonForm() {
             ? <p className={styles.hint}>Нет доступных объектов</p>
             : <div className={styles.chips}>
                 {allObjects.map(obj => (
-                  <button key={obj.id} type="button"
-                    className={`${styles.chip} ${form.connected_objects.includes(obj.id) ? styles.chipActive : ''}`}
-                    onClick={() => toggleObject(obj.id)}>
+                  <button key={obj._id} type="button"
+                    className={`${styles.chip} ${form.connected_objects.includes(obj._id) ? styles.chipActive : ''}`}
+                    onClick={() => toggleObject(obj._id)}>
                     {obj.name}
                   </button>
                 ))}
@@ -245,9 +337,9 @@ export function PersonForm() {
 
 function PersonPreview({ form, allPersons, allObjects, onConfirm, onEdit, isPending, error }) {
   const connectedPersonNames = form.connected_persons
-    .map(id => allPersons.find(p => p.id === id)?.name).filter(Boolean);
+    .map(id => allPersons.find(p => p._id === id)?.name).filter(Boolean);
   const connectedObjectNames = form.connected_objects
-    .map(id => allObjects.find(o => o.id === id)?.name).filter(Boolean);
+    .map(id => allObjects.find(o => o._id === id)?.name).filter(Boolean);
 
   const cleanDescription = form.description.filter(d => d.topic.trim() || d.content.trim());
   const cleanFacts = form.interesting_facts.filter(f => f.trim());

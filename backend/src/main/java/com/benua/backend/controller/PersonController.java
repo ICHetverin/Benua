@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/persons")
 public class PersonController {
-    PersonService ps;
+    private final PersonService ps;
     private static final Logger log = LoggerFactory.getLogger(PersonController.class);
 
     public PersonController(PersonService ps) {
@@ -34,38 +34,34 @@ public class PersonController {
         allParams.remove("limit");
 
         try {
-            List<PersonDto> result = ps.getPersonDto(allParams, offset, limit);
-
-            if (result == null || result.isEmpty()) {
-                log.warn("getAllBuildings returned empty list for filters={}, offset={}, limit={}", allParams, offset, limit);
-                return ResponseEntity.noContent().build(); // HTTP 204
-            }
-            return ResponseEntity.ok(ps.getPersonsDto(allParams, offset, limit));
+            List<PersonDto> result = ps.getPersonsDto(allParams, offset, limit);
+            log.info("getAllPersons returned {} items for filters={}, offset={}, limit={}", result.size(), allParams, offset, limit);
+            return ResponseEntity.ok(result); // HTTP 200, пустой список → []
         } catch (Exception e) {
-            log.error("Error in getAllBuildings with filters={}, offset={}, limit={}", allParams, offset, limit, e);
+            log.error("Error in getAllPersons with filters={}, offset={}, limit={}", allParams, offset, limit, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PersonDto> getPersonById(@PathVariable @NotBlank String id) {
-        log.info("Called getBuildingById: id={}", id);
+        log.info("Called getPersonById: id={}", id);
 
         try {
             Person person = ps.getPerson(id);
             return ResponseEntity.ok(ps.toDto(person)); // HTTP 200
         } catch (NoSuchElementException e) {
-            log.warn("No building found for id={}", id, e);
+            log.warn("No person found for id={}", id, e);
             return ResponseEntity.notFound().build(); // HTTP 404
         } catch (Exception e) {
-            log.error("Error while getting building by id={}", id, e);
+            log.error("Error while getting person by id={}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
         }
     }
 
     @PostMapping
     public ResponseEntity<PersonDto> createPerson(@RequestBody @Valid PersonCreateDto person) {
-        log.info("Called createBuilding with payload={}", person);
+        log.info("Called createPerson with payload={}", person);
 
         try {
             PersonDto saved = ps.createPerson(person);
@@ -74,7 +70,7 @@ public class PersonController {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            log.error("Error creating building with payload={}", person, e);
+            log.error("Error creating person with payload={}", person, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
         }
     }

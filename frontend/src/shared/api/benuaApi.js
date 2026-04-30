@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || '',
+  baseURL: (process.env.REACT_APP_API_URL || '') + '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -10,13 +10,28 @@ api.interceptors.response.use(
   (error) => Promise.reject(error?.response?.data ?? error),
 );
 
-export const getPersons = () => api.get('/api/persons');
-export const getPersonById = (id) => api.get(`/api/persons/${id}`);
+const normalizeId = (entity) => {
+  if (!entity || typeof entity !== 'object') return entity;
+  if (entity._id) return entity;
+  if (entity.id) return { ...entity, _id: entity.id };
+  return entity;
+};
 
-export const getObjects = () => api.get('/api/objects');
-export const getObjectById = (id) => api.get(`/api/objects/${id}`);
+const normalizeList = (items) => {
+  if (Array.isArray(items)) return items.map(normalizeId);
+  if (items && Array.isArray(items.data)) {
+    return { ...items, data: items.data.map(normalizeId) };
+  }
+  return items;
+};
 
-export const createPerson = (data) => api.post('/api/persons', data);
-export const createObject = (data) => api.post('/api/objects', data);
+export const getPersons = () => api.get('/persons', { params: { limit: 1000 } }).then(normalizeList);
+export const getPersonById = (id) => api.get(`/persons/${id}`).then(normalizeId);
 
-export const search = (query) => api.get('/api/search', { params: { q: query } });
+export const getObjects = () => api.get('/objects', { params: { size: 1000 } }).then(normalizeList);
+export const getObjectById = (id) => api.get(`/objects/${id}`).then(normalizeId);
+
+export const createPerson = (data) => api.post('/persons', data).then(normalizeId);
+export const createObject = (data) => api.post('/objects', data).then(normalizeId);
+
+export const search = (query) => api.get('/search', { params: { q: query } });

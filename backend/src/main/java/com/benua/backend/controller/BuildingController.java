@@ -55,15 +55,8 @@ public class BuildingController {
 
         try {
             List<BuildingDto> result = bs.getBuildingsDto(allParams, page, size);
-
-            if (result == null || result.isEmpty()) {
-                log.warn("getAllBuildings returned empty list for filters={}, page={}, size={}", allParams, page, size);
-                return ResponseEntity.noContent().build(); // HTTP 204
-            } else {
-                log.info("Success getAll");
-            }
-
-            return ResponseEntity.ok(result); // HTTP 200
+            log.info("getAllBuildings returned {} items for filters={}, page={}, size={}", result.size(), allParams, page, size);
+            return ResponseEntity.ok(result); // HTTP 200, пустой список → []
         } catch (Exception e) {
             log.error("Error in getAllBuildings with filters={}, page={}, size={}", allParams, page, size, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500

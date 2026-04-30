@@ -17,14 +17,25 @@ export function PersonDetail() {
 
       <div className={styles.hero}>
         <div className={styles.photoWrapper}>
-          <div className={styles.photoPlaceholder} />
+          {person.images?.[0]?.url_to_s3
+            ? <img className={styles.photo} src={person.images[0].url_to_s3} alt={person.name} />
+            : <div className={styles.photoPlaceholder} />
+          }
         </div>
         <div className={styles.info}>
           <h1 className={styles.name}>{person.name}</h1>
           {person.life_years && <p className={styles.meta}>{person.life_years}</p>}
           {person.profession && <p className={styles.meta}>{person.profession}</p>}
+          {person.birth_place && <p className={styles.meta}>Место рождения: {person.birth_place}</p>}
         </div>
       </div>
+
+      {person.connection_with_benua && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Связь с Бенуа</h2>
+          <p className={styles.text}>{person.connection_with_benua}</p>
+        </section>
+      )}
 
       {person.description?.length > 0 && (
         <section className={styles.section}>
@@ -68,7 +79,7 @@ export function PersonDetail() {
           <h2 className={styles.sectionTitle}>Связанные персоны</h2>
           <div className={styles.grid}>
             {person.connected_persons.map((p) => (
-              <PersonCard key={p.id} person={p} />
+              <PersonCard key={p._id} person={p} />
             ))}
           </div>
         </section>
@@ -79,7 +90,7 @@ export function PersonDetail() {
           <h2 className={styles.sectionTitle}>Связанные объекты</h2>
           <div className={styles.grid}>
             {person.connected_objects.map((obj) => (
-              <ObjectCard key={obj.id} object={obj} />
+              <ObjectCard key={obj._id} object={obj} />
             ))}
           </div>
         </section>
