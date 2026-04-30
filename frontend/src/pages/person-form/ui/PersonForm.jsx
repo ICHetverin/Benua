@@ -91,8 +91,8 @@ export function PersonForm() {
         sources: form.sources.filter(s => s.text.trim() && s.url.trim()),
         images: form.images.filter(img => img.url_to_s3.trim()),
       };
-      const result = await mutation.mutateAsync(payload);
-      navigate(`/persons/${result._id}`);
+      await mutation.mutateAsync(payload);
+      navigate('/persons');
     } catch (e) {
       console.error('PersonForm submit error:', e);
       setError(e?.message || 'Ошибка при сохранении данных');
