@@ -17,7 +17,13 @@ const normalizeId = (entity) => {
   return entity;
 };
 
-const normalizeList = (items) => (Array.isArray(items) ? items.map(normalizeId) : items);
+const normalizeList = (items) => {
+  if (Array.isArray(items)) return items.map(normalizeId);
+  if (items && Array.isArray(items.data)) {
+    return { ...items, data: items.data.map(normalizeId) };
+  }
+  return items;
+};
 
 export const getPersons = () => api.get('/persons', { params: { limit: 1000 } }).then(normalizeList);
 export const getPersonById = (id) => api.get(`/persons/${id}`).then(normalizeId);

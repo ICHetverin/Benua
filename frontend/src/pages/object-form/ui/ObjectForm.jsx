@@ -106,7 +106,7 @@ export function ObjectForm() {
         images: form.images.filter(img => img.url_to_s3.trim()),
       };
       const result = await mutation.mutateAsync(payload);
-      navigate(`/objects/${result._id}`);
+      navigate(result?._id ? `/objects/${result._id}` : '/objects');
     } catch (e) {
       console.error('ObjectForm submit error:', e);
       setError(e?.message || 'Ошибка при сохранении данных');
