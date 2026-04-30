@@ -55,7 +55,10 @@ const loadDraft = () => {
     }
     return normalizeDraft(JSON.parse(saved));
   } catch (error) {
-    console.error('PersonForm draft load error:', error);
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+    }
+    console.error('PersonForm draft load error; cleared stored draft:', error);
     return EMPTY;
   }
 };
@@ -76,7 +79,7 @@ export function PersonForm() {
     }
     const handle = window.setTimeout(() => {
       window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-    }, 300);
+    }, 500);
     return () => window.clearTimeout(handle);
   }, [form]);
 
