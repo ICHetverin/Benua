@@ -10,10 +10,10 @@ api.interceptors.response.use(
   (error) => Promise.reject(error?.response?.data ?? error),
 );
 
-export const getPersons = () => api.get('/persons', { params: { limit: 1000 } });
+export const getPersons = () => api.get('/persons', { params: { limit: 1000 } }).then(data => Array.isArray(data) ? data : []);
 export const getPersonById = (id) => api.get(`/persons/${id}`);
 
-export const getObjects = () => api.get('/objects', { params: { size: 1000 } });
+export const getObjects = () => api.get('/objects', { params: { size: 1000 } }).then(data => Array.isArray(data) ? data : []);
 export const getObjectById = (id) => api.get(`/objects/${id}`);
 
 export const createPerson = (data) => api.post('/api/persons', data);
