@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.Instant;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -65,16 +67,18 @@ public class DataMigrationService {
     }
 
     private void migrateImages() {
-        List<Image> images = readJson("data/images.json", new TypeReference<>() {});
-        for (Image image : images) {
-            if (imageRepository.existsById(image._id())) {
-                log.warn("Image already exists, skipping: {}", image._id());
+        List<ImageSeedDto> images = readJson("data/images.json", new TypeReference<>() {});
+        for (ImageSeedDto dto : images) {
+            if (imageRepository.existsById(dto._id())) {
+                log.warn("Image already exists, skipping: {}", dto._id());
                 continue;
             }
-            imageRepository.save(image);
-            log.info("Saved image: {}", image._id());
+            imageRepository.save(new Image(dto._id(), dto.text(), dto.url_to_s3(), null));
+            log.info("Saved image: {}", dto._id());
         }
     }
+
+    private record ImageSeedDto(String _id, String text, String url_to_s3) {}
 
     private void migrateSources() {
         List<Source> sources = readJson("data/sources.json", new TypeReference<>() {});
@@ -107,7 +111,8 @@ public class DataMigrationService {
                         List.of(),
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
-                        dto.sources() != null ? dto.sources() : List.of()
+                        dto.sources() != null ? dto.sources() : List.of(),
+                        null, true, Instant.now(), Instant.now()
                 ));
                 log.info("Saved person (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -139,7 +144,8 @@ public class DataMigrationService {
                         List.of(),
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
-                        dto.sources() != null ? dto.sources() : List.of()
+                        dto.sources() != null ? dto.sources() : List.of(),
+                        null, true, Instant.now(), Instant.now()
                 ));
                 log.info("Saved building (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -167,7 +173,8 @@ public class DataMigrationService {
                         resolvePersons(dto.connectedPersons()),
                         resolveBuildings(dto.connectedObjects()),
                         existing.images(),
-                        existing.sources()
+                        existing.sources(),
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now()
                 ));
                 log.info("Updated person connections: {}", dto.id());
             } catch (Exception e) {
@@ -199,7 +206,8 @@ public class DataMigrationService {
                         resolvePersons(dto.connectedPersons()),
                         resolveBuildings(dto.connectedObjects()),
                         existing.images(),
-                        existing.sources()
+                        existing.sources(),
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now()
                 ));
                 log.info("Updated building connections: {}", dto.id());
             } catch (Exception e) {

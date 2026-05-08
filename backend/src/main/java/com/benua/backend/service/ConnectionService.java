@@ -4,6 +4,7 @@ import com.benua.backend.model.Building;
 import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
 import com.benua.backend.repository.BuildingRepository;
+import com.benua.backend.repository.ImageRepository;
 import com.benua.backend.repository.PersonRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,12 @@ import java.util.NoSuchElementException;
 public class ConnectionService {
     private final PersonRepository personRepository;
     private final BuildingRepository buildingRepository;
+    private final ImageRepository imageRepository;
 
-
-    public ConnectionService(PersonRepository personRepository, BuildingRepository buildingRepository) {
+    public ConnectionService(PersonRepository personRepository, BuildingRepository buildingRepository, ImageRepository imageRepository) {
         this.personRepository = personRepository;
         this.buildingRepository = buildingRepository;
+        this.imageRepository = imageRepository;
     }
 
     private <T> List<T> getByIds(List<String> ids, MongoRepository<T, String> repository, String entityName) {
@@ -43,5 +45,21 @@ public class ConnectionService {
 
     public List<Building> getBuildingsByIds(List<String> ids) {
         return getByIds(ids, buildingRepository, "building");
+    }
+
+    public List<Image> getImagesByIds(List<String> ids) {
+        return getByIds(ids, imageRepository, "image");
+    }
+
+    public Person getPersonById(String id) {
+        if (id == null || id.isBlank()) return null;
+        return personRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Person not found by id: " + id));
+    }
+
+    public Image getImageById(String id) {
+        if (id == null || id.isBlank()) return null;
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Image not found by id: " + id));
     }
 }

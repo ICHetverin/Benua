@@ -4,6 +4,7 @@ import com.benua.backend.model.Description;
 import com.benua.backend.model.Image;
 import com.benua.backend.model.Source;
 
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -28,7 +29,11 @@ public record BuildingDto(
         List<SimpleEntity> connectedPersons,
         List<SimpleEntity> connectedObjects,
         List<Image> images,
-        List<Source> sources
+        List<Source> sources,
+        Integer sortOrder,
+        Boolean isPublished,
+        Instant createdAt,
+        Instant updatedAt
 ) {
     /**
      * Минимальный объект для вложенных связей: только _id и name

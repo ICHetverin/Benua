@@ -17,5 +17,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public record Image (
     @Id String _id,
     @NotBlank(message = "Text cannot be blank") String text,
-    @Pattern(regexp = "^(https?|s3)://.+", message = "Must be a valid URL") @NotBlank(message = "S3 URL cannot be blank") @Field("url_to_s3") String urlToS3
+    @Pattern(regexp = "^(https?|s3)://.+", message = "Must be a valid URL") @NotBlank(message = "S3 URL cannot be blank") @Field("url_to_s3") String urlToS3,
+    @Field("s3_key") String s3Key
 ) {}

@@ -1,46 +1,50 @@
 package com.benua.backend.service;
 
-import com.benua.backend.dto.BuildingCreateDto;
-import com.benua.backend.dto.ImageCreateDto;
-import com.benua.backend.dto.SourceCreateDto;
-import com.benua.backend.dto.BuildingDto;
+import com.benua.backend.dto.*;
 import com.benua.backend.model.Building;
 import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
 import com.benua.backend.model.Source;
 import com.benua.backend.repository.BuildingRepository;
+import com.benua.backend.repository.ExcursionRepository;
 import com.benua.backend.repository.ImageRepository;
 import com.benua.backend.repository.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-/**
- * Бизнес логика для работы API с Building
- */
 @Service
 public class BuildingService {
     private final BuildingRepository br;
     private final ConnectionService cs;
     private final ImageRepository ir;
     private final SourceRepository sr;
+    private final ExcursionRepository excursionRepository;
     private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public BuildingService(BuildingRepository br, ConnectionService cs, ImageRepository ir, SourceRepository sr, MongoTemplate mongoTemplate) {
+    public BuildingService(BuildingRepository br, ConnectionService cs, ImageRepository ir, SourceRepository sr,
+                           ExcursionRepository excursionRepository, MongoTemplate mongoTemplate) {
         this.br = br;
         this.cs = cs;
         this.ir = ir;
         this.sr = sr;
+        this.excursionRepository = excursionRepository;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -52,11 +56,45 @@ public class BuildingService {
             "name", "address", "architect", "years_built", "history", "design", "connection_with_benua"
     );
 
-    private List<Building> getBuildings(Map<String, String> filters, int page, int size) {
+    public List<BuildingDto> getBuildingsDto(Map<String, String> filters, int page, int size, boolean onlyPublished) {
         if (page < 0) page = 0;
         if (size <= 0 || size > 10_000) size = 10;
 
         Query query = new Query();
+
+        if (onlyPublished) {
+            query.addCriteria(Criteria.where("is_published").is(true));
+        }
+
+        String search = filters.get("search");
+        if (search != null && !search.isBlank()) {
+            String pattern = Pattern.quote(search);
+            query.addCriteria(new Criteria().orOperator(
+                    Criteria.where("name").regex(pattern, "i"),
+                    Criteria.where("address").regex(pattern, "i")
+            ));
+        }
+
+        String isPublishedParam = filters.get("is_published");
+        if (!onlyPublished && isPublishedParam != null && !isPublishedParam.isBlank()) {
+            query.addCriteria(Criteria.where("is_published").is(Boolean.parseBoolean(isPublishedParam)));
+        }
+
+        String excursionId = filters.get("excursion");
+        if (excursionId != null && !excursionId.isBlank()) {
+            excursionRepository.findById(excursionId).ifPresent(excursion -> {
+                if (excursion.buildings() != null && !excursion.buildings().isEmpty()) {
+                    List<String> buildingIds = excursion.buildings().stream().map(Building::_id).toList();
+                    query.addCriteria(Criteria.where("_id").in(buildingIds));
+                }
+            });
+        }
+
+        String personId = filters.get("person");
+        if (personId != null && !personId.isBlank()) {
+            query.addCriteria(Criteria.where("connected_persons.$id").is(
+                    new org.bson.types.ObjectId(personId)));
+        }
 
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             if (ALLOWED_FILTERS.contains(entry.getKey()) && entry.getValue() != null && !entry.getValue().isEmpty()) {
@@ -64,15 +102,10 @@ public class BuildingService {
             }
         }
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "sort_order"));
         query.with(pageable);
 
-        return mongoTemplate.find(query, Building.class);
-    }
-
-    public List<BuildingDto> getBuildingsDto(Map<String, String> filters, int page, int size) {
-        List<Building> buildings = getBuildings(filters, page, size);
-        return buildings.stream().map(this::toDto).toList();
+        return mongoTemplate.find(query, Building.class).stream().map(this::toDto).toList();
     }
 
     public BuildingDto createBuilding(BuildingCreateDto building) {
@@ -97,16 +130,87 @@ public class BuildingService {
                 connectedPeople,
                 connectedBuildings,
                 images,
-                sources
+                sources,
+                null,
+                false,
+                Instant.now(),
+                Instant.now()
         );
 
         return toDto(br.save(newBuilding));
     }
 
+    public BuildingDto updateBuilding(String id, BuildingUpdateDto patch) {
+        Building existing = getBuilding(id);
+
+        List<Person> connectedPeople = patch.connectedPersons() != null
+                ? cs.getPersonsByIds(patch.connectedPersons()) : existing.connectedPersons();
+        List<Building> connectedBuildings = patch.connectedObjects() != null
+                ? cs.getBuildingsByIds(patch.connectedObjects()) : existing.connectedObjects();
+        List<Image> images = patch.imageIds() != null
+                ? cs.getImagesByIds(patch.imageIds()) : existing.images();
+        List<Source> sources = patch.sources() != null
+                ? saveSources(patch.sources()) : existing.sources();
+
+        Building updated = new Building(
+                existing._id(),
+                patch.name() != null ? patch.name() : existing.name(),
+                patch.address() != null ? patch.address() : existing.address(),
+                patch.latitude() != null ? patch.latitude() : existing.latitude(),
+                patch.longitude() != null ? patch.longitude() : existing.longitude(),
+                patch.architect() != null ? patch.architect() : existing.architect(),
+                patch.yearsBuilt() != null ? patch.yearsBuilt() : existing.yearsBuilt(),
+                patch.history() != null ? patch.history() : existing.history(),
+                patch.design() != null ? patch.design() : existing.design(),
+                patch.connectionWithBenua() != null ? patch.connectionWithBenua() : existing.connectionWithBenua(),
+                patch.description() != null ? patch.description() : existing.description(),
+                patch.interestingFacts() != null ? patch.interestingFacts() : existing.interestingFacts(),
+                connectedPeople,
+                connectedBuildings,
+                images,
+                sources,
+                patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
+                patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
+                existing.createdAt(),
+                Instant.now()
+        );
+
+        return toDto(br.save(updated));
+    }
+
+    public void deleteBuilding(String id) {
+        getBuilding(id);
+        br.deleteById(id);
+    }
+
+    public BuildingDto setPublished(String id, boolean value) {
+        Building existing = getBuilding(id);
+        Building updated = new Building(
+                existing._id(), existing.name(), existing.address(), existing.latitude(), existing.longitude(),
+                existing.architect(), existing.yearsBuilt(), existing.history(), existing.design(),
+                existing.connectionWithBenua(), existing.description(), existing.interestingFacts(),
+                existing.connectedPersons(), existing.connectedObjects(), existing.images(), existing.sources(),
+                existing.sortOrder(), value, existing.createdAt(), Instant.now()
+        );
+        return toDto(br.save(updated));
+    }
+
+    public void reorder(List<String> idsInOrder) {
+        if (idsInOrder == null || idsInOrder.isEmpty()) return;
+        BulkOperations bulk = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "objects");
+        for (int i = 0; i < idsInOrder.size(); i++) {
+            bulk.updateOne(
+                    new Query(Criteria.where("_id").is(idsInOrder.get(i))),
+                    new Update().set("sort_order", i).set("updated_at", Instant.now())
+            );
+        }
+        bulk.execute();
+    }
+
     private List<Image> saveImages(List<ImageCreateDto> images) {
         if (images == null || images.isEmpty()) return List.of();
         return images.stream()
-                .map(img -> ir.save(new Image(null, img.text(), img.urlToS3())))
+                .map(img -> ir.save(new Image(null, img.text(), img.urlToS3(), null)))
                 .toList();
     }
 
@@ -127,23 +231,10 @@ public class BuildingService {
                         .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name()))
                         .toList();
         return new BuildingDto(
-                b._id(),
-                b.name(),
-                b.address(),
-                b.latitude(),
-                b.longitude(),
-                b.architect(),
-                b.yearsBuilt(),
-                b.history(),
-                b.design(),
-                b.connectionWithBenua(),
-                b.description(),
-                b.interestingFacts(),
-                persons,
-                objects,
-                b.images(),
-                b.sources()
+                b._id(), b.name(), b.address(), b.latitude(), b.longitude(),
+                b.architect(), b.yearsBuilt(), b.history(), b.design(), b.connectionWithBenua(),
+                b.description(), b.interestingFacts(), persons, objects, b.images(), b.sources(),
+                b.sortOrder(), b.isPublished(), b.createdAt(), b.updatedAt()
         );
     }
-
 }
