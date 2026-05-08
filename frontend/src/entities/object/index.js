@@ -1,2 +1,2 @@
 export { ObjectCard } from './ui/ObjectCard';
-export { useObjects, useObjectById, useCreateObject } from './api/objectQueries';
+export { useObjects, useObjectById } from './api/objectQueries';

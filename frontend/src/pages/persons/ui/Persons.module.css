@@ -2,29 +2,6 @@
   padding: var(--page-padding);
 }
 
-.header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1.5rem;
-}
-
-.addBtn {
-  background: transparent;
-  border: 1.5px solid var(--dark-red);
-  color: var(--dark-red);
-  font-family: var(--font-lora);
-  font-size: 0.9rem;
-  padding: 0.45rem 1.2rem;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.addBtn:hover {
-  background: var(--dark-red);
-  color: var(--white);
-}
-
 @media (max-width: 768px) {
   .page {
     padding: 1.5rem;

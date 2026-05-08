@@ -25,13 +25,10 @@ const normalizeList = (items) => {
   return items;
 };
 
-export const getPersons = () => api.get('/persons', { params: { limit: 1000 } }).then(normalizeList);
+export const getPersons = () => api.get('/persons', { params: { size: 1000 } }).then(normalizeList);
 export const getPersonById = (id) => api.get(`/persons/${id}`).then(normalizeId);
 
 export const getObjects = () => api.get('/objects', { params: { size: 1000 } }).then(normalizeList);
 export const getObjectById = (id) => api.get(`/objects/${id}`).then(normalizeId);
-
-export const createPerson = (data) => api.post('/persons', data).then(normalizeId);
-export const createObject = (data) => api.post('/objects', data).then(normalizeId);
 
 export const search = (query) => api.get('/search', { params: { q: query } });

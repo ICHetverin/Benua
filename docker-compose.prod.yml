@@ -39,8 +39,11 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_URL: ""
+        VITE_YANDEX_MAPS_API_KEY: ${YANDEX_MAPS_API_KEY}
     container_name: benua-frontend
     ports:
       - "80:80"

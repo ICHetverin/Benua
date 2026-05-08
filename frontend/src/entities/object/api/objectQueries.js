@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getObjects, getObjectById, createObject } from 'shared/api/benuaApi';
+import { useQuery } from '@tanstack/react-query';
+import { getObjects, getObjectById } from 'shared/api/benuaApi';
 
 export const objectKeys = {
   all: ['objects'],
@@ -18,13 +18,3 @@ export const useObjectById = (id) =>
     queryFn: () => getObjectById(id),
     enabled: !!id,
   });
-
-export const useCreateObject = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: createObject,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: objectKeys.all });
-    },
-  });
-};

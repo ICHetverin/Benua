@@ -56,6 +56,25 @@ services:
     networks:
       - benua-net
 
+  frontend-admin:
+    build:
+      context: ./frontend-admin
+      dockerfile: Dockerfile.dev
+    container_name: benua-frontend-admin
+    environment:
+      - VITE_API_URL=http://localhost:8080
+      - VITE_YANDEX_MAPS_API_KEY=${YANDEX_MAPS_API_KEY}
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "3001:5173"
+    volumes:
+      - ./frontend-admin:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - benua-net
+
 volumes:
   mongodb_data:
 
