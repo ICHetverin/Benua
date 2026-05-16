@@ -27,7 +27,7 @@ public class BuildingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     public BuildingDto createBuilding(@RequestBody @Valid BuildingCreateDto building) {
         log.info("createBuilding: {}", building.name());
         return bs.createBuilding(building);
@@ -52,33 +52,27 @@ public class BuildingController {
         return bs.toDto(bs.getBuilding(id));
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public BuildingDto updateBuilding(@PathVariable String id, @RequestBody BuildingUpdateDto patch) {
-        return bs.updateBuilding(id, patch);
-    }
-
     @PatchMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public BuildingDto patchBuilding(@PathVariable String id, @RequestBody BuildingUpdateDto patch) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public BuildingDto updateBuilding(@PathVariable String id, @RequestBody BuildingUpdateDto patch) {
         return bs.updateBuilding(id, patch);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteBuilding(@PathVariable String id) {
         bs.deleteBuilding(id);
     }
 
     @PatchMapping("/{id}/publish")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     public BuildingDto setPublished(@PathVariable String id, @RequestParam boolean value) {
         return bs.setPublished(id, value);
     }
 
     @PostMapping("/reorder")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void reorder(@RequestBody List<String> idsInOrder) {
         bs.reorder(idsInOrder);

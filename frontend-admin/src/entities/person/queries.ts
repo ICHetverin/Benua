@@ -9,7 +9,10 @@ export const personKeys = {
 };
 
 export const usePersons = (params?: Record<string, unknown>) =>
-  useQuery({ queryKey: personKeys.list(params), queryFn: () => personApi.list(params), select: (d) => Array.isArray(d) ? d : (d as { data?: typeof d }).data ?? d });
+  useQuery({
+    queryKey: personKeys.list(params),
+    queryFn: () => personApi.list(params),
+  });
 
 export const usePerson = (id: string) =>
   useQuery({ queryKey: personKeys.detail(id), queryFn: () => personApi.get(id), enabled: !!id });

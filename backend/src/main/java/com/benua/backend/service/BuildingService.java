@@ -7,9 +7,6 @@ import com.benua.backend.model.Person;
 import com.benua.backend.model.Source;
 import com.benua.backend.repository.BuildingRepository;
 import com.benua.backend.repository.ExcursionRepository;
-import com.benua.backend.repository.ImageRepository;
-import com.benua.backend.repository.SourceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,7 +15,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -32,18 +28,13 @@ import java.util.regex.Pattern;
 public class BuildingService {
     private final BuildingRepository br;
     private final ConnectionService cs;
-    private final ImageRepository ir;
-    private final SourceRepository sr;
     private final ExcursionRepository excursionRepository;
     private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    public BuildingService(BuildingRepository br, ConnectionService cs, ImageRepository ir, SourceRepository sr,
+    public BuildingService(BuildingRepository br, ConnectionService cs,
                            ExcursionRepository excursionRepository, MongoTemplate mongoTemplate) {
         this.br = br;
         this.cs = cs;
-        this.ir = ir;
-        this.sr = sr;
         this.excursionRepository = excursionRepository;
         this.mongoTemplate = mongoTemplate;
     }
@@ -111,8 +102,8 @@ public class BuildingService {
     public BuildingDto createBuilding(BuildingCreateDto building) {
         List<Person> connectedPeople = cs.getPersonsByIds(building.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(building.connectedObjects());
-        List<Image> images = saveImages(building.images());
-        List<Source> sources = saveSources(building.sources());
+        List<Image> images = cs.saveImages(building.images());
+        List<Source> sources = cs.saveSources(building.sources());
 
         Building newBuilding = new Building(
                 null,
@@ -150,7 +141,7 @@ public class BuildingService {
         List<Image> images = patch.imageIds() != null
                 ? cs.getImagesByIds(patch.imageIds()) : existing.images();
         List<Source> sources = patch.sources() != null
-                ? saveSources(patch.sources()) : existing.sources();
+                ? cs.saveSources(patch.sources()) : existing.sources();
 
         Building updated = new Building(
                 existing._id(),
@@ -205,20 +196,6 @@ public class BuildingService {
             );
         }
         bulk.execute();
-    }
-
-    private List<Image> saveImages(List<ImageCreateDto> images) {
-        if (images == null || images.isEmpty()) return List.of();
-        return images.stream()
-                .map(img -> ir.save(new Image(null, img.text(), img.urlToS3(), null)))
-                .toList();
-    }
-
-    private List<Source> saveSources(List<SourceCreateDto> sources) {
-        if (sources == null || sources.isEmpty()) return List.of();
-        return sources.stream()
-                .map(src -> sr.save(new Source(null, src.text(), src.url())))
-                .toList();
     }
 
     public BuildingDto toDto(Building b) {

@@ -29,12 +29,8 @@ export function AjaxSelect({
 
   const { data, isFetching } = useQuery({
     queryKey: [endpoint, 'search', search],
-    queryFn: () =>
-      adminApi.get(endpoint, { params: { search, size: 20 } }) as Promise<{
-        data: Record<string, string>[];
-      }>,
-    select: (res): Option[] =>
-      (res.data ?? []).map((item) => ({ value: item._id, label: item[labelField] })),
+    queryFn: () => adminApi.get<Record<string, string>[]>(endpoint, { params: { search, size: 20 } }),
+    select: (res): Option[] => res.map((item) => ({ value: item._id, label: item[labelField] })),
   });
 
   return (

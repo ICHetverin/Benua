@@ -1,11 +1,15 @@
 package com.benua.backend.service;
 
+import com.benua.backend.dto.ImageCreateDto;
+import com.benua.backend.dto.SourceCreateDto;
 import com.benua.backend.model.Building;
 import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
+import com.benua.backend.model.Source;
 import com.benua.backend.repository.BuildingRepository;
 import com.benua.backend.repository.ImageRepository;
 import com.benua.backend.repository.PersonRepository;
+import com.benua.backend.repository.SourceRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +26,14 @@ public class ConnectionService {
     private final PersonRepository personRepository;
     private final BuildingRepository buildingRepository;
     private final ImageRepository imageRepository;
+    private final SourceRepository sourceRepository;
 
-    public ConnectionService(PersonRepository personRepository, BuildingRepository buildingRepository, ImageRepository imageRepository) {
+    public ConnectionService(PersonRepository personRepository, BuildingRepository buildingRepository,
+                             ImageRepository imageRepository, SourceRepository sourceRepository) {
         this.personRepository = personRepository;
         this.buildingRepository = buildingRepository;
         this.imageRepository = imageRepository;
+        this.sourceRepository = sourceRepository;
     }
 
     private <T> List<T> getByIds(List<String> ids, MongoRepository<T, String> repository, String entityName) {
@@ -61,5 +68,19 @@ public class ConnectionService {
         if (id == null || id.isBlank()) return null;
         return imageRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Image not found by id: " + id));
+    }
+
+    public List<Image> saveImages(List<ImageCreateDto> images) {
+        if (images == null || images.isEmpty()) return List.of();
+        return images.stream()
+                .map(img -> imageRepository.save(new Image(null, img.text(), img.urlToS3(), null)))
+                .toList();
+    }
+
+    public List<Source> saveSources(List<SourceCreateDto> sources) {
+        if (sources == null || sources.isEmpty()) return List.of();
+        return sources.stream()
+                .map(src -> sourceRepository.save(new Source(null, src.text(), src.url())))
+                .toList();
     }
 }

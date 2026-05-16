@@ -5,10 +5,7 @@ import com.benua.backend.model.Building;
 import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
 import com.benua.backend.model.Source;
-import com.benua.backend.repository.ImageRepository;
 import com.benua.backend.repository.PersonRepository;
-import com.benua.backend.repository.SourceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,17 +27,12 @@ import java.util.regex.Pattern;
 public class PersonService {
     private final PersonRepository pr;
     private final ConnectionService cs;
-    private final ImageRepository ir;
-    private final SourceRepository sr;
     private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs, ImageRepository ir, SourceRepository sr) {
+    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs) {
         this.mongoTemplate = mongoTemplate;
         this.pr = pr;
         this.cs = cs;
-        this.ir = ir;
-        this.sr = sr;
     }
 
     public Person getPerson(String id) {
@@ -95,8 +87,8 @@ public class PersonService {
     public PersonDto createPerson(PersonCreateDto person) {
         List<Person> connectedPeople = cs.getPersonsByIds(person.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(person.connectedObjects());
-        List<Image> images = saveImages(person.images());
-        List<Source> sources = saveSources(person.sources());
+        List<Image> images = cs.saveImages(person.images());
+        List<Source> sources = cs.saveSources(person.sources());
 
         Person newPerson = new Person(
                 null, person.name(), person.lifeYears(), person.birthPlace(), person.profession(),
@@ -118,7 +110,7 @@ public class PersonService {
         List<Image> images = patch.imageIds() != null
                 ? cs.getImagesByIds(patch.imageIds()) : existing.images();
         List<Source> sources = patch.sources() != null
-                ? saveSources(patch.sources()) : existing.sources();
+                ? cs.saveSources(patch.sources()) : existing.sources();
 
         Person updated = new Person(
                 existing._id(),
@@ -165,20 +157,6 @@ public class PersonService {
             );
         }
         bulk.execute();
-    }
-
-    private List<Image> saveImages(List<ImageCreateDto> images) {
-        if (images == null || images.isEmpty()) return List.of();
-        return images.stream()
-                .map(img -> ir.save(new Image(null, img.text(), img.urlToS3(), null)))
-                .toList();
-    }
-
-    private List<Source> saveSources(List<SourceCreateDto> sources) {
-        if (sources == null || sources.isEmpty()) return List.of();
-        return sources.stream()
-                .map(src -> sr.save(new Source(null, src.text(), src.url())))
-                .toList();
     }
 
     public PersonDto toDto(Person p) {

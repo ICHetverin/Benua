@@ -2,6 +2,7 @@ package com.benua.backend.service;
 
 import com.benua.backend.dto.PersonCreateDto;
 import com.benua.backend.dto.PersonDto;
+import com.benua.backend.dto.PersonUpdateDto;
 import com.benua.backend.model.Building;
 import com.benua.backend.model.Description;
 import com.benua.backend.model.Person;
@@ -13,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -21,13 +23,10 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
@@ -77,7 +76,8 @@ class PersonServiceTest {
                 List.of(connectedPerson),
                 List.of(connectedObject),
                 List.of(),
-                List.of()
+                List.of(),
+                null, false, null, null
         );
 
         PersonCreateDto createDto = new PersonCreateDto(
@@ -142,12 +142,57 @@ class PersonServiceTest {
     }
 
     @Test
-    void getPersonsDtoUsesFiltersAndOffsetLimitFromRequest() {
+    void updatePersonMergesNonNullPatchFields() {
+        Person existing = person("person-1", "Old Name");
+        when(personRepository.findById("person-1")).thenReturn(Optional.of(existing));
+
+        Person updated = person("person-1", "New Name");
+        when(personRepository.save(any())).thenReturn(updated);
+
+        PersonUpdateDto patch = new PersonUpdateDto(
+                "New Name", null, null, null, null, null, null, null, null, null, null, null, null);
+
+        PersonDto result = personService.updatePerson("person-1", patch);
+
+        assertEquals("New Name", result.name());
+        verify(personRepository).save(any(Person.class));
+    }
+
+    @Test
+    void setPublishedUpdatesIsPublishedFlag() {
+        Person existing = person("person-1", "Alice");
+        when(personRepository.findById("person-1")).thenReturn(Optional.of(existing));
+
+        Person published = new Person(
+                "person-1", "Alice", null, null, null, null,
+                List.of(), List.of(), List.of(), List.of(), List.of(), List.of(),
+                null, true, null, null);
+        when(personRepository.save(any())).thenReturn(published);
+
+        PersonDto result = personService.setPublished("person-1", true);
+
+        assertTrue(result.isPublished());
+    }
+
+    @Test
+    void reorderExecutesBulkWrite() {
+        BulkOperations bulk = mock(BulkOperations.class);
+        when(mongoTemplate.bulkOps(any(), eq("persons"))).thenReturn(bulk);
+        when(bulk.updateOne(any(), any())).thenReturn(bulk);
+
+        personService.reorder(List.of("id-1", "id-2"));
+
+        verify(bulk, times(2)).updateOne(any(), any());
+        verify(bulk).execute();
+    }
+
+    @Test
+    void getPersonsDtoUsesPageBasedPaginationAndFilters() {
         Person person = person("person-1", "Alice");
         ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
         when(mongoTemplate.find(any(Query.class), eq(Person.class))).thenReturn(List.of(person));
 
-        List<PersonDto> result = personService.getPersonsDto(Map.of("name", "Alice"), 3, 7);
+        List<PersonDto> result = personService.getPersonsDto(Map.of("name", "Alice"), 2, 3, false);
 
         verify(mongoTemplate).find(queryCaptor.capture(), eq(Person.class));
         Query query = queryCaptor.getValue();
@@ -156,19 +201,32 @@ class PersonServiceTest {
         assertEquals(1, result.size());
         assertEquals("person-1", result.getFirst()._id());
         assertEquals("Alice", queryObject.getString("name"));
-        assertEquals(3L, query.getSkip());
-        assertEquals(7, query.getLimit());
+        assertEquals(6L, query.getSkip());  // page=2, size=3 → skip=6
+        assertEquals(3, query.getLimit());
     }
 
     @Test
-    void getPersonDtoDelegatesToSameQueryLogic() {
-        Person person = person("person-1", "Alice");
-        when(mongoTemplate.find(any(Query.class), eq(Person.class))).thenReturn(List.of(person));
+    void getPersonsDtoAddsIsPublishedFilterForAnonymous() {
+        ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+        when(mongoTemplate.find(any(Query.class), eq(Person.class))).thenReturn(List.of());
 
-        List<PersonDto> result = personService.getPersonDto(Map.of(), 0, 10);
+        personService.getPersonsDto(Map.of(), 0, 10, true);
 
-        assertEquals(1, result.size());
-        assertEquals("person-1", result.getFirst()._id());
+        verify(mongoTemplate).find(queryCaptor.capture(), eq(Person.class));
+        Document queryObject = queryCaptor.getValue().getQueryObject();
+        assertTrue(queryObject.containsKey("is_published"));
+        assertEquals(true, queryObject.getBoolean("is_published"));
+    }
+
+    @Test
+    void getPersonsDtoAppliesRoleFilter() {
+        ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+        when(mongoTemplate.find(any(Query.class), eq(Person.class))).thenReturn(List.of());
+
+        personService.getPersonsDto(Map.of("role", "Artist"), 0, 10, false);
+
+        verify(mongoTemplate).find(queryCaptor.capture(), eq(Person.class));
+        assertTrue(queryCaptor.getValue().getQueryObject().containsKey("profession"));
     }
 
     @Test
@@ -187,7 +245,8 @@ class PersonServiceTest {
                 List.of(connectedPerson),
                 List.of(connectedObject),
                 List.of(),
-                List.of()
+                List.of(),
+                null, null, null, null
         );
 
         PersonDto result = personService.toDto(person);
@@ -213,7 +272,8 @@ class PersonServiceTest {
                 List.of(),
                 List.of(),
                 List.of(),
-                List.of()
+                List.of(),
+                null, null, null, null
         );
     }
 
@@ -234,7 +294,8 @@ class PersonServiceTest {
                 List.of(),
                 List.of(),
                 List.of(),
-                List.of()
+                List.of(),
+                null, null, null, null
         );
     }
 }

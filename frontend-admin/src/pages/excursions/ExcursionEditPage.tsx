@@ -126,10 +126,7 @@ export function ExcursionEditPage({ mode }: Props) {
           </Form.Item>
         </Space>
         <Form.Item name="description" label="Описание">
-          <RichTextEditor
-            value={form.getFieldValue('description')}
-            onChange={(html) => form.setFieldValue('description', html)}
-          />
+          <RichTextEditor />
         </Form.Item>
 
         <Divider>Расписание</Divider>
@@ -187,17 +184,10 @@ export function ExcursionEditPage({ mode }: Props) {
           <AjaxSelect endpoint="/persons" placeholder="Найти персону..." />
         </Form.Item>
         <Form.Item name="_cover" label="Обложка">
-          <ImageUploader
-            value={form.getFieldValue('_cover')}
-            onChange={(imgs) => form.setFieldValue('_cover', imgs)}
-            maxCount={1}
-          />
+          <ImageUploader maxCount={1} />
         </Form.Item>
         <Form.Item name="_images" label="Фотографии">
-          <ImageUploader
-            value={form.getFieldValue('_images')}
-            onChange={(imgs) => form.setFieldValue('_images', imgs)}
-          />
+          <ImageUploader />
         </Form.Item>
         <Space>
           <Button type="primary" htmlType="submit" loading={isPending}>

@@ -4,7 +4,6 @@ import { usePerson, useCreatePerson, useUpdatePerson } from 'entities/person/que
 import { ImageUploader } from 'features/image-uploader/ImageUploader';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import type { PersonCreateDto, PersonUpdateDto } from 'entities/person/types';
-import type { ImageDto } from 'entities/image/types';
 import { ROUTES } from 'shared/config/routes';
 
 interface Props {
@@ -39,7 +38,7 @@ export function PersonEditPage({ mode }: Props) {
       : undefined;
 
   const onFinish = async (values: Record<string, unknown>) => {
-    const uploadedImages = (form.getFieldValue('_images') as ImageDto[]) ?? [];
+    const uploadedImages = (values._images as { _id: string; text: string; url_to_s3: string }[]) ?? [];
     try {
       if (mode === 'create') {
         const dto: PersonCreateDto = {
@@ -102,10 +101,7 @@ export function PersonEditPage({ mode }: Props) {
           <Input.TextArea rows={2} />
         </Form.Item>
         <Form.Item name="_images" label="Фотографии">
-          <ImageUploader
-            value={form.getFieldValue('_images')}
-            onChange={(imgs) => form.setFieldValue('_images', imgs)}
-          />
+          <ImageUploader />
         </Form.Item>
         <Form.Item name="connected_persons" label="Связанные персоны">
           <AjaxSelect endpoint="/persons" mode="multiple" placeholder="Найти персону..." />

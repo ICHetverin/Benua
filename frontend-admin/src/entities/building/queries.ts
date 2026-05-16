@@ -12,7 +12,6 @@ export const useBuildings = (params?: Record<string, unknown>) =>
   useQuery({
     queryKey: buildingKeys.list(params),
     queryFn: () => buildingApi.list(params),
-    select: (d) => Array.isArray(d) ? d : (d as { data?: typeof d }).data ?? d,
   });
 
 export const useBuilding = (id: string) =>

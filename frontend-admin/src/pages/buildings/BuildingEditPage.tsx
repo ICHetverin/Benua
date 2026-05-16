@@ -5,7 +5,6 @@ import { ImageUploader } from 'features/image-uploader/ImageUploader';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import { YandexMapPicker } from 'features/map-picker/YandexMapPicker';
 import type { BuildingCreateDto, BuildingUpdateDto } from 'entities/building/types';
-import type { ImageDto } from 'entities/image/types';
 import { ROUTES } from 'shared/config/routes';
 
 interface Props {
@@ -46,8 +45,8 @@ export function BuildingEditPage({ mode }: Props) {
       : undefined;
 
   const onFinish = async (values: Record<string, unknown>) => {
-    const uploadedImages = (form.getFieldValue('_images') as ImageDto[]) ?? [];
-    const coords = form.getFieldValue('_coords') as { lat: number; lng: number } | undefined;
+    const uploadedImages = (values._images as { _id: string; text: string; url_to_s3: string }[]) ?? [];
+    const coords = values._coords as { lat: number; lng: number } | undefined;
     try {
       if (mode === 'create') {
         const dto: BuildingCreateDto = {
@@ -124,16 +123,10 @@ export function BuildingEditPage({ mode }: Props) {
           <Input.TextArea rows={2} />
         </Form.Item>
         <Form.Item name="_coords" label="Координаты">
-          <YandexMapPicker
-            value={form.getFieldValue('_coords')}
-            onChange={(coords) => form.setFieldValue('_coords', coords)}
-          />
+          <YandexMapPicker />
         </Form.Item>
         <Form.Item name="_images" label="Фотографии">
-          <ImageUploader
-            value={form.getFieldValue('_images')}
-            onChange={(imgs) => form.setFieldValue('_images', imgs)}
-          />
+          <ImageUploader />
         </Form.Item>
         <Form.Item name="connected_persons" label="Связанные персоны">
           <AjaxSelect endpoint="/persons" mode="multiple" placeholder="Найти персону..." />

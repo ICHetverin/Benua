@@ -2,6 +2,7 @@ package com.benua.backend.controller;
 
 import com.benua.backend.dto.ExcursionCreateDto;
 import com.benua.backend.dto.ExcursionDto;
+import com.benua.backend.dto.ExcursionUpdateDto;
 import com.benua.backend.service.ExcursionService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -50,15 +51,9 @@ public class ExcursionController {
         return excursionService.create(dto);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ExcursionDto update(@PathVariable String id, @RequestBody ExcursionCreateDto dto) {
-        return excursionService.update(id, dto);
-    }
-
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ExcursionDto patch(@PathVariable String id, @RequestBody ExcursionCreateDto dto) {
+    public ExcursionDto update(@PathVariable String id, @RequestBody ExcursionUpdateDto dto) {
         return excursionService.update(id, dto);
     }
 

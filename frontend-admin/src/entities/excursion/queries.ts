@@ -12,7 +12,6 @@ export const useExcursions = (params?: Record<string, unknown>) =>
   useQuery({
     queryKey: excursionKeys.list(params),
     queryFn: () => excursionApi.list(params),
-    select: (d) => Array.isArray(d) ? d : (d as { data?: typeof d }).data ?? d,
   });
 
 export const useExcursion = (id: string) =>

@@ -2,10 +2,9 @@ package com.benua.backend.service;
 
 import com.benua.backend.dto.ExcursionCreateDto;
 import com.benua.backend.dto.ExcursionDto;
-import com.benua.backend.dto.SourceCreateDto;
+import com.benua.backend.dto.ExcursionUpdateDto;
 import com.benua.backend.model.*;
 import com.benua.backend.repository.ExcursionRepository;
-import com.benua.backend.repository.SourceRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -26,14 +25,12 @@ public class ExcursionService {
 
     private final ExcursionRepository excursionRepository;
     private final ConnectionService cs;
-    private final SourceRepository sourceRepository;
     private final MongoTemplate mongoTemplate;
 
     public ExcursionService(ExcursionRepository excursionRepository, ConnectionService cs,
-                            SourceRepository sourceRepository, MongoTemplate mongoTemplate) {
+                            MongoTemplate mongoTemplate) {
         this.excursionRepository = excursionRepository;
         this.cs = cs;
-        this.sourceRepository = sourceRepository;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -70,7 +67,7 @@ public class ExcursionService {
         Person guide = cs.getPersonById(dto.guideId());
         Image coverImage = cs.getImageById(dto.coverImageId());
         List<Image> images = dto.imageIds() != null ? cs.getImagesByIds(dto.imageIds()) : List.of();
-        List<Source> sources = saveSources(dto.sources());
+        List<Source> sources = cs.saveSources(dto.sources());
 
         Excursion excursion = new Excursion(
                 null, dto.title(), dto.description(), dto.durationMinutes(), dto.mode(),
@@ -81,14 +78,14 @@ public class ExcursionService {
         return toDto(excursionRepository.save(excursion));
     }
 
-    public ExcursionDto update(String id, ExcursionCreateDto patch) {
+    public ExcursionDto update(String id, ExcursionUpdateDto patch) {
         Excursion existing = getExcursion(id);
 
         List<Building> buildings = patch.buildings() != null ? cs.getBuildingsByIds(patch.buildings()) : existing.buildings();
         Person guide = patch.guideId() != null ? cs.getPersonById(patch.guideId()) : existing.guide();
         Image coverImage = patch.coverImageId() != null ? cs.getImageById(patch.coverImageId()) : existing.coverImage();
         List<Image> images = patch.imageIds() != null ? cs.getImagesByIds(patch.imageIds()) : existing.images();
-        List<Source> sources = patch.sources() != null ? saveSources(patch.sources()) : existing.sources();
+        List<Source> sources = patch.sources() != null ? cs.saveSources(patch.sources()) : existing.sources();
 
         Excursion updated = new Excursion(
                 existing._id(),
@@ -133,13 +130,6 @@ public class ExcursionService {
             );
         }
         bulk.execute();
-    }
-
-    private List<Source> saveSources(List<SourceCreateDto> sources) {
-        if (sources == null || sources.isEmpty()) return List.of();
-        return sources.stream()
-                .map(src -> sourceRepository.save(new Source(null, src.text(), src.url())))
-                .toList();
     }
 
     public ExcursionDto toDto(Excursion e) {

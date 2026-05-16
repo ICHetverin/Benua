@@ -1,8 +1,5 @@
 package com.benua.backend.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,10 +12,10 @@ import java.util.List;
 @Document(collection = "excursions")
 public record Excursion(
         @Id String _id,
-        @NotBlank @Size(max = 255) String title,
+        String title,
         String description,
         @Field("duration_minutes") Integer durationMinutes,
-        @NotNull Mode mode,
+        Mode mode,
         String price,
         List<ScheduleItem> schedule,
         List<Waypoint> waypoints,
@@ -35,14 +32,14 @@ public record Excursion(
     public enum Mode { PEDESTRIAN, BUS, MIXED }
 
     public record ScheduleItem(
-            @NotNull DayOfWeek dayOfWeek,
-            @NotBlank String time
+            DayOfWeek dayOfWeek,
+            String time
     ) {}
 
     public record Waypoint(
-            @NotNull Integer order,
-            @NotNull Float lat,
-            @NotNull Float lng,
+            Integer order,
+            Float lat,
+            Float lng,
             String buildingId
     ) {}
 }

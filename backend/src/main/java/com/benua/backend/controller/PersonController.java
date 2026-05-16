@@ -52,15 +52,9 @@ public class PersonController {
         return ps.createPerson(person);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public PersonDto updatePerson(@PathVariable String id, @RequestBody PersonUpdateDto patch) {
-        return ps.updatePerson(id, patch);
-    }
-
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public PersonDto patchPerson(@PathVariable String id, @RequestBody PersonUpdateDto patch) {
+    public PersonDto updatePerson(@PathVariable String id, @RequestBody PersonUpdateDto patch) {
         return ps.updatePerson(id, patch);
     }
 
