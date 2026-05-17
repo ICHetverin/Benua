@@ -1,4 +1,4 @@
-import { Upload, message } from 'antd';
+import { Upload, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { imageApi } from 'entities/image/api';
@@ -29,14 +29,26 @@ export function ImageUploader({ value = [], onChange, maxCount }: Props) {
     }
   };
 
-  const handleRemove = async (file: UploadFile) => {
-    try {
-      await imageApi.delete(file.uid);
-      onChange?.(value.filter((img) => img._id !== file.uid));
-    } catch {
-      message.error('Ошибка удаления файла');
-    }
-  };
+  const handleRemove = (file: UploadFile): Promise<boolean> =>
+    new Promise((resolve) => {
+      Modal.confirm({
+        title: 'Удалить фото?',
+        okText: 'Удалить',
+        okButtonProps: { danger: true },
+        cancelText: 'Отмена',
+        onOk: async () => {
+          try {
+            await imageApi.delete(file.uid);
+            onChange?.(value.filter((img) => img._id !== file.uid));
+            resolve(true);
+          } catch {
+            message.error('Ошибка удаления файла');
+            resolve(false);
+          }
+        },
+        onCancel: () => resolve(false),
+      });
+    });
 
   return (
     <Upload

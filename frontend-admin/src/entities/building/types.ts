@@ -33,6 +33,9 @@ export interface BuildingCreateDto {
   history?: string;
   design?: string;
   connection_with_benua?: string;
+  description?: Description[];
+  interesting_facts?: string[];
+  is_published?: boolean;
   connected_persons?: string[];
   connected_objects?: string[];
   images?: InlineImage[];
@@ -48,6 +51,8 @@ export interface BuildingUpdateDto {
   history?: string;
   design?: string;
   connection_with_benua?: string;
+  description?: Description[];
+  interesting_facts?: string[];
   connected_persons?: string[];
   connected_objects?: string[];
   image_ids?: string[];

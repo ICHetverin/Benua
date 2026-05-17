@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/admin/images")
-@PreAuthorize("isAuthenticated()")
+@PreAuthorize("hasRole('ADMIN')")
 public class ImageController {
 
     private final StorageService storageService;

@@ -9,6 +9,7 @@ import {
   message,
   Spin,
   Divider,
+  Switch,
 } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -62,12 +63,13 @@ export function ExcursionEditPage({ mode }: Props) {
           description: existing.description,
           schedule: existing.schedule,
           waypoints: existing.waypoints,
+          is_published: existing.is_published ?? false,
           _images: existing.images ?? [],
           _cover: existing.cover_image ? [existing.cover_image] : [],
           buildings: existing.buildings?.map((b) => b._id),
           guide_id: existing.guide?._id,
         }
-      : { mode: 'PEDESTRIAN' };
+      : { mode: 'PEDESTRIAN', is_published: false };
 
   const onFinish = async (values: Record<string, unknown>) => {
     const _images = (values._images as { _id: string }[] | undefined) ?? [];
@@ -82,6 +84,7 @@ export function ExcursionEditPage({ mode }: Props) {
       waypoints: values.waypoints as ExcursionCreateDto['waypoints'],
       buildings: values.buildings as string[] | undefined,
       guide_id: values.guide_id as string | undefined,
+      is_published: values.is_published as boolean,
       image_ids: _images.map((img) => img._id),
       cover_image_id: _cover[0]?._id,
     };
@@ -182,6 +185,9 @@ export function ExcursionEditPage({ mode }: Props) {
         </Form.Item>
         <Form.Item name="guide_id" label="Гид">
           <AjaxSelect endpoint="/persons" placeholder="Найти персону..." />
+        </Form.Item>
+        <Form.Item name="is_published" label="Опубликовано" valuePropName="checked">
+          <Switch />
         </Form.Item>
         <Form.Item name="_cover" label="Обложка">
           <ImageUploader maxCount={1} />

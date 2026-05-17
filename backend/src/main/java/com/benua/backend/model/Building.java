@@ -16,8 +16,8 @@ import java.util.List;
  * @param _id уникальный идентификатор
  * @param name название здания, обязательное, макс 255 символов
  * @param address адрес здания, обязательное, макс 255 символов
- * @param latitude географическая широта, обязательное, (-40...70)
- * @param longitude географическая долгота, обязательное, (-20...40)
+ * @param latitude географическая широта (опционально, не отображается в UI)
+ * @param longitude географическая долгота (опционально, не отображается в UI)
  * @param architect архитектор, макс 255 символов
  * @param yearsBuilt годы постройки, макс 255 символов
  * @param history история здания
@@ -35,8 +35,8 @@ public record Building(
         @Id String _id,
         @NotBlank(message="Name is required") @Size(max=255, message="Name too long (max=255)") String name,
         @NotBlank(message="Adress is required") @Size(max=255, message="Adress too long (max=255)") String address,
-        @NotNull(message="Latitude is required") @Min(40) @Max(70) Float latitude,
-        @NotNull(message="Longitude is required") @Min(20) @Max(40) Float longitude,
+        Float latitude,
+        Float longitude,
         @Size(max=255, message="Architect too long (max=255)") String architect,
         @Size(max=255, message="YearsBuilt too long (max=255)") @Field("years_built") String yearsBuilt,
         String history,

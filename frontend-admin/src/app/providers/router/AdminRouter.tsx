@@ -48,9 +48,30 @@ const router = createBrowserRouter(
             </RoleGuard>
           ),
         },
-        { path: 'buildings', element: <BuildingsListPage /> },
-        { path: 'buildings/new', element: <BuildingEditPage mode="create" /> },
-        { path: 'buildings/:id', element: <BuildingEditPage mode="edit" /> },
+        {
+          path: 'buildings',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BuildingsListPage />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'buildings/new',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BuildingEditPage mode="create" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'buildings/:id',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BuildingEditPage mode="edit" />
+            </RoleGuard>
+          ),
+        },
         {
           path: 'excursions',
           element: (

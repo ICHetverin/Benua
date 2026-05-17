@@ -11,8 +11,7 @@ COPY frontend-admin/package.json ./
 RUN npm install
 COPY frontend-admin/ ./
 ARG VITE_API_URL
-ARG VITE_YANDEX_MAPS_API_KEY
-ENV VITE_API_URL=$VITE_API_URL VITE_YANDEX_MAPS_API_KEY=$VITE_YANDEX_MAPS_API_KEY
+ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 FROM nginx:alpine

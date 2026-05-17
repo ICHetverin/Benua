@@ -1,5 +1,6 @@
 import { Form, Input, Button, Card, message, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuth } from 'app/providers/auth/AuthContext';
 import { ROUTES } from 'shared/config/routes';
 
@@ -13,10 +14,9 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm<FormValues>();
 
-  if (user) {
-    navigate(ROUTES.DASHBOARD, { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (user) navigate(ROUTES.DASHBOARD, { replace: true });
+  }, [user, navigate]);
 
   const onFinish = async (values: FormValues) => {
     try {

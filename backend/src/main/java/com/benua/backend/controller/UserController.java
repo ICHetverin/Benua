@@ -2,6 +2,7 @@ package com.benua.backend.controller;
 
 import com.benua.backend.dto.UserCreateDto;
 import com.benua.backend.dto.UserDto;
+import com.benua.backend.dto.UserUpdateDto;
 import com.benua.backend.model.User;
 import com.benua.backend.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -42,6 +43,21 @@ public class UserController {
         User saved = userRepository.save(new User(null, dto.username(),
                 passwordEncoder.encode(dto.password()), dto.roles(), now, now));
         return toDto(saved);
+    }
+
+    @PatchMapping("/{id}")
+    public UserDto update(@PathVariable String id, @RequestBody @Valid UserUpdateDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("User not found: " + id));
+        String newHash = (dto.password() != null && !dto.password().isBlank())
+                ? passwordEncoder.encode(dto.password())
+                : user.passwordHash();
+        java.util.Set<User.Role> newRoles = (dto.roles() != null && !dto.roles().isEmpty())
+                ? dto.roles()
+                : user.roles();
+        User updated = new User(user._id(), user.username(), newHash, newRoles,
+                user.createdAt(), Instant.now());
+        return toDto(userRepository.save(updated));
     }
 
     @DeleteMapping("/{id}")
