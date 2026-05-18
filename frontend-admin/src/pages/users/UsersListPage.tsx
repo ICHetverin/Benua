@@ -3,7 +3,7 @@ import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from 'entities/user/queries';
 import { formatDate } from 'shared/lib/format';
-import type { UserDto } from 'entities/user/types';
+import type { UserDto, UserUpdateDto } from 'entities/user/types';
 
 export function UsersListPage() {
   const { data: users = [], isLoading } = useUsers();
@@ -36,7 +36,7 @@ export function UsersListPage() {
     if (!editTarget) return;
     const values = await editForm.validateFields();
     try {
-      const dto: { password?: string; roles?: string[] } = { roles: values.roles };
+      const dto: UserUpdateDto = { roles: values.roles };
       if (values.password) dto.password = values.password;
       await updateMutation.mutateAsync({ id: editTarget._id, dto });
       message.success('Пользователь обновлён');
