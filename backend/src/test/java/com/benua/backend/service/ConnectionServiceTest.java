@@ -81,7 +81,11 @@ class ConnectionServiceTest {
                 List.of(),
                 List.of(),
                 List.of(),
-                List.of()
+                List.of(),
+                null,
+                null,
+                null,
+                null
         );
     }
 
@@ -102,7 +106,11 @@ class ConnectionServiceTest {
                 List.of(),
                 List.of(),
                 List.of(),
-                List.of()
+                List.of(),
+                null,
+                null,
+                null,
+                null
         );
     }
 }
