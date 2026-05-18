@@ -28,7 +28,7 @@ services:
     env_file:
       - .env
     environment:
-      MONGO_HOST: mongodb
+      MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/benua?authSource=admin"
     ports:
       - "8080:8080"
     depends_on:

@@ -31,7 +31,7 @@ services:
     env_file:
       - .env
     environment:
-      MONGO_HOST: mongodb
+      MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/benua?authSource=admin"
     depends_on:
       mongodb:
         condition: service_healthy
