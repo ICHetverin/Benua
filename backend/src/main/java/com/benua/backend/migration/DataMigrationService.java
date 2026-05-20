@@ -32,17 +32,20 @@ public class DataMigrationService {
     private final SourceRepository sourceRepository;
     private final PersonRepository personRepository;
     private final BuildingRepository buildingRepository;
+    private final ObjectTypeRepository objectTypeRepository;
     private final ObjectMapper objectMapper;
 
     public DataMigrationService(ImageRepository imageRepository,
                                 SourceRepository sourceRepository,
                                 PersonRepository personRepository,
                                 BuildingRepository buildingRepository,
+                                ObjectTypeRepository objectTypeRepository,
                                 ObjectMapper objectMapper) {
         this.imageRepository = imageRepository;
         this.sourceRepository = sourceRepository;
         this.personRepository = personRepository;
         this.buildingRepository = buildingRepository;
+        this.objectTypeRepository = objectTypeRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -51,6 +54,7 @@ public class DataMigrationService {
 
         migrateImages();
         migrateSources();
+        migrateObjectTypes();
 
         List<PersonSeedDto> personDtos = readJson("data/persons.json", new TypeReference<>() {});
         List<BuildingSeedDto> buildingDtos = readJson("data/buildings.json", new TypeReference<>() {});
@@ -60,6 +64,7 @@ public class DataMigrationService {
 
         updatePersonConnections(personDtos);
         updateBuildingConnections(buildingDtos);
+        backfillMissingBuildingBlueFlags();
 
         log.info("Data migration completed.");
     }
@@ -85,6 +90,22 @@ public class DataMigrationService {
             }
             sourceRepository.save(source);
             log.info("Saved source: {}", source._id());
+        }
+    }
+
+    private void migrateObjectTypes() {
+        List<ObjectTypeSeedDto> objectTypes = readJson("data/object_types.json", new TypeReference<>() {});
+        for (ObjectTypeSeedDto objectType : objectTypes) {
+            if (objectTypeRepository.existsById(objectType.id())) {
+                log.warn("Object type already exists, skipping: {}", objectType.id());
+                continue;
+            }
+            objectTypeRepository.save(new ObjectType(
+                    objectType.id(),
+                    objectType.name(),
+                    objectType.subtypes() != null ? objectType.subtypes() : List.of()
+            ));
+            log.info("Saved object type: {}", objectType.id());
         }
     }
 
@@ -120,6 +141,7 @@ public class DataMigrationService {
         for (BuildingSeedDto dto : dtos) {
             if (buildingRepository.existsById(dto.id())) {
                 log.warn("Building already exists, skipping: {}", dto.id());
+                updateExistingSeedBuildingBlueFlag(dto);
                 continue;
             }
             try {
@@ -136,6 +158,9 @@ public class DataMigrationService {
                         dto.connectionWithBenua(),
                         dto.description(),
                         dto.interestingFacts(),
+                        dto.typeId(),
+                        dto.subtype(),
+                        seedBlueFlag(dto),
                         List.of(),
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
@@ -196,6 +221,9 @@ public class DataMigrationService {
                         existing.connectionWithBenua(),
                         existing.description(),
                         existing.interestingFacts(),
+                        existing.typeId(),
+                        existing.subtype(),
+                        existing.isBlue() != null ? existing.isBlue() : seedBlueFlag(dto),
                         resolvePersons(dto.connectedPersons()),
                         resolveBuildings(dto.connectedObjects()),
                         existing.images(),
@@ -205,6 +233,69 @@ public class DataMigrationService {
             } catch (Exception e) {
                 log.error("Failed to update building connections {}: {}", dto.id(), e.getMessage());
             }
+        }
+    }
+
+    private void updateExistingSeedBuildingBlueFlag(BuildingSeedDto dto) {
+        buildingRepository.findById(dto.id()).ifPresent(existing -> {
+            Boolean seedIsBlue = seedBlueFlag(dto);
+            if (seedIsBlue.equals(existing.isBlue())) return;
+
+            buildingRepository.save(new Building(
+                    existing._id(),
+                    existing.name(),
+                    existing.address(),
+                    existing.latitude(),
+                    existing.longitude(),
+                    existing.architect(),
+                    existing.yearsBuilt(),
+                    existing.history(),
+                    existing.design(),
+                    existing.connectionWithBenua(),
+                    existing.description(),
+                    existing.interestingFacts(),
+                    existing.typeId(),
+                    existing.subtype(),
+                    seedIsBlue,
+                    existing.connectedPersons(),
+                    existing.connectedObjects(),
+                    existing.images(),
+                    existing.sources()
+            ));
+            log.info("Updated seed building blue flag: id={}, is_blue={}", dto.id(), seedIsBlue);
+        });
+    }
+
+    private Boolean seedBlueFlag(BuildingSeedDto dto) {
+        return dto.isBlue() != null ? dto.isBlue() : true;
+    }
+
+    private void backfillMissingBuildingBlueFlags() {
+        for (Building existing : buildingRepository.findAll()) {
+            if (existing.isBlue() != null) continue;
+
+            buildingRepository.save(new Building(
+                    existing._id(),
+                    existing.name(),
+                    existing.address(),
+                    existing.latitude(),
+                    existing.longitude(),
+                    existing.architect(),
+                    existing.yearsBuilt(),
+                    existing.history(),
+                    existing.design(),
+                    existing.connectionWithBenua(),
+                    existing.description(),
+                    existing.interestingFacts(),
+                    existing.typeId(),
+                    existing.subtype(),
+                    false,
+                    existing.connectedPersons(),
+                    existing.connectedObjects(),
+                    existing.images(),
+                    existing.sources()
+            ));
+            log.info("Backfilled missing building blue flag: id={}, is_blue=false", existing._id());
         }
     }
 
