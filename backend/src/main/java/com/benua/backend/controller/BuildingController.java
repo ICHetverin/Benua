@@ -34,6 +34,9 @@ public class BuildingController {
         try {
             BuildingDto saved = bs.createBuilding(building);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved); // HTTP 201
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid createBuilding payload={}: {}", building, e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (NoSuchElementException e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -88,11 +91,44 @@ public class BuildingController {
 
         try {
             return ResponseEntity.ok(bs.updateBuildingType(id, dto));
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid updateBuildingType payload for id={}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (NoSuchElementException e) {
             log.warn("No building found for id={}", id, e);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error("Error while updating building type by id={}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PatchMapping("/{id}/mark-blue")
+    public ResponseEntity<BuildingDto> markBlue(@PathVariable @NotBlank String id) {
+        log.info("Called markBlue: id={}", id);
+
+        try {
+            return ResponseEntity.ok(bs.markBlue(id));
+        } catch (NoSuchElementException e) {
+            log.warn("No building found for id={}", id, e);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Error while marking building blue by id={}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PatchMapping("/{id}/unmark-blue")
+    public ResponseEntity<BuildingDto> unmarkBlue(@PathVariable @NotBlank String id) {
+        log.info("Called unmarkBlue: id={}", id);
+
+        try {
+            return ResponseEntity.ok(bs.unmarkBlue(id));
+        } catch (NoSuchElementException e) {
+            log.warn("No building found for id={}", id, e);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Error while unmarking building blue by id={}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

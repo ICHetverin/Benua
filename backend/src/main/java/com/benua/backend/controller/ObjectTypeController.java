@@ -29,7 +29,6 @@ public class ObjectTypeController {
 
         try {
             List<ObjectType> result = objectTypeService.getObjectTypes();
-            log.info("getObjectTypes returned {} items", result.size());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("Error while getting object types", e);
@@ -43,14 +42,13 @@ public class ObjectTypeController {
 
         try {
             ObjectType result = objectTypeService.getObjectType(id);
-            log.info("getObjectType succeeded: id={}", id);
             return ResponseEntity.ok(result);
         } catch (NoSuchElementException e) {
             log.warn("Object type not found: id={}", id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             log.error("Error while getting object type id={}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
         }
     }
 
@@ -60,14 +58,13 @@ public class ObjectTypeController {
 
         try {
             ObjectType created = objectTypeService.createObjectType(objectType);
-            log.info("createObjectType succeeded: id={}", created._id());
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
             log.warn("Invalid createObjectType payload={}: {}", objectType, e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Error creating object type with payload={}", objectType, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
         }
     }
 
@@ -79,7 +76,6 @@ public class ObjectTypeController {
 
         try {
             ObjectType updated = objectTypeService.updateObjectType(id, objectType);
-            log.info("updateObjectType succeeded: id={}", updated._id());
             return ResponseEntity.ok(updated);
         } catch (NoSuchElementException e) {
             log.warn("Object type not found for update: id={}", id, e);
@@ -89,7 +85,7 @@ public class ObjectTypeController {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Error updating object type id={} with payload={}", id, objectType, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
         }
     }
 
@@ -99,14 +95,13 @@ public class ObjectTypeController {
 
         try {
             objectTypeService.deleteObjectType(id);
-            log.info("deleteObjectType succeeded: id={}", id);
             return ResponseEntity.noContent().build();
         } catch (NoSuchElementException e) {
             log.warn("Object type not found for delete: id={}", id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             log.error("Error deleting object type id={}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
         }
     }
 }

@@ -21,6 +21,7 @@ public record BuildingSeedDto(
         List<String> interestingFacts,
         String typeId,
         String subtype,
+        Boolean isBlue,
         List<String> connectedPersons,
         List<String> connectedObjects,
         List<Source> sources,

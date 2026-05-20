@@ -27,6 +27,7 @@ public record BuildingDto(
         List<String> interestingFacts,
         String typeId,
         String subtype,
+        Boolean isBlue,
         List<SimpleEntity> connectedPersons,
         List<SimpleEntity> connectedObjects,
         List<Image> images,

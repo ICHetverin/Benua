@@ -64,6 +64,7 @@ public class DataMigrationService {
 
         updatePersonConnections(personDtos);
         updateBuildingConnections(buildingDtos);
+        backfillMissingBuildingBlueFlags();
 
         log.info("Data migration completed.");
     }
@@ -140,6 +141,7 @@ public class DataMigrationService {
         for (BuildingSeedDto dto : dtos) {
             if (buildingRepository.existsById(dto.id())) {
                 log.warn("Building already exists, skipping: {}", dto.id());
+                updateExistingSeedBuildingBlueFlag(dto);
                 continue;
             }
             try {
@@ -158,6 +160,7 @@ public class DataMigrationService {
                         dto.interestingFacts(),
                         dto.typeId(),
                         dto.subtype(),
+                        seedBlueFlag(dto),
                         List.of(),
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
@@ -220,6 +223,7 @@ public class DataMigrationService {
                         existing.interestingFacts(),
                         existing.typeId(),
                         existing.subtype(),
+                        existing.isBlue() != null ? existing.isBlue() : seedBlueFlag(dto),
                         resolvePersons(dto.connectedPersons()),
                         resolveBuildings(dto.connectedObjects()),
                         existing.images(),
@@ -229,6 +233,69 @@ public class DataMigrationService {
             } catch (Exception e) {
                 log.error("Failed to update building connections {}: {}", dto.id(), e.getMessage());
             }
+        }
+    }
+
+    private void updateExistingSeedBuildingBlueFlag(BuildingSeedDto dto) {
+        buildingRepository.findById(dto.id()).ifPresent(existing -> {
+            Boolean seedIsBlue = seedBlueFlag(dto);
+            if (seedIsBlue.equals(existing.isBlue())) return;
+
+            buildingRepository.save(new Building(
+                    existing._id(),
+                    existing.name(),
+                    existing.address(),
+                    existing.latitude(),
+                    existing.longitude(),
+                    existing.architect(),
+                    existing.yearsBuilt(),
+                    existing.history(),
+                    existing.design(),
+                    existing.connectionWithBenua(),
+                    existing.description(),
+                    existing.interestingFacts(),
+                    existing.typeId(),
+                    existing.subtype(),
+                    seedIsBlue,
+                    existing.connectedPersons(),
+                    existing.connectedObjects(),
+                    existing.images(),
+                    existing.sources()
+            ));
+            log.info("Updated seed building blue flag: id={}, is_blue={}", dto.id(), seedIsBlue);
+        });
+    }
+
+    private Boolean seedBlueFlag(BuildingSeedDto dto) {
+        return dto.isBlue() != null ? dto.isBlue() : true;
+    }
+
+    private void backfillMissingBuildingBlueFlags() {
+        for (Building existing : buildingRepository.findAll()) {
+            if (existing.isBlue() != null) continue;
+
+            buildingRepository.save(new Building(
+                    existing._id(),
+                    existing.name(),
+                    existing.address(),
+                    existing.latitude(),
+                    existing.longitude(),
+                    existing.architect(),
+                    existing.yearsBuilt(),
+                    existing.history(),
+                    existing.design(),
+                    existing.connectionWithBenua(),
+                    existing.description(),
+                    existing.interestingFacts(),
+                    existing.typeId(),
+                    existing.subtype(),
+                    false,
+                    existing.connectedPersons(),
+                    existing.connectedObjects(),
+                    existing.images(),
+                    existing.sources()
+            ));
+            log.info("Backfilled missing building blue flag: id={}, is_blue=false", existing._id());
         }
     }
 

@@ -26,6 +26,7 @@ import java.util.List;
  * @param interestingFacts список интересных фактов
  * @param typeId идентификатор типа объекта
  * @param subtype подтип объекта
+ * @param isBlue признак объекта, выделенного голубым цветом
  * @param connectedPersons связанные лица, (Person manyToMany Object) + валидация Person
  * @param connectedObjects (Object manyToMany Object) + валидация Object
  * @param images картинки, lazy (Image manyToMany Object) + валидация Image
@@ -47,8 +48,15 @@ public record Building(
         @Field("interesting_facts") List<String> interestingFacts,
         @Field("type_id") String typeId,
         String subtype,
+        @Field("is_blue") Boolean isBlue,
         @DBRef(lazy=true) @Valid @Field("connected_persons") List<Person> connectedPersons,
         @DBRef(lazy=true) @Valid @Field("connected_objects") List<Building> connectedObjects,
         @DBRef(lazy=true) @Valid List<Image> images,
         @DBRef(lazy=true) @Valid List<Source> sources
-) {}
+) {
+    public Building {
+        if (isBlue == null) {
+            isBlue = false;
+        }
+    }
+}

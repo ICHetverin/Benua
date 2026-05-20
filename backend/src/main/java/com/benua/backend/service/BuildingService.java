@@ -52,7 +52,7 @@ public class BuildingService {
     }
 
     private static final Set<String> ALLOWED_FILTERS = Set.of(
-            "name", "address", "architect", "years_built", "history", "design", "connection_with_benua", "type_id", "subtype"
+            "name", "address", "architect", "years_built", "history", "design", "connection_with_benua", "type_id", "subtype", "is_blue"
     );
 
     private List<Building> getBuildings(Map<String, String> filters, int page, int size) {
@@ -100,6 +100,7 @@ public class BuildingService {
                 building.interestingFacts(),
                 typeAssignment.typeId(),
                 typeAssignment.subtype(),
+                false,
                 connectedPeople,
                 connectedBuildings,
                 images,
@@ -111,6 +112,9 @@ public class BuildingService {
 
     public BuildingDto updateBuildingType(String id, BuildingTypeUpdateDto dto) {
         Building existing = getBuilding(id);
+        if (!Boolean.TRUE.equals(existing.isBlue())) {
+            throw new IllegalArgumentException("Object type can be assigned only to blue objects");
+        }
         ObjectTypeService.ObjectTypeAssignment typeAssignment = objectTypeService.validateAssignment(dto.typeId(), dto.subtype());
 
         Building updated = new Building(
@@ -128,6 +132,63 @@ public class BuildingService {
                 existing.interestingFacts(),
                 typeAssignment.typeId(),
                 typeAssignment.subtype(),
+                existing.isBlue(),
+                existing.connectedPersons(),
+                existing.connectedObjects(),
+                existing.images(),
+                existing.sources()
+        );
+
+        return toDto(br.save(updated));
+    }
+
+    public BuildingDto markBlue(String id) {
+        Building existing = getBuilding(id);
+
+        Building updated = new Building(
+                existing._id(),
+                existing.name(),
+                existing.address(),
+                existing.latitude(),
+                existing.longitude(),
+                existing.architect(),
+                existing.yearsBuilt(),
+                existing.history(),
+                existing.design(),
+                existing.connectionWithBenua(),
+                existing.description(),
+                existing.interestingFacts(),
+                existing.typeId(),
+                existing.subtype(),
+                true,
+                existing.connectedPersons(),
+                existing.connectedObjects(),
+                existing.images(),
+                existing.sources()
+        );
+
+        return toDto(br.save(updated));
+    }
+
+    public BuildingDto unmarkBlue(String id) {
+        Building existing = getBuilding(id);
+
+        Building updated = new Building(
+                existing._id(),
+                existing.name(),
+                existing.address(),
+                existing.latitude(),
+                existing.longitude(),
+                existing.architect(),
+                existing.yearsBuilt(),
+                existing.history(),
+                existing.design(),
+                existing.connectionWithBenua(),
+                existing.description(),
+                existing.interestingFacts(),
+                null,
+                null,
+                false,
                 existing.connectedPersons(),
                 existing.connectedObjects(),
                 existing.images(),
@@ -175,6 +236,7 @@ public class BuildingService {
                 b.interestingFacts(),
                 b.typeId(),
                 b.subtype(),
+                Boolean.TRUE.equals(b.isBlue()),
                 persons,
                 objects,
                 b.images(),
