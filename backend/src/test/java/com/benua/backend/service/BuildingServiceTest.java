@@ -2,6 +2,7 @@ package com.benua.backend.service;
 
 import com.benua.backend.dto.BuildingCreateDto;
 import com.benua.backend.dto.BuildingDto;
+import com.benua.backend.dto.BuildingTypeUpdateDto;
 import com.benua.backend.model.Building;
 import com.benua.backend.model.Description;
 import com.benua.backend.model.Person;
@@ -41,6 +42,9 @@ class BuildingServiceTest {
     @Mock
     private MongoTemplate mongoTemplate;
 
+    @Mock
+    private ObjectTypeService objectTypeService;
+
     @InjectMocks
     private BuildingService buildingService;
 
@@ -78,6 +82,8 @@ class BuildingServiceTest {
                 "Benua link",
                 List.of(new Description("topic", "content")),
                 List.of("fact"),
+                "1",
+                "Школы и гимназии",
                 List.of(connectedPerson),
                 List.of(connectedObject),
                 List.of(),
@@ -97,6 +103,8 @@ class BuildingServiceTest {
                 "Benua link",
                 List.of(new Description("topic", "content")),
                 List.of("fact"),
+                "1",
+                "Школы и гимназии",
                 List.of("person-1"),
                 List.of("building-2"),
                 List.of(),
@@ -105,12 +113,16 @@ class BuildingServiceTest {
 
         when(connectionService.getPersonsByIds(List.of("person-1"))).thenReturn(List.of(connectedPerson));
         when(connectionService.getBuildingsByIds(List.of("building-2"))).thenReturn(List.of(connectedObject));
+        when(objectTypeService.validateAssignment("1", "Школы и гимназии"))
+                .thenReturn(new ObjectTypeService.ObjectTypeAssignment("1", "Школы и гимназии"));
         when(buildingRepository.save(any(Building.class))).thenReturn(savedBuilding);
 
         BuildingDto result = buildingService.createBuilding(createDto);
 
         assertEquals("building-1", result._id());
         assertEquals("Museum", result.name());
+        assertEquals("1", result.typeId());
+        assertEquals("Школы и гимназии", result.subtype());
         assertEquals(1, result.connectedPersons().size());
         assertEquals("person-1", result.connectedPersons().getFirst()._id());
         assertEquals(1, result.connectedObjects().size());
@@ -136,6 +148,8 @@ class BuildingServiceTest {
                 null,
                 List.of(),
                 List.of(),
+                null,
+                null,
                 List.of(),
                 List.of(),
                 List.of(),
@@ -144,6 +158,8 @@ class BuildingServiceTest {
 
         when(connectionService.getPersonsByIds(List.of())).thenReturn(List.of());
         when(connectionService.getBuildingsByIds(List.of())).thenReturn(List.of());
+        when(objectTypeService.validateAssignment(null, null))
+                .thenReturn(new ObjectTypeService.ObjectTypeAssignment(null, null));
         when(buildingRepository.save(any(Building.class))).thenReturn(savedBuilding);
 
         BuildingDto result = buildingService.createBuilding(createDto);
@@ -178,7 +194,7 @@ class BuildingServiceTest {
         ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
         when(mongoTemplate.find(any(Query.class), eq(Building.class))).thenReturn(List.of(building));
 
-        buildingService.getBuildingsDto(Map.of(), -1, 200);
+        buildingService.getBuildingsDto(Map.of(), -1, 20_000);
 
         verify(mongoTemplate).find(queryCaptor.capture(), eq(Building.class));
         Query query = queryCaptor.getValue();
@@ -204,6 +220,8 @@ class BuildingServiceTest {
                 "Benua link",
                 List.of(new Description("topic", "content")),
                 List.of("fact"),
+                "1",
+                "Школы и гимназии",
                 List.of(connectedPerson),
                 List.of(connectedObject),
                 List.of(),
@@ -214,10 +232,57 @@ class BuildingServiceTest {
 
         assertEquals("building-1", result._id());
         assertEquals("Museum", result.name());
+        assertEquals("1", result.typeId());
+        assertEquals("Школы и гимназии", result.subtype());
         assertEquals("person-1", result.connectedPersons().getFirst()._id());
         assertEquals("Alice", result.connectedPersons().getFirst().name());
         assertEquals("building-2", result.connectedObjects().getFirst()._id());
         assertEquals("Gallery", result.connectedObjects().getFirst().name());
+    }
+
+    @Test
+    void updateBuildingTypeValidatesAssignmentAndKeepsOtherFields() {
+        Building existing = building("building-1", "Museum");
+        Building saved = new Building(
+                "building-1",
+                "Museum",
+                "Address",
+                55.75f,
+                37.61f,
+                null,
+                null,
+                null,
+                null,
+                null,
+                List.of(),
+                List.of(),
+                "1",
+                "Школы и гимназии",
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of()
+        );
+        ArgumentCaptor<Building> buildingCaptor = ArgumentCaptor.forClass(Building.class);
+
+        when(buildingRepository.findById("building-1")).thenReturn(Optional.of(existing));
+        when(objectTypeService.validateAssignment("1", "Школы и гимназии"))
+                .thenReturn(new ObjectTypeService.ObjectTypeAssignment("1", "Школы и гимназии"));
+        when(buildingRepository.save(any(Building.class))).thenReturn(saved);
+
+        BuildingDto result = buildingService.updateBuildingType(
+                "building-1",
+                new BuildingTypeUpdateDto("1", "Школы и гимназии")
+        );
+
+        verify(buildingRepository).save(buildingCaptor.capture());
+        Building savedArgument = buildingCaptor.getValue();
+        assertEquals("building-1", savedArgument._id());
+        assertEquals("Museum", savedArgument.name());
+        assertEquals("1", savedArgument.typeId());
+        assertEquals("Школы и гимназии", savedArgument.subtype());
+        assertEquals("1", result.typeId());
+        assertEquals("Школы и гимназии", result.subtype());
     }
 
     private static Building building(String id, String name) {
@@ -234,6 +299,8 @@ class BuildingServiceTest {
                 null,
                 List.of(),
                 List.of(),
+                null,
+                null,
                 List.of(),
                 List.of(),
                 List.of(),

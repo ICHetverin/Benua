@@ -25,6 +25,8 @@ public record BuildingDto(
         String connectionWithBenua,
         List<Description> description,
         List<String> interestingFacts,
+        String typeId,
+        String subtype,
         List<SimpleEntity> connectedPersons,
         List<SimpleEntity> connectedObjects,
         List<Image> images,

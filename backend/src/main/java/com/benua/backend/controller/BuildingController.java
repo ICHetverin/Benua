@@ -2,6 +2,7 @@ package com.benua.backend.controller;
 
 import com.benua.backend.dto.BuildingCreateDto;
 import com.benua.backend.dto.BuildingDto;
+import com.benua.backend.dto.BuildingTypeUpdateDto;
 import com.benua.backend.model.Building;
 import com.benua.backend.service.BuildingService;
 import jakarta.validation.Valid;
@@ -76,6 +77,23 @@ public class BuildingController {
         } catch (Exception e) {
             log.error("Error while getting building by id={}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
+        }
+    }
+
+    @PatchMapping("/{id}/type")
+    public ResponseEntity<BuildingDto> updateBuildingType(
+            @PathVariable @NotBlank String id,
+            @RequestBody BuildingTypeUpdateDto dto) {
+        log.info("Called updateBuildingType: id={}, payload={}", id, dto);
+
+        try {
+            return ResponseEntity.ok(bs.updateBuildingType(id, dto));
+        } catch (NoSuchElementException e) {
+            log.warn("No building found for id={}", id, e);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Error while updating building type by id={}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

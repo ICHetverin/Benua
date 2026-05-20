@@ -32,17 +32,20 @@ public class DataMigrationService {
     private final SourceRepository sourceRepository;
     private final PersonRepository personRepository;
     private final BuildingRepository buildingRepository;
+    private final ObjectTypeRepository objectTypeRepository;
     private final ObjectMapper objectMapper;
 
     public DataMigrationService(ImageRepository imageRepository,
                                 SourceRepository sourceRepository,
                                 PersonRepository personRepository,
                                 BuildingRepository buildingRepository,
+                                ObjectTypeRepository objectTypeRepository,
                                 ObjectMapper objectMapper) {
         this.imageRepository = imageRepository;
         this.sourceRepository = sourceRepository;
         this.personRepository = personRepository;
         this.buildingRepository = buildingRepository;
+        this.objectTypeRepository = objectTypeRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -51,6 +54,7 @@ public class DataMigrationService {
 
         migrateImages();
         migrateSources();
+        migrateObjectTypes();
 
         List<PersonSeedDto> personDtos = readJson("data/persons.json", new TypeReference<>() {});
         List<BuildingSeedDto> buildingDtos = readJson("data/buildings.json", new TypeReference<>() {});
@@ -85,6 +89,22 @@ public class DataMigrationService {
             }
             sourceRepository.save(source);
             log.info("Saved source: {}", source._id());
+        }
+    }
+
+    private void migrateObjectTypes() {
+        List<ObjectTypeSeedDto> objectTypes = readJson("data/object_types.json", new TypeReference<>() {});
+        for (ObjectTypeSeedDto objectType : objectTypes) {
+            if (objectTypeRepository.existsById(objectType.id())) {
+                log.warn("Object type already exists, skipping: {}", objectType.id());
+                continue;
+            }
+            objectTypeRepository.save(new ObjectType(
+                    objectType.id(),
+                    objectType.name(),
+                    objectType.subtypes() != null ? objectType.subtypes() : List.of()
+            ));
+            log.info("Saved object type: {}", objectType.id());
         }
     }
 
@@ -136,6 +156,8 @@ public class DataMigrationService {
                         dto.connectionWithBenua(),
                         dto.description(),
                         dto.interestingFacts(),
+                        dto.typeId(),
+                        dto.subtype(),
                         List.of(),
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
@@ -196,6 +218,8 @@ public class DataMigrationService {
                         existing.connectionWithBenua(),
                         existing.description(),
                         existing.interestingFacts(),
+                        existing.typeId(),
+                        existing.subtype(),
                         resolvePersons(dto.connectedPersons()),
                         resolveBuildings(dto.connectedObjects()),
                         existing.images(),

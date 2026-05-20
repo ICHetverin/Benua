@@ -19,6 +19,8 @@ public record BuildingSeedDto(
         String connectionWithBenua,
         List<Description> description,
         List<String> interestingFacts,
+        String typeId,
+        String subtype,
         List<String> connectedPersons,
         List<String> connectedObjects,
         List<Source> sources,
