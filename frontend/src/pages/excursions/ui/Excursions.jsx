@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { ExcursionList } from "widgets/excursion-list";
-import { getExcursions } from "entities/excursions";
+import { useExcursions } from "entities/excursions";
 
 export function Excursions() {
-  const [excursions] = useState(getExcursions());
+  const { data: excursions = [], isLoading } = useExcursions();
 
   return (
     <div className="page">
@@ -11,7 +10,11 @@ export function Excursions() {
         <h1 className="title">Экскурсии</h1>
       </div>
 
-      <ExcursionList excursions={excursions} />
+      {isLoading ? (
+        <p>Загрузка...</p>
+      ) : (
+        <ExcursionList excursions={excursions} />
+      )}
     </div>
   );
 }
