@@ -3,12 +3,13 @@ package com.benua.backend.dto;
 import com.benua.backend.model.Excursion;
 import com.benua.backend.model.Image;
 import com.benua.backend.model.Source;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 import java.util.List;
 
 public record ExcursionDto(
-        String _id,
+        @JsonProperty("_id") String _id,
         String title,
         String description,
         Integer durationMinutes,
@@ -26,5 +27,5 @@ public record ExcursionDto(
         Instant createdAt,
         Instant updatedAt
 ) {
-    public record SimpleEntity(String _id, String name) {}
+    public record SimpleEntity(@JsonProperty("_id") String _id, String name) {}
 }

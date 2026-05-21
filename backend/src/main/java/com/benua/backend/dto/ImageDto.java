@@ -1,3 +1,5 @@
 package com.benua.backend.dto;
 
-public record ImageDto(String _id, String text, String urlToS3) {}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record ImageDto(@JsonProperty("_id") String _id, String text, String urlToS3) {}
