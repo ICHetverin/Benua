@@ -34,7 +34,7 @@ export const getObjectById = (id) => api.get(`/objects/${id}`).then(normalizeId)
 export const search = (query) => api.get('/search', { params: { q: query } });
 
 export const getPublicExcursions = () =>
-  api.get('/public-excursions').then(normalizeList);
+  api.get('/excursions', { params: { size: 1000 } }).then(normalizeList);
 
 export const getPublicExcursionById = (id) =>
-  api.get(`/public-excursions/${id}`).then(normalizeId);
+  api.get(`/excursions/${id}`).then(normalizeId);

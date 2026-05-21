@@ -13,9 +13,9 @@ import com.benua.backend.repository.SourceRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Логика для устранения циклической связи BuildingService <-> PersonService в create
@@ -36,26 +36,23 @@ public class ConnectionService {
         this.sourceRepository = sourceRepository;
     }
 
-    private <T> List<T> getByIds(List<String> ids, MongoRepository<T, String> repository, String entityName) {
+    private <T> List<T> getByIds(List<String> ids, MongoRepository<T, String> repository) {
         if (ids == null || ids.isEmpty()) return Collections.emptyList();
-
-        return ids.stream()
-                .map(id -> repository.findById(id)
-                        .orElseThrow(() -> new NoSuchElementException(
-                                entityName + " not found by id: " + id)))
-                .toList();
+        List<T> result = new ArrayList<>();
+        repository.findAllById(ids).forEach(result::add);
+        return result;
     }
 
     public List<Person> getPersonsByIds(List<String> ids) {
-        return getByIds(ids, personRepository, "person");
+        return getByIds(ids, personRepository);
     }
 
     public List<Building> getBuildingsByIds(List<String> ids) {
-        return getByIds(ids, buildingRepository, "building");
+        return getByIds(ids, buildingRepository);
     }
 
     public List<Image> getImagesByIds(List<String> ids) {
-        return getByIds(ids, imageRepository, "image");
+        return getByIds(ids, imageRepository);
     }
 
     public Person getPersonById(String id) {
