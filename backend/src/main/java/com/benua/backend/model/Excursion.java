@@ -1,46 +1,31 @@
 package com.benua.backend.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.util.List;
 
 @Document(collection = "excursions")
 public record Excursion(
         @Id String _id,
-        String title,
+        String name,
         String description,
-        @Field("duration_minutes") Integer durationMinutes,
-        Mode mode,
-        String price,
-        List<ScheduleItem> schedule,
-        List<Waypoint> waypoints,
-        @DBRef List<Building> buildings,
-        @DBRef Person guide,
-        @DBRef @Field("cover_image") Image coverImage,
-        @DBRef List<Image> images,
-        @DBRef List<Source> sources,
-        @Field("sort_order") Integer sortOrder,
+        String time,
+        String guide,
+        @Field("passing_methods") List<String> passingMethods,
+        @Field("key_points") List<String> keyPoints,
+        @Field("text_content") List<ContentSection> textContent,
+        @Field("cover_photo") String coverPhoto,
+        @Field("route_photo") String routePhoto,
+        List<ExcursionSource> sources,
         @Field("is_published") Boolean isPublished,
+        @Field("sort_order") Integer sortOrder,
         @Field("created_at") Instant createdAt,
         @Field("updated_at") Instant updatedAt,
         @Field("updated_by") String updatedBy
 ) {
-    public enum Mode { PEDESTRIAN, BUS, MIXED }
-
-    public record ScheduleItem(
-            DayOfWeek dayOfWeek,
-            String time
-    ) {}
-
-    public record Waypoint(
-            Integer order,
-            Float lat,
-            Float lng,
-            String buildingId
-    ) {}
+    public record ContentSection(String topic, String content) {}
+    public record ExcursionSource(String source, String url) {}
 }

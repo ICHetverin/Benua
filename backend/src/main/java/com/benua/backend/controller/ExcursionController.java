@@ -47,7 +47,7 @@ public class ExcursionController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     public ExcursionDto create(@RequestBody @Valid ExcursionCreateDto dto, Authentication auth) {
-        log.info("createExcursion: {}", dto.title());
+        log.info("createExcursion: {}", dto.name());
         return excursionService.create(dto, auth.getName());
     }
 
