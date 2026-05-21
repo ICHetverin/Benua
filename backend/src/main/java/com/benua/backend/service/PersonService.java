@@ -85,8 +85,8 @@ public class PersonService {
     }
 
     public PersonDto createPerson(PersonCreateDto person, String updatedBy) {
-        List<Person> connectedPeople = cs.getPersonsByIds(person.connectedPersons());
-        List<Building> connectedBuildings = cs.getBuildingsByIds(person.connectedObjects());
+        List<String> connectedPeople = person.connectedPersons() != null ? person.connectedPersons() : List.of();
+        List<String> connectedBuildings = person.connectedObjects() != null ? person.connectedObjects() : List.of();
         List<Image> images = cs.saveImages(person.images());
         List<Source> sources = cs.saveSources(person.sources());
 
@@ -103,10 +103,10 @@ public class PersonService {
     public PersonDto updatePerson(String id, PersonUpdateDto patch, String updatedBy) {
         Person existing = getPerson(id);
 
-        List<Person> connectedPeople = patch.connectedPersons() != null
-                ? cs.getPersonsByIds(patch.connectedPersons()) : existing.connectedPersons();
-        List<Building> connectedBuildings = patch.connectedObjects() != null
-                ? cs.getBuildingsByIds(patch.connectedObjects()) : existing.connectedObjects();
+        List<String> connectedPeople = patch.connectedPersons() != null
+                ? patch.connectedPersons() : existing.connectedPersons();
+        List<String> connectedBuildings = patch.connectedObjects() != null
+                ? patch.connectedObjects() : existing.connectedObjects();
         List<Image> images = patch.imageIds() != null
                 ? cs.getImagesByIds(patch.imageIds()) : existing.images();
         List<Source> sources = patch.sources() != null
@@ -161,9 +161,11 @@ public class PersonService {
 
     public PersonDto toDto(Person p) {
         List<PersonDto.SimpleEntity> persons = p.connectedPersons() == null ? List.of() :
-                p.connectedPersons().stream().map(l -> new PersonDto.SimpleEntity(l._id(), l.name())).toList();
+                cs.getPersonsByIds(p.connectedPersons()).stream()
+                  .map(cp -> new PersonDto.SimpleEntity(cp._id(), cp.name())).toList();
         List<PersonDto.SimpleEntity> objects = p.connectedObjects() == null ? List.of() :
-                p.connectedObjects().stream().map(o -> new PersonDto.SimpleEntity(o._id(), o.name())).toList();
+                cs.getBuildingsByIds(p.connectedObjects()).stream()
+                  .map(o -> new PersonDto.SimpleEntity(o._id(), o.name())).toList();
         return new PersonDto(
                 p._id(), p.name(), p.lifeYears(), p.birthPlace(), p.profession(), p.connectionWithBenua(),
                 p.description(), p.interestingFacts(), persons, objects, p.images(), p.sources(),

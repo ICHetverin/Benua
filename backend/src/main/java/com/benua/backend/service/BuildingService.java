@@ -83,8 +83,7 @@ public class BuildingService {
 
         String personId = filters.get("person");
         if (personId != null && !personId.isBlank()) {
-            query.addCriteria(Criteria.where("connected_persons.$id").is(
-                    new org.bson.types.ObjectId(personId)));
+            query.addCriteria(Criteria.where("connected_persons").is(personId));
         }
 
         for (Map.Entry<String, String> entry : filters.entrySet()) {
@@ -100,8 +99,8 @@ public class BuildingService {
     }
 
     public BuildingDto createBuilding(BuildingCreateDto building, String updatedBy) {
-        List<Person> connectedPeople = cs.getPersonsByIds(building.connectedPersons());
-        List<Building> connectedBuildings = cs.getBuildingsByIds(building.connectedObjects());
+        List<String> connectedPeople = building.connectedPersons() != null ? building.connectedPersons() : List.of();
+        List<String> connectedBuildings = building.connectedObjects() != null ? building.connectedObjects() : List.of();
         List<Image> images = cs.saveImages(building.images());
         List<Source> sources = cs.saveSources(building.sources());
 
@@ -135,10 +134,10 @@ public class BuildingService {
     public BuildingDto updateBuilding(String id, BuildingUpdateDto patch, String updatedBy) {
         Building existing = getBuilding(id);
 
-        List<Person> connectedPeople = patch.connectedPersons() != null
-                ? cs.getPersonsByIds(patch.connectedPersons()) : existing.connectedPersons();
-        List<Building> connectedBuildings = patch.connectedObjects() != null
-                ? cs.getBuildingsByIds(patch.connectedObjects()) : existing.connectedObjects();
+        List<String> connectedPeople = patch.connectedPersons() != null
+                ? patch.connectedPersons() : existing.connectedPersons();
+        List<String> connectedBuildings = patch.connectedObjects() != null
+                ? patch.connectedObjects() : existing.connectedObjects();
         List<Image> images = patch.imageIds() != null
                 ? cs.getImagesByIds(patch.imageIds()) : existing.images();
         List<Source> sources = patch.sources() != null
@@ -202,13 +201,11 @@ public class BuildingService {
 
     public BuildingDto toDto(Building b) {
         List<BuildingDto.SimpleEntity> persons = b.connectedPersons() == null ? List.of() :
-                b.connectedPersons().stream()
-                        .map(p -> new BuildingDto.SimpleEntity(p._id(), p.name()))
-                        .toList();
+                cs.getPersonsByIds(b.connectedPersons()).stream()
+                  .map(p -> new BuildingDto.SimpleEntity(p._id(), p.name())).toList();
         List<BuildingDto.SimpleEntity> objects = b.connectedObjects() == null ? List.of() :
-                b.connectedObjects().stream()
-                        .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name()))
-                        .toList();
+                cs.getBuildingsByIds(b.connectedObjects()).stream()
+                  .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name())).toList();
         return new BuildingDto(
                 b._id(), b.name(), b.address(), b.latitude(), b.longitude(),
                 b.architect(), b.yearsBuilt(), b.history(), b.design(), b.connectionWithBenua(),

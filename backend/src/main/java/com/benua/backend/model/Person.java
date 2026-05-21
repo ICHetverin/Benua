@@ -38,8 +38,8 @@ public record Person(
         @Valid List<Description> description,
         @Field("interesting_facts") List<String> interestingFacts,
 
-        @DBRef @Valid @Field("connected_persons") List<Person> connectedPersons,
-        @DBRef @Valid @Field("connected_objects") List<Building> connectedObjects,
+        @Field("connected_persons") List<String> connectedPersons,
+        @Field("connected_objects") List<String> connectedObjects,
         @DBRef @Valid List<Image> images,
         @DBRef @Valid List<Source> sources,
         @Field("sort_order") Integer sortOrder,
