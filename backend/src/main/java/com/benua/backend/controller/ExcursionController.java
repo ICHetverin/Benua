@@ -46,15 +46,15 @@ public class ExcursionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    public ExcursionDto create(@RequestBody @Valid ExcursionCreateDto dto) {
+    public ExcursionDto create(@RequestBody @Valid ExcursionCreateDto dto, Authentication auth) {
         log.info("createExcursion: {}", dto.title());
-        return excursionService.create(dto);
+        return excursionService.create(dto, auth.getName());
     }
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ExcursionDto update(@PathVariable String id, @RequestBody ExcursionUpdateDto dto) {
-        return excursionService.update(id, dto);
+    public ExcursionDto update(@PathVariable String id, @RequestBody ExcursionUpdateDto dto, Authentication auth) {
+        return excursionService.update(id, dto, auth.getName());
     }
 
     @DeleteMapping("/{id}")
@@ -66,8 +66,8 @@ public class ExcursionController {
 
     @PatchMapping("/{id}/publish")
     @PreAuthorize("hasRole('ADMIN')")
-    public ExcursionDto setPublished(@PathVariable String id, @RequestParam boolean value) {
-        return excursionService.setPublished(id, value);
+    public ExcursionDto setPublished(@PathVariable String id, @RequestParam boolean value, Authentication auth) {
+        return excursionService.setPublished(id, value, auth.getName());
     }
 
     @PostMapping("/reorder")

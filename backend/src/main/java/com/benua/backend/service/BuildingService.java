@@ -99,7 +99,7 @@ public class BuildingService {
         return mongoTemplate.find(query, Building.class).stream().map(this::toDto).toList();
     }
 
-    public BuildingDto createBuilding(BuildingCreateDto building) {
+    public BuildingDto createBuilding(BuildingCreateDto building, String updatedBy) {
         List<Person> connectedPeople = cs.getPersonsByIds(building.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(building.connectedObjects());
         List<Image> images = cs.saveImages(building.images());
@@ -125,13 +125,14 @@ public class BuildingService {
                 null,
                 false,
                 Instant.now(),
-                Instant.now()
+                Instant.now(),
+                updatedBy
         );
 
         return toDto(br.save(newBuilding));
     }
 
-    public BuildingDto updateBuilding(String id, BuildingUpdateDto patch) {
+    public BuildingDto updateBuilding(String id, BuildingUpdateDto patch, String updatedBy) {
         Building existing = getBuilding(id);
 
         List<Person> connectedPeople = patch.connectedPersons() != null
@@ -163,7 +164,8 @@ public class BuildingService {
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
                 existing.createdAt(),
-                Instant.now()
+                Instant.now(),
+                updatedBy
         );
 
         return toDto(br.save(updated));
@@ -174,14 +176,14 @@ public class BuildingService {
         br.deleteById(id);
     }
 
-    public BuildingDto setPublished(String id, boolean value) {
+    public BuildingDto setPublished(String id, boolean value, String updatedBy) {
         Building existing = getBuilding(id);
         Building updated = new Building(
                 existing._id(), existing.name(), existing.address(), existing.latitude(), existing.longitude(),
                 existing.architect(), existing.yearsBuilt(), existing.history(), existing.design(),
                 existing.connectionWithBenua(), existing.description(), existing.interestingFacts(),
                 existing.connectedPersons(), existing.connectedObjects(), existing.images(), existing.sources(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now()
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(br.save(updated));
     }

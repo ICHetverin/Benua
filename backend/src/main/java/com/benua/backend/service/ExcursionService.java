@@ -62,7 +62,7 @@ public class ExcursionService {
         return mongoTemplate.find(query, Excursion.class).stream().map(this::toDto).toList();
     }
 
-    public ExcursionDto create(ExcursionCreateDto dto) {
+    public ExcursionDto create(ExcursionCreateDto dto, String updatedBy) {
         List<Building> buildings = cs.getBuildingsByIds(dto.buildings());
         Person guide = cs.getPersonById(dto.guideId());
         Image coverImage = cs.getImageById(dto.coverImageId());
@@ -73,12 +73,12 @@ public class ExcursionService {
                 null, dto.title(), dto.description(), dto.durationMinutes(), dto.mode(),
                 dto.price(), dto.schedule(), dto.waypoints(), buildings, guide, coverImage, images, sources,
                 dto.sortOrder(), dto.isPublished() != null ? dto.isPublished() : false,
-                Instant.now(), Instant.now()
+                Instant.now(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(excursion));
     }
 
-    public ExcursionDto update(String id, ExcursionUpdateDto patch) {
+    public ExcursionDto update(String id, ExcursionUpdateDto patch, String updatedBy) {
         Excursion existing = getExcursion(id);
 
         List<Building> buildings = patch.buildings() != null ? cs.getBuildingsByIds(patch.buildings()) : existing.buildings();
@@ -99,7 +99,7 @@ public class ExcursionService {
                 buildings, guide, coverImage, images, sources,
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
-                existing.createdAt(), Instant.now()
+                existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(updated));
     }
@@ -109,13 +109,13 @@ public class ExcursionService {
         excursionRepository.deleteById(id);
     }
 
-    public ExcursionDto setPublished(String id, boolean value) {
+    public ExcursionDto setPublished(String id, boolean value, String updatedBy) {
         Excursion existing = getExcursion(id);
         Excursion updated = new Excursion(
                 existing._id(), existing.title(), existing.description(), existing.durationMinutes(),
                 existing.mode(), existing.price(), existing.schedule(), existing.waypoints(),
                 existing.buildings(), existing.guide(), existing.coverImage(), existing.images(), existing.sources(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now()
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(updated));
     }

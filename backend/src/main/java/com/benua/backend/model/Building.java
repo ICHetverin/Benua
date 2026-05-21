@@ -51,5 +51,6 @@ public record Building(
         @Field("sort_order") Integer sortOrder,
         @Field("is_published") Boolean isPublished,
         @Field("created_at") Instant createdAt,
-        @Field("updated_at") Instant updatedAt
+        @Field("updated_at") Instant updatedAt,
+        @Field("updated_by") String updatedBy
 ) {}

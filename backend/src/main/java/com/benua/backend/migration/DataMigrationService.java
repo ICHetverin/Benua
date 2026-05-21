@@ -107,7 +107,7 @@ public class DataMigrationService {
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
                         dto.sources() != null ? dto.sources() : List.of(),
-                        null, true, Instant.now(), Instant.now()
+                        null, true, Instant.now(), Instant.now(), null
                 ));
                 log.info("Saved person (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -140,7 +140,7 @@ public class DataMigrationService {
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
                         dto.sources() != null ? dto.sources() : List.of(),
-                        null, true, Instant.now(), Instant.now()
+                        null, true, Instant.now(), Instant.now(), null
                 ));
                 log.info("Saved building (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -169,7 +169,7 @@ public class DataMigrationService {
                         resolveBuildings(dto.connectedObjects()),
                         existing.images(),
                         existing.sources(),
-                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now()
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now(), null
                 ));
                 log.info("Updated person connections: {}", dto.id());
             } catch (Exception e) {
@@ -202,7 +202,7 @@ public class DataMigrationService {
                         resolveBuildings(dto.connectedObjects()),
                         existing.images(),
                         existing.sources(),
-                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now()
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now(), null
                 ));
                 log.info("Updated building connections: {}", dto.id());
             } catch (Exception e) {

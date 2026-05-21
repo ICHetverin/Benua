@@ -84,7 +84,7 @@ public class PersonService {
         return mongoTemplate.find(query, Person.class).stream().map(this::toDto).toList();
     }
 
-    public PersonDto createPerson(PersonCreateDto person) {
+    public PersonDto createPerson(PersonCreateDto person, String updatedBy) {
         List<Person> connectedPeople = cs.getPersonsByIds(person.connectedPersons());
         List<Building> connectedBuildings = cs.getBuildingsByIds(person.connectedObjects());
         List<Image> images = cs.saveImages(person.images());
@@ -94,13 +94,13 @@ public class PersonService {
                 null, person.name(), person.lifeYears(), person.birthPlace(), person.profession(),
                 person.connectionWithBenua(), person.description(), person.interestingFacts(),
                 connectedPeople, connectedBuildings, images, sources,
-                null, false, Instant.now(), Instant.now()
+                null, false, Instant.now(), Instant.now(), updatedBy
         );
 
         return toDto(pr.save(newPerson));
     }
 
-    public PersonDto updatePerson(String id, PersonUpdateDto patch) {
+    public PersonDto updatePerson(String id, PersonUpdateDto patch, String updatedBy) {
         Person existing = getPerson(id);
 
         List<Person> connectedPeople = patch.connectedPersons() != null
@@ -124,7 +124,7 @@ public class PersonService {
                 connectedPeople, connectedBuildings, images, sources,
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
-                existing.createdAt(), Instant.now()
+                existing.createdAt(), Instant.now(), updatedBy
         );
 
         return toDto(pr.save(updated));
@@ -135,14 +135,14 @@ public class PersonService {
         pr.deleteById(id);
     }
 
-    public PersonDto setPublished(String id, boolean value) {
+    public PersonDto setPublished(String id, boolean value, String updatedBy) {
         Person existing = getPerson(id);
         Person updated = new Person(
                 existing._id(), existing.name(), existing.lifeYears(), existing.birthPlace(),
                 existing.profession(), existing.connectionWithBenua(), existing.description(),
                 existing.interestingFacts(), existing.connectedPersons(), existing.connectedObjects(),
                 existing.images(), existing.sources(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now()
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(pr.save(updated));
     }
