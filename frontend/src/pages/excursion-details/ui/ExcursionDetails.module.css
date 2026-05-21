@@ -1,0 +1,30 @@
+/* Loading / error states */
+.stateWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+    gap: 1rem;
+    padding: var(--page-padding);
+}
+
+.stateText {
+    font-family: var(--font-lora);
+    font-size: 0.9rem;
+    color: var(--black);
+    margin: 0;
+}
+
+.backLink {
+    font-family: var(--font-lora);
+    font-size: 0.85rem;
+    color: var(--dark-red);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s;
+}
+
+.backLink:hover {
+    opacity: 0.75;
+}
