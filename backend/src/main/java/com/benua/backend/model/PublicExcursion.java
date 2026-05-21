@@ -1,5 +1,6 @@
 package com.benua.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Document(collection = "public_excursions")
 public record PublicExcursion(
-        @Id String _id,
+        @Id @JsonProperty("_id") String _id,
         String name,
         String description,
         String time,
