@@ -1,0 +1,108 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 10;
+}
+
+.label {
+    font-family: var(--font-lora);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin: 0;
+}
+
+/* ── Dropdown container ── */
+.dropdown {
+    min-width: 320px;
+    max-width: 500px;
+    width: auto;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* When open: add border around the whole panel */
+.dropdownOpen {
+    border: 1.5px solid var(--dark-blue);
+    overflow: visible;
+}
+
+/* ── Header button (selected item) ── */
+.dropdownHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 1.4rem;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-lora);
+    font-size: 0.85rem;
+    text-align: left;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.dropdownHeader:hover {
+    background-color: #002a6e;
+}
+
+/* When dropdown is open, only round the top */
+.dropdownHeaderOpen {
+    border-radius: 6px 6px 0 0;
+}
+
+.chevron {
+    width: 12px;
+    height: 8px;
+    flex-shrink: 0;
+    color: var(--white);
+}
+
+/* ── Dropdown list ── */
+.dropdownList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: var(--beige);
+    border-top: 1px solid rgba(0, 31, 83, 0.15);
+}
+
+.dropdownItem {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1.4rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-lora);
+    font-size: 0.82rem;
+    color: var(--black);
+    text-align: center;
+    transition: background-color 0.15s ease;
+}
+
+.dropdownItem:hover {
+    background-color: var(--darker-beige);
+}
+
+.dropdownList li:last-child .dropdownItem {
+    border-radius: 0 0 6px 6px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .dropdown {
+        min-width: 280px;
+        max-width: 90vw;
+    }
+}
