@@ -1,7 +1,6 @@
 import {
   Form,
   Input,
-  InputNumber,
   Select,
   Button,
   Space,
@@ -14,8 +13,6 @@ import {
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useExcursion, useCreateExcursion, useUpdateExcursion } from 'entities/excursion/queries';
-import { RichTextEditor } from 'features/rich-text/RichTextEditor';
-import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import type { ExcursionCreateDto } from 'entities/excursion/types';
 import { ROUTES } from 'shared/config/routes';
 
@@ -23,20 +20,10 @@ interface Props {
   mode: 'create' | 'edit';
 }
 
-const DAY_OPTIONS = [
-  { value: 'MONDAY', label: 'Пн' },
-  { value: 'TUESDAY', label: 'Вт' },
-  { value: 'WEDNESDAY', label: 'Ср' },
-  { value: 'THURSDAY', label: 'Чт' },
-  { value: 'FRIDAY', label: 'Пт' },
-  { value: 'SATURDAY', label: 'Сб' },
-  { value: 'SUNDAY', label: 'Вс' },
-];
-
-const MODE_OPTIONS = [
-  { value: 'PEDESTRIAN', label: 'Пешая' },
-  { value: 'BUS', label: 'Автобусная' },
-  { value: 'MIXED', label: 'Смешанная' },
+const PASSING_METHOD_OPTIONS = [
+  { value: 'on_foot', label: 'Пешая' },
+  { value: 'by_bus', label: 'Автобусная' },
+  { value: 'mixed', label: 'Смешанная' },
 ];
 
 export function ExcursionEditPage({ mode }: Props) {
@@ -55,33 +42,37 @@ export function ExcursionEditPage({ mode }: Props) {
   const initialValues =
     mode === 'edit' && existing
       ? {
-          title: existing.title,
-          mode: existing.mode,
-          duration_minutes: existing.duration_minutes,
-          price: existing.price,
+          name: existing.name,
           description: existing.description,
-          schedule: existing.schedule,
-          waypoints: existing.waypoints,
+          time: existing.time,
+          guide: existing.guide,
+          passing_methods: existing.passing_methods ?? [],
+          key_points: existing.key_points ?? [],
+          text_content: existing.text_content ?? [],
+          cover_photo: existing.cover_photo,
+          route_photo: existing.route_photo,
+          sources: existing.sources ?? [],
           is_published: existing.is_published ?? false,
-          buildings: existing.buildings?.map((b) => b._id),
-          guide_id: existing.guide?._id,
         }
-      : { mode: 'PEDESTRIAN', is_published: false };
+      : { passing_methods: [], key_points: [], text_content: [], sources: [], is_published: false };
 
   const onFinish = async (values: Record<string, unknown>) => {
     const dto: ExcursionCreateDto = {
-      title: values.title as string,
+      name: values.name as string,
       description: values.description as string | undefined,
-      duration_minutes: values.duration_minutes as number | undefined,
-      mode: values.mode as ExcursionCreateDto['mode'],
-      price: values.price as string | undefined,
-      schedule: values.schedule as ExcursionCreateDto['schedule'],
-      waypoints: values.waypoints as ExcursionCreateDto['waypoints'],
-      buildings: values.buildings as string[] | undefined,
-      guide_id: values.guide_id as string | undefined,
+      time: values.time as string | undefined,
+      guide: values.guide as string | undefined,
+      passing_methods: values.passing_methods as string[] | undefined,
+      key_points: (values.key_points as string[] | undefined)?.filter(Boolean),
+      text_content: (values.text_content as { topic?: string; content?: string }[] | undefined)
+        ?.filter((s) => s?.topic || s?.content)
+        .map((s) => ({ topic: s.topic ?? '', content: s.content ?? '' })),
+      cover_photo: values.cover_photo as string | undefined,
+      route_photo: values.route_photo as string | undefined,
+      sources: (values.sources as { source?: string; url?: string }[] | undefined)
+        ?.filter((s) => s?.source || s?.url)
+        .map((s) => ({ source: s.source ?? '', url: s.url ?? '' })),
       is_published: values.is_published as boolean,
-      image_ids: (existing?.images ?? []).map((img) => img._id),
-      cover_image_id: existing?.cover_image?._id,
     };
     try {
       if (mode === 'create') {
@@ -109,60 +100,35 @@ export function ExcursionEditPage({ mode }: Props) {
         onFinish={onFinish}
         style={{ maxWidth: 800 }}
       >
-        <Form.Item name="title" label="Название" rules={[{ required: true }]}>
+        <Form.Item name="name" label="Название" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="mode" label="Режим" rules={[{ required: true }]}>
-          <Select options={MODE_OPTIONS} />
-        </Form.Item>
-        <Space>
-          <Form.Item name="duration_minutes" label="Длительность (мин)">
-            <InputNumber style={{ width: 160 }} />
+
+        <Space style={{ width: '100%' }} align="start">
+          <Form.Item name="time" label="Продолжительность" style={{ width: 200 }}>
+            <Input placeholder="2,5 часа" />
           </Form.Item>
-          <Form.Item name="price" label="Стоимость">
-            <Input style={{ width: 200 }} placeholder="бесплатно / от 500 ₽" />
+          <Form.Item name="passing_methods" label="Способ проведения" style={{ width: 280 }}>
+            <Select mode="multiple" options={PASSING_METHOD_OPTIONS} placeholder="Выбрать..." />
           </Form.Item>
         </Space>
-        <Form.Item name="description" label="Описание">
-          <RichTextEditor />
+
+        <Form.Item name="guide" label="Гид">
+          <Input placeholder="Имя гида" />
         </Form.Item>
 
-        <Divider>Расписание</Divider>
-        <Form.List name="schedule">
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name }) => (
-                <Space key={key} align="baseline">
-                  <Form.Item name={[name, 'day_of_week']} rules={[{ required: true }]}>
-                    <Select options={DAY_OPTIONS} style={{ width: 100 }} placeholder="День" />
-                  </Form.Item>
-                  <Form.Item name={[name, 'time']} rules={[{ required: true }]}>
-                    <Input placeholder="14:00" style={{ width: 100 }} />
-                  </Form.Item>
-                  <MinusCircleOutlined onClick={() => remove(name)} />
-                </Space>
-              ))}
-              <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
-                Добавить сеанс
-              </Button>
-            </>
-          )}
-        </Form.List>
+        <Form.Item name="description" label="Описание">
+          <Input.TextArea rows={5} />
+        </Form.Item>
 
-        <Divider>Маршрут (waypoints)</Divider>
-        <Form.List name="waypoints">
+        <Divider>Ключевые точки</Divider>
+        <Form.List name="key_points">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name }) => (
-                <Space key={key} align="baseline">
-                  <Form.Item name={[name, 'order']} rules={[{ required: true }]}>
-                    <InputNumber placeholder="№" style={{ width: 60 }} />
-                  </Form.Item>
-                  <Form.Item name={[name, 'lat']} rules={[{ required: true }]}>
-                    <InputNumber placeholder="Широта" style={{ width: 130 }} step={0.0001} />
-                  </Form.Item>
-                  <Form.Item name={[name, 'lng']} rules={[{ required: true }]}>
-                    <InputNumber placeholder="Долгота" style={{ width: 130 }} step={0.0001} />
+                <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 4 }}>
+                  <Form.Item name={name} style={{ flex: 1, marginBottom: 0, width: 580 }}>
+                    <Input placeholder="Точка маршрута" />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />
                 </Space>
@@ -174,16 +140,69 @@ export function ExcursionEditPage({ mode }: Props) {
           )}
         </Form.List>
 
+        <Divider>Текстовый контент</Divider>
+        <Form.List name="text_content">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name }) => (
+                <div key={key} style={{ marginBottom: 12, padding: '12px 16px', background: '#fafafa', borderRadius: 6 }}>
+                  <Space align="start" style={{ width: '100%' }}>
+                    <div style={{ flex: 1 }}>
+                      <Form.Item name={[name, 'topic']} style={{ marginBottom: 8 }}>
+                        <Input placeholder="Заголовок раздела" />
+                      </Form.Item>
+                      <Form.Item name={[name, 'content']} style={{ marginBottom: 0 }}>
+                        <Input.TextArea rows={3} placeholder="Текст раздела" />
+                      </Form.Item>
+                    </div>
+                    <MinusCircleOutlined onClick={() => remove(name)} style={{ marginTop: 8 }} />
+                  </Space>
+                </div>
+              ))}
+              <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
+                Добавить раздел
+              </Button>
+            </>
+          )}
+        </Form.List>
+
+        <Divider>Фото</Divider>
+        <Space style={{ width: '100%' }} align="start">
+          <Form.Item name="cover_photo" label="Фото обложки" style={{ width: 360 }}>
+            <Input placeholder="benua_garden.jpg" />
+          </Form.Item>
+          <Form.Item name="route_photo" label="Фото маршрута" style={{ width: 360 }}>
+            <Input placeholder="route_map.jpg" />
+          </Form.Item>
+        </Space>
+
+        <Divider>Источники</Divider>
+        <Form.List name="sources">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name }) => (
+                <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 8 }}>
+                  <Form.Item name={[name, 'source']} style={{ marginBottom: 0, width: 340 }}>
+                    <Input placeholder="Название источника" />
+                  </Form.Item>
+                  <Form.Item name={[name, 'url']} style={{ marginBottom: 0, width: 240 }}>
+                    <Input placeholder="https://..." />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
+                Добавить источник
+              </Button>
+            </>
+          )}
+        </Form.List>
+
         <Divider />
-        <Form.Item name="buildings" label="Здания маршрута">
-          <AjaxSelect endpoint="/objects" mode="multiple" placeholder="Найти здание..." />
-        </Form.Item>
-        <Form.Item name="guide_id" label="Гид">
-          <AjaxSelect endpoint="/persons" placeholder="Найти персону..." />
-        </Form.Item>
         <Form.Item name="is_published" label="Опубликовано" valuePropName="checked">
           <Switch />
         </Form.Item>
+
         <Space>
           <Button type="primary" htmlType="submit" loading={isPending}>
             Сохранить

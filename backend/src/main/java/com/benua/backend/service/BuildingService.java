@@ -6,7 +6,6 @@ import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
 import com.benua.backend.model.Source;
 import com.benua.backend.repository.BuildingRepository;
-import com.benua.backend.repository.ExcursionRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,14 +27,11 @@ import java.util.regex.Pattern;
 public class BuildingService {
     private final BuildingRepository br;
     private final ConnectionService cs;
-    private final ExcursionRepository excursionRepository;
     private final MongoTemplate mongoTemplate;
 
-    public BuildingService(BuildingRepository br, ConnectionService cs,
-                           ExcursionRepository excursionRepository, MongoTemplate mongoTemplate) {
+    public BuildingService(BuildingRepository br, ConnectionService cs, MongoTemplate mongoTemplate) {
         this.br = br;
         this.cs = cs;
-        this.excursionRepository = excursionRepository;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -69,16 +65,6 @@ public class BuildingService {
         String isPublishedParam = filters.get("is_published");
         if (!onlyPublished && isPublishedParam != null && !isPublishedParam.isBlank()) {
             query.addCriteria(Criteria.where("is_published").is(Boolean.parseBoolean(isPublishedParam)));
-        }
-
-        String excursionId = filters.get("excursion");
-        if (excursionId != null && !excursionId.isBlank()) {
-            excursionRepository.findById(excursionId).ifPresent(excursion -> {
-                if (excursion.buildings() != null && !excursion.buildings().isEmpty()) {
-                    List<String> buildingIds = excursion.buildings().stream().map(Building::_id).toList();
-                    query.addCriteria(Criteria.where("_id").in(buildingIds));
-                }
-            });
         }
 
         String personId = filters.get("person");

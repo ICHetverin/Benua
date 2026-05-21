@@ -37,7 +37,7 @@ public class ActivityService {
                 items.add(new ActivityDto(b._id(), b.name(), "building", b.updatedAt(), b.updatedBy())));
 
         mongoTemplate.find(q, Excursion.class).forEach(e ->
-                items.add(new ActivityDto(e._id(), e.title(), "excursion", e.updatedAt(), e.updatedBy())));
+                items.add(new ActivityDto(e._id(), e.name(), "excursion", e.updatedAt(), e.updatedBy())));
 
         return items.stream()
                 .filter(a -> a.updatedAt() != null)

@@ -3,7 +3,7 @@ package com.benua.backend.service;
 import com.benua.backend.dto.ExcursionCreateDto;
 import com.benua.backend.dto.ExcursionDto;
 import com.benua.backend.dto.ExcursionUpdateDto;
-import com.benua.backend.model.*;
+import com.benua.backend.model.Excursion;
 import com.benua.backend.repository.ExcursionRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,13 +24,10 @@ import java.util.regex.Pattern;
 public class ExcursionService {
 
     private final ExcursionRepository excursionRepository;
-    private final ConnectionService cs;
     private final MongoTemplate mongoTemplate;
 
-    public ExcursionService(ExcursionRepository excursionRepository, ConnectionService cs,
-                            MongoTemplate mongoTemplate) {
+    public ExcursionService(ExcursionRepository excursionRepository, MongoTemplate mongoTemplate) {
         this.excursionRepository = excursionRepository;
-        this.cs = cs;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -50,7 +47,7 @@ public class ExcursionService {
 
         String search = filters.get("search");
         if (search != null && !search.isBlank()) {
-            query.addCriteria(Criteria.where("title").regex(Pattern.quote(search), "i"));
+            query.addCriteria(Criteria.where("name").regex(Pattern.quote(search), "i"));
         }
 
         String isPublishedParam = filters.get("is_published");
@@ -63,42 +60,32 @@ public class ExcursionService {
     }
 
     public ExcursionDto create(ExcursionCreateDto dto, String updatedBy) {
-        List<Building> buildings = cs.getBuildingsByIds(dto.buildings());
-        Person guide = cs.getPersonById(dto.guideId());
-        Image coverImage = cs.getImageById(dto.coverImageId());
-        List<Image> images = dto.imageIds() != null ? cs.getImagesByIds(dto.imageIds()) : List.of();
-        List<Source> sources = cs.saveSources(dto.sources());
-
         Excursion excursion = new Excursion(
-                null, dto.title(), dto.description(), dto.durationMinutes(), dto.mode(),
-                dto.price(), dto.schedule(), dto.waypoints(), buildings, guide, coverImage, images, sources,
-                dto.sortOrder(), dto.isPublished() != null ? dto.isPublished() : false,
-                Instant.now(), Instant.now(), updatedBy
+                null, dto.name(), dto.description(), dto.time(), dto.guide(),
+                dto.passingMethods(), dto.keyPoints(), dto.textContent(),
+                dto.coverPhoto(), dto.routePhoto(), dto.sources(),
+                dto.isPublished() != null ? dto.isPublished() : false,
+                dto.sortOrder(), Instant.now(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(excursion));
     }
 
     public ExcursionDto update(String id, ExcursionUpdateDto patch, String updatedBy) {
         Excursion existing = getExcursion(id);
-
-        List<Building> buildings = patch.buildings() != null ? cs.getBuildingsByIds(patch.buildings()) : existing.buildings();
-        Person guide = patch.guideId() != null ? cs.getPersonById(patch.guideId()) : existing.guide();
-        Image coverImage = patch.coverImageId() != null ? cs.getImageById(patch.coverImageId()) : existing.coverImage();
-        List<Image> images = patch.imageIds() != null ? cs.getImagesByIds(patch.imageIds()) : existing.images();
-        List<Source> sources = patch.sources() != null ? cs.saveSources(patch.sources()) : existing.sources();
-
         Excursion updated = new Excursion(
                 existing._id(),
-                patch.title() != null ? patch.title() : existing.title(),
+                patch.name() != null ? patch.name() : existing.name(),
                 patch.description() != null ? patch.description() : existing.description(),
-                patch.durationMinutes() != null ? patch.durationMinutes() : existing.durationMinutes(),
-                patch.mode() != null ? patch.mode() : existing.mode(),
-                patch.price() != null ? patch.price() : existing.price(),
-                patch.schedule() != null ? patch.schedule() : existing.schedule(),
-                patch.waypoints() != null ? patch.waypoints() : existing.waypoints(),
-                buildings, guide, coverImage, images, sources,
-                patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
+                patch.time() != null ? patch.time() : existing.time(),
+                patch.guide() != null ? patch.guide() : existing.guide(),
+                patch.passingMethods() != null ? patch.passingMethods() : existing.passingMethods(),
+                patch.keyPoints() != null ? patch.keyPoints() : existing.keyPoints(),
+                patch.textContent() != null ? patch.textContent() : existing.textContent(),
+                patch.coverPhoto() != null ? patch.coverPhoto() : existing.coverPhoto(),
+                patch.routePhoto() != null ? patch.routePhoto() : existing.routePhoto(),
+                patch.sources() != null ? patch.sources() : existing.sources(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
+                patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(updated));
@@ -112,10 +99,10 @@ public class ExcursionService {
     public ExcursionDto setPublished(String id, boolean value, String updatedBy) {
         Excursion existing = getExcursion(id);
         Excursion updated = new Excursion(
-                existing._id(), existing.title(), existing.description(), existing.durationMinutes(),
-                existing.mode(), existing.price(), existing.schedule(), existing.waypoints(),
-                existing.buildings(), existing.guide(), existing.coverImage(), existing.images(), existing.sources(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
+                existing._id(), existing.name(), existing.description(), existing.time(),
+                existing.guide(), existing.passingMethods(), existing.keyPoints(), existing.textContent(),
+                existing.coverPhoto(), existing.routePhoto(), existing.sources(),
+                value, existing.sortOrder(), existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(updated));
     }
@@ -133,14 +120,11 @@ public class ExcursionService {
     }
 
     public ExcursionDto toDto(Excursion e) {
-        List<ExcursionDto.SimpleEntity> buildings = e.buildings() == null ? List.of() :
-                e.buildings().stream().map(b -> new ExcursionDto.SimpleEntity(b._id(), b.name())).toList();
-        ExcursionDto.SimpleEntity guide = e.guide() == null ? null :
-                new ExcursionDto.SimpleEntity(e.guide()._id(), e.guide().name());
         return new ExcursionDto(
-                e._id(), e.title(), e.description(), e.durationMinutes(), e.mode() != null ? e.mode().name() : null,
-                e.price(), e.schedule(), e.waypoints(), buildings, guide, e.coverImage(), e.images(), e.sources(),
-                e.sortOrder(), e.isPublished(), e.createdAt(), e.updatedAt()
+                e._id(), e.name(), e.description(), e.time(), e.guide(),
+                e.passingMethods(), e.keyPoints(), e.textContent(),
+                e.coverPhoto(), e.routePhoto(), e.sources(),
+                e.isPublished(), e.sortOrder(), e.createdAt(), e.updatedAt()
         );
     }
 }
