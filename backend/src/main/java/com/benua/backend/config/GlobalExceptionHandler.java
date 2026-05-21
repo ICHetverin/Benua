@@ -45,6 +45,11 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, "Файл слишком большой (максимум 10 МБ)");
     }
 
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ProblemDetail unavailable(UnsupportedOperationException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail other(Exception e) {
         log.error("Unhandled exception", e);

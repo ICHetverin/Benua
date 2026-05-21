@@ -15,7 +15,6 @@ import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useExcursion, useCreateExcursion, useUpdateExcursion } from 'entities/excursion/queries';
 import { RichTextEditor } from 'features/rich-text/RichTextEditor';
-import { ImageUploader } from 'features/image-uploader/ImageUploader';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import type { ExcursionCreateDto } from 'entities/excursion/types';
 import { ROUTES } from 'shared/config/routes';
@@ -64,16 +63,12 @@ export function ExcursionEditPage({ mode }: Props) {
           schedule: existing.schedule,
           waypoints: existing.waypoints,
           is_published: existing.is_published ?? false,
-          _images: existing.images ?? [],
-          _cover: existing.cover_image ? [existing.cover_image] : [],
           buildings: existing.buildings?.map((b) => b._id),
           guide_id: existing.guide?._id,
         }
       : { mode: 'PEDESTRIAN', is_published: false };
 
   const onFinish = async (values: Record<string, unknown>) => {
-    const _images = (values._images as { _id: string }[] | undefined) ?? [];
-    const _cover = (values._cover as { _id: string }[] | undefined) ?? [];
     const dto: ExcursionCreateDto = {
       title: values.title as string,
       description: values.description as string | undefined,
@@ -85,8 +80,8 @@ export function ExcursionEditPage({ mode }: Props) {
       buildings: values.buildings as string[] | undefined,
       guide_id: values.guide_id as string | undefined,
       is_published: values.is_published as boolean,
-      image_ids: _images.map((img) => img._id),
-      cover_image_id: _cover[0]?._id,
+      image_ids: (existing?.images ?? []).map((img) => img._id),
+      cover_image_id: existing?.cover_image?._id,
     };
     try {
       if (mode === 'create') {
@@ -188,12 +183,6 @@ export function ExcursionEditPage({ mode }: Props) {
         </Form.Item>
         <Form.Item name="is_published" label="Опубликовано" valuePropName="checked">
           <Switch />
-        </Form.Item>
-        <Form.Item name="_cover" label="Обложка">
-          <ImageUploader maxCount={1} />
-        </Form.Item>
-        <Form.Item name="_images" label="Фотографии">
-          <ImageUploader />
         </Form.Item>
         <Space>
           <Button type="primary" htmlType="submit" loading={isPending}>
