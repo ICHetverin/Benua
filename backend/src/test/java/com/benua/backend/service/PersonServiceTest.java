@@ -210,7 +210,7 @@ class PersonServiceTest {
         ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
         when(mongoTemplate.find(any(Query.class), eq(Person.class))).thenReturn(List.of());
 
-        personService.getPersonsDto(Map.of(), 0, 10, true);
+        List<PersonDto> result = personService.getPersonsDto(Map.of(), 0, 10);
 
         verify(mongoTemplate).find(queryCaptor.capture(), eq(Person.class));
         Document queryObject = queryCaptor.getValue().getQueryObject();
