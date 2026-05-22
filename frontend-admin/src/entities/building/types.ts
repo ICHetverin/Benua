@@ -17,6 +17,8 @@ export interface BuildingDto {
   connected_persons?: SimpleEntity[];
   connected_objects?: SimpleEntity[];
   images?: ImageDto[];
+  building_type?: string;
+  building_subtype?: string;
   is_published?: boolean;
   sort_order?: number;
   created_at?: string;
@@ -35,6 +37,8 @@ export interface BuildingCreateDto {
   connection_with_benua?: string;
   description?: Description[];
   interesting_facts?: string[];
+  building_type?: string;
+  building_subtype?: string;
   is_published?: boolean;
   connected_persons?: string[];
   connected_objects?: string[];
@@ -53,6 +57,8 @@ export interface BuildingUpdateDto {
   connection_with_benua?: string;
   description?: Description[];
   interesting_facts?: string[];
+  building_type?: string;
+  building_subtype?: string;
   connected_persons?: string[];
   connected_objects?: string[];
   image_ids?: string[];

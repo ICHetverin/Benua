@@ -1,4 +1,4 @@
-import { Form, Input, Button, Space, Typography, message, Spin, Switch, Divider } from 'antd';
+import { Form, Input, Button, Space, Typography, message, Spin, Switch, Divider, Select } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBuilding, useCreateBuilding, useUpdateBuilding } from 'entities/building/queries';
@@ -6,6 +6,68 @@ import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import { RichTextEditor } from 'features/rich-text/RichTextEditor';
 import type { BuildingCreateDto, BuildingUpdateDto } from 'entities/building/types';
 import { ROUTES } from 'shared/config/routes';
+
+const BUILDING_CATEGORIES = [
+  {
+    value: 'administrative',
+    label: 'Общественные и административные здания',
+    subcategories: [
+      { value: 'governmental', label: 'Государственные учреждения' },
+      { value: 'banks', label: 'Банки и страховые общества' },
+      { value: 'organizations', label: 'Общественные организации' },
+      { value: 'commercial', label: 'Коммерческие объекты' },
+      { value: 'medical', label: 'Медицинские учреждения' },
+    ],
+  },
+  {
+    value: 'cultural',
+    label: 'Культурные и исторические объекты',
+    subcategories: [
+      { value: 'museums', label: 'Музеи и галереи' },
+      { value: 'theaters', label: 'Театры и концертные залы' },
+      { value: 'monuments', label: 'Памятники и мемориалы' },
+    ],
+  },
+  {
+    value: 'religious',
+    label: 'Религиозные сооружения',
+    subcategories: [
+      { value: 'churches', label: 'Церкви и соборы' },
+      { value: 'chapels', label: 'Часовни' },
+    ],
+  },
+  {
+    value: 'residential',
+    label: 'Жилые и доходные дома',
+    subcategories: [
+      { value: 'mansions', label: 'Особняки и усадьбы' },
+      { value: 'apartments', label: 'Доходные дома' },
+    ],
+  },
+  {
+    value: 'educational',
+    label: 'Учебные заведения',
+    subcategories: [
+      { value: 'universities', label: 'Университеты и институты' },
+      { value: 'schools', label: 'Школы и гимназии' },
+    ],
+  },
+  {
+    value: 'industrial',
+    label: 'Промышленные и транспортные объекты',
+    subcategories: [
+      { value: 'factories', label: 'Заводы и фабрики' },
+      { value: 'railway', label: 'Железнодорожные объекты' },
+    ],
+  },
+  {
+    value: 'dachas',
+    label: 'Дачи (загородные объекты)',
+    subcategories: [
+      { value: 'dachas_main', label: 'Загородные резиденции' },
+    ],
+  },
+];
 
 interface Props {
   mode: 'create' | 'edit';
@@ -15,6 +77,7 @@ export function BuildingEditPage({ mode }: Props) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const selectedType = Form.useWatch('building_type', form) as string | undefined;
 
   const { data: existing, isLoading } = useBuilding(id ?? '');
   const createMutation = useCreateBuilding();
@@ -36,6 +99,8 @@ export function BuildingEditPage({ mode }: Props) {
           connection_with_benua: existing.connection_with_benua,
           description: existing.description ?? [],
           interesting_facts: existing.interesting_facts ?? [],
+          building_type: existing.building_type,
+          building_subtype: existing.building_subtype,
           is_published: existing.is_published ?? false,
           connected_persons: existing.connected_persons?.map((p) => p._id) ?? [],
           connected_objects: existing.connected_objects?.map((o) => o._id) ?? [],
@@ -55,6 +120,8 @@ export function BuildingEditPage({ mode }: Props) {
           connection_with_benua: values.connection_with_benua as string | undefined,
           description: values.description as BuildingCreateDto['description'],
           interesting_facts: values.interesting_facts as string[] | undefined,
+          building_type: values.building_type as string | undefined,
+          building_subtype: values.building_subtype as string | undefined,
           is_published: values.is_published as boolean,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
@@ -72,6 +139,8 @@ export function BuildingEditPage({ mode }: Props) {
           connection_with_benua: values.connection_with_benua as string | undefined,
           description: values.description as BuildingUpdateDto['description'],
           interesting_facts: values.interesting_facts as string[] | undefined,
+          building_type: values.building_type as string | undefined,
+          building_subtype: values.building_subtype as string | undefined,
           is_published: values.is_published as boolean,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
@@ -165,6 +234,28 @@ export function BuildingEditPage({ mode }: Props) {
             </>
           )}
         </Form.List>
+
+        <Divider>Категория здания</Divider>
+        <Form.Item name="building_type" label="Тип здания">
+          <Select
+            allowClear
+            placeholder="Выберите тип..."
+            options={BUILDING_CATEGORIES.map((c) => ({ value: c.value, label: c.label }))}
+            onChange={() => form.setFieldValue('building_subtype', undefined)}
+          />
+        </Form.Item>
+        <Form.Item name="building_subtype" label="Подтип здания">
+          <Select
+            allowClear
+            placeholder="Выберите подтип..."
+            disabled={!selectedType}
+            options={
+              (BUILDING_CATEGORIES.find((c) => c.value === selectedType)?.subcategories ?? []).map(
+                (s) => ({ value: s.value, label: s.label })
+              )
+            }
+          />
+        </Form.Item>
 
         <Divider />
         <Form.Item name="is_published" label="Опубликовано" valuePropName="checked">

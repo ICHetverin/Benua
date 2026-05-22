@@ -6,8 +6,8 @@ export function ExcursionCard({ excursion }) {
   const navigate = useNavigate();
 
   const labels = [
-    excursion.mode ? PASSING_METHOD_LABELS[excursion.mode] ?? excursion.mode : null,
-    excursion.durationMinutes ? `${excursion.durationMinutes} мин` : null,
+    ...(excursion.passing_methods ?? []).map((m) => PASSING_METHOD_LABELS[m] ?? m),
+    excursion.time ?? null,
   ].filter(Boolean);
 
   return (
@@ -16,7 +16,7 @@ export function ExcursionCard({ excursion }) {
         <div className={styles.testphoto} />
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{excursion.title?.toUpperCase()}</h3>
+        <h3 className={styles.title}>{excursion.name?.toUpperCase()}</h3>
 
         <div className={styles.description}>
           {labels.map((item, index) => (

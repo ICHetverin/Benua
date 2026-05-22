@@ -107,6 +107,8 @@ public class BuildingService {
                 connectedBuildings,
                 images,
                 sources,
+                building.buildingType(),
+                building.buildingSubtype(),
                 null,
                 false,
                 Instant.now(),
@@ -146,6 +148,8 @@ public class BuildingService {
                 connectedBuildings,
                 images,
                 sources,
+                patch.buildingType() != null ? patch.buildingType() : existing.buildingType(),
+                patch.buildingSubtype() != null ? patch.buildingSubtype() : existing.buildingSubtype(),
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
                 existing.createdAt(),
@@ -168,6 +172,7 @@ public class BuildingService {
                 existing.architect(), existing.yearsBuilt(), existing.history(), existing.design(),
                 existing.connectionWithBenua(), existing.description(), existing.interestingFacts(),
                 existing.connectedPersons(), existing.connectedObjects(), existing.images(), existing.sources(),
+                existing.buildingType(), existing.buildingSubtype(),
                 existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(br.save(updated));
@@ -196,6 +201,7 @@ public class BuildingService {
                 b._id(), b.name(), b.address(), b.latitude(), b.longitude(),
                 b.architect(), b.yearsBuilt(), b.history(), b.design(), b.connectionWithBenua(),
                 b.description(), b.interestingFacts(), persons, objects, b.images(), b.sources(),
+                b.buildingType(), b.buildingSubtype(),
                 b.sortOrder(), b.isPublished(), b.createdAt(), b.updatedAt()
         );
     }

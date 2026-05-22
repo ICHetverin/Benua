@@ -48,6 +48,8 @@ public record Building(
         @Field("connected_objects") List<String> connectedObjects,
         @DBRef @Valid List<Image> images,
         @DBRef @Valid List<Source> sources,
+        @Field("building_type") String buildingType,
+        @Field("building_subtype") String buildingSubtype,
         @Field("sort_order") Integer sortOrder,
         @Field("is_published") Boolean isPublished,
         @Field("created_at") Instant createdAt,

@@ -21,6 +21,8 @@ public record BuildingUpdateDto(
         @JsonProperty("connected_objects") List<String> connectedObjects,
         @JsonProperty("image_ids") List<String> imageIds,
         @JsonProperty("sources") List<SourceCreateDto> sources,
+        @JsonProperty("building_type") String buildingType,
+        @JsonProperty("building_subtype") String buildingSubtype,
         @JsonProperty("sort_order") Integer sortOrder,
         @JsonProperty("is_published") Boolean isPublished
 ) {}

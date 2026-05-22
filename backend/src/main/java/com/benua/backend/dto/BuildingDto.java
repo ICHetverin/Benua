@@ -31,6 +31,8 @@ public record BuildingDto(
         List<SimpleEntity> connectedObjects,
         List<Image> images,
         List<Source> sources,
+        String buildingType,
+        String buildingSubtype,
         Integer sortOrder,
         Boolean isPublished,
         Instant createdAt,
