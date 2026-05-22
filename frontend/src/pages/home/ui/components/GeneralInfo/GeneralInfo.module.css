@@ -26,6 +26,20 @@
     font-weight: 400;
 }
 
+.aboutLink {
+    font-family: var(--font-lora);
+    font-size: 0.85rem;
+    color: var(--black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
+    margin-top: 0.25rem;
+}
+
+.aboutLink:hover {
+    color: var(--dark-red);
+}
+
 @media (max-width: 768px) {
     .generalInfo {
         padding: 1.5rem 1.5rem;
