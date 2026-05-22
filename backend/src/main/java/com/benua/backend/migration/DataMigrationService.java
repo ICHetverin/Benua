@@ -140,7 +140,7 @@ public class DataMigrationService {
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
                         dto.sources() != null ? dto.sources() : List.of(),
-                        null, true, Instant.now(), Instant.now(), null
+                        null, null, null, true, Instant.now(), Instant.now(), null
                 ));
                 log.info("Saved building (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -202,6 +202,7 @@ public class DataMigrationService {
                         dto.connectedObjects() != null ? dto.connectedObjects() : List.of(),
                         existing.images(),
                         existing.sources(),
+                        existing.buildingType(), existing.buildingSubtype(),
                         existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now(), null
                 ));
                 log.info("Updated building connections: {}", dto.id());
