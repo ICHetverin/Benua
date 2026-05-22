@@ -1,31 +1,25 @@
 package com.benua.backend.dto;
 
 import com.benua.backend.model.Description;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-/**
- * DTO для create Building
- * Сущность, принимаемая при Post
- * Создана для избегания циклов в JSON
- * связанные личности и объекты передаются как id
- * источники и изображения передаются как inline-данные и сохраняются сервисом
- */
 public record BuildingCreateDto(
-        String _id,
-        String name,
-        String address,
-        Float latitude,
-        Float longitude,
-        String architect,
-        String yearsBuilt,
-        String history,
-        String design,
-        String connectionWithBenua,
-        List<Description> description,
-        List<String> interestingFacts,
-        List<String> connectedPersons,
-        List<String> connectedObjects,
-        List<SourceCreateDto> sources,
-        List<ImageCreateDto> images
+        @JsonProperty("_id") String _id,
+        @JsonProperty("name") String name,
+        @JsonProperty("address") String address,
+        @JsonProperty("latitude") Float latitude,
+        @JsonProperty("longitude") Float longitude,
+        @JsonProperty("architect") String architect,
+        @JsonProperty("years_built") String yearsBuilt,
+        @JsonProperty("history") String history,
+        @JsonProperty("design") String design,
+        @JsonProperty("connection_with_benua") String connectionWithBenua,
+        @JsonProperty("description") List<Description> description,
+        @JsonProperty("interesting_facts") List<String> interestingFacts,
+        @JsonProperty("connected_persons") List<String> connectedPersons,
+        @JsonProperty("connected_objects") List<String> connectedObjects,
+        @JsonProperty("sources") List<SourceCreateDto> sources,
+        @JsonProperty("images") List<ImageCreateDto> images
 ) {}

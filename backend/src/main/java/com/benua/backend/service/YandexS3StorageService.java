@@ -3,6 +3,7 @@ package com.benua.backend.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@ConditionalOnProperty(name = "app.s3.enabled", havingValue = "true")
 public class YandexS3StorageService implements StorageService {
 
     private static final Logger log = LoggerFactory.getLogger(YandexS3StorageService.class);

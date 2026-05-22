@@ -1,41 +1,27 @@
-export const excursions = [
-    {
-      id: 1,
-      title: 'Современное звучание фамилии Бенуа в городе',
-      label: [ '2 ч 30 минут', 'Пешком' ],
-    },
-    {
-      id: 2,
-      title: 'ПРОГУЛКА ПО ЦЕНТРУ С ЛЕОНТИЕМ БЕНУА',
-      label: [ '3 часа', 'Пешком', 'На велосипеде'],
-    },
-    {
-      id: 3,
-      title: 'По следам Бенуа',
-      label: [ '3 ч 30 минут', 'Пешком' ],
-    },
-    {
-      id: 4,
-      title: 'По следам Бенуа',
-      label: [ '2 ч 10 минут', 'Пешком', 'На велосипеде'],
-    },
-    {
-      id: 5,
-      title: 'По следам Бенуа',
-      label: [ '2.5 часа', 'Пешком' ],
-    },
-    {
-      id: 6,
-      title: 'По следам Бенуа',
-      label: [ '2.5 часа', 'Пешком', 'На велосипеде'],
-    },
-    {
-      id: 7,
-      title: 'Test',
-      label: [ 'test', 'test' ]
-    }
-  ];
+import { useQuery } from '@tanstack/react-query';
+import { getPublicExcursions, getPublicExcursionById } from 'shared/api/benuaApi';
 
-  export const getExcursions = () => excursions;
+export const excursionKeys = {
+  all: ['public-excursions'],
+  detail: (id) => ['public-excursions', id],
+};
 
-  export const getExcursionById = (id) => excursions.find(exc => exc.id === id);
+export const useExcursions = () =>
+  useQuery({
+    queryKey: excursionKeys.all,
+    queryFn: getPublicExcursions,
+  });
+
+export const useExcursionById = (id) =>
+  useQuery({
+    queryKey: excursionKeys.detail(id),
+    queryFn: () => getPublicExcursionById(id),
+    enabled: !!id,
+  });
+
+export const PASSING_METHOD_LABELS = {
+  on_foot: 'Пешком',
+  by_bike: 'На велосипеде',
+  by_bus: 'На автобусе',
+  by_car: 'На автомобиле',
+};

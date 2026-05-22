@@ -1,5 +1,7 @@
 package com.benua.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
@@ -14,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document(collection = "sources")
 public record Source (
-    @Id String _id,
+    @Id @JsonProperty("_id") @JsonAlias("id") String _id,
     @NotBlank(message = "Text cannot be blank") @Size(max=500, message="Text too long (max=500)") String text,
     @NotBlank(message = "URL cannot be blank") @Size(max=2048, message="Url too long (max=2048") String url
 ) {}

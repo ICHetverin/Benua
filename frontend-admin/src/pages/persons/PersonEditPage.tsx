@@ -2,7 +2,6 @@ import { Form, Input, Button, Space, Typography, message, Spin, Switch, Divider 
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePerson, useCreatePerson, useUpdatePerson } from 'entities/person/queries';
-import { ImageUploader } from 'features/image-uploader/ImageUploader';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import { RichTextEditor } from 'features/rich-text/RichTextEditor';
 import type { PersonCreateDto, PersonUpdateDto } from 'entities/person/types';
@@ -36,14 +35,12 @@ export function PersonEditPage({ mode }: Props) {
           description: existing.description ?? [],
           interesting_facts: existing.interesting_facts ?? [],
           is_published: existing.is_published ?? false,
-          _images: existing.images ?? [],
           connected_persons: existing.connected_persons?.map((p) => p._id) ?? [],
           connected_objects: existing.connected_objects?.map((o) => o._id) ?? [],
         }
       : { is_published: false, description: [], interesting_facts: [] };
 
   const onFinish = async (values: Record<string, unknown>) => {
-    const uploadedImages = (values._images as { _id: string; text: string; url_to_s3: string }[]) ?? [];
     try {
       if (mode === 'create') {
         const dto: PersonCreateDto = {
@@ -56,7 +53,6 @@ export function PersonEditPage({ mode }: Props) {
           interesting_facts: values.interesting_facts as string[] | undefined,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
-          images: uploadedImages.map((img) => ({ text: img.text, url_to_s3: img.url_to_s3 })),
         };
         await createMutation.mutateAsync(dto);
         message.success('Персона создана');
@@ -72,7 +68,7 @@ export function PersonEditPage({ mode }: Props) {
           is_published: values.is_published as boolean,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
-          image_ids: uploadedImages.map((img) => img._id),
+          image_ids: (existing?.images ?? []).map((img) => img._id),
         };
         await updateMutation.mutateAsync(dto);
         message.success('Персона обновлена');
@@ -160,9 +156,6 @@ export function PersonEditPage({ mode }: Props) {
         <Divider />
         <Form.Item name="is_published" label="Опубликовано" valuePropName="checked">
           <Switch />
-        </Form.Item>
-        <Form.Item name="_images" label="Фотографии">
-          <ImageUploader />
         </Form.Item>
         <Form.Item name="connected_persons" label="Связанные персоны">
           <AjaxSelect endpoint="/persons" mode="multiple" placeholder="Найти персону..." />

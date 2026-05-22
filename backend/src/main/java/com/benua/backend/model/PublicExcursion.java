@@ -1,15 +1,15 @@
 package com.benua.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.Instant;
 import java.util.List;
 
-@Document(collection = "excursions")
-public record Excursion(
-        @Id String _id,
+@Document(collection = "public_excursions")
+public record PublicExcursion(
+        @Id @JsonProperty("_id") String _id,
         String name,
         String description,
         String time,
@@ -21,10 +21,7 @@ public record Excursion(
         @Field("route_photo") String routePhoto,
         List<ExcursionSource> sources,
         @Field("is_published") Boolean isPublished,
-        @Field("sort_order") Integer sortOrder,
-        @Field("created_at") Instant createdAt,
-        @Field("updated_at") Instant updatedAt,
-        @Field("updated_by") String updatedBy
+        @Field("sort_order") Integer sortOrder
 ) {
     public record ContentSection(String topic, String content) {}
     public record ExcursionSource(String source, String url) {}

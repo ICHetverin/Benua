@@ -6,7 +6,6 @@ import com.benua.backend.model.Image;
 import com.benua.backend.model.Person;
 import com.benua.backend.model.Source;
 import com.benua.backend.repository.BuildingRepository;
-import com.benua.backend.repository.ExcursionRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,14 +27,11 @@ import java.util.regex.Pattern;
 public class BuildingService {
     private final BuildingRepository br;
     private final ConnectionService cs;
-    private final ExcursionRepository excursionRepository;
     private final MongoTemplate mongoTemplate;
 
-    public BuildingService(BuildingRepository br, ConnectionService cs,
-                           ExcursionRepository excursionRepository, MongoTemplate mongoTemplate) {
+    public BuildingService(BuildingRepository br, ConnectionService cs, MongoTemplate mongoTemplate) {
         this.br = br;
         this.cs = cs;
-        this.excursionRepository = excursionRepository;
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -71,20 +67,9 @@ public class BuildingService {
             query.addCriteria(Criteria.where("is_published").is(Boolean.parseBoolean(isPublishedParam)));
         }
 
-        String excursionId = filters.get("excursion");
-        if (excursionId != null && !excursionId.isBlank()) {
-            excursionRepository.findById(excursionId).ifPresent(excursion -> {
-                if (excursion.buildings() != null && !excursion.buildings().isEmpty()) {
-                    List<String> buildingIds = excursion.buildings().stream().map(Building::_id).toList();
-                    query.addCriteria(Criteria.where("_id").in(buildingIds));
-                }
-            });
-        }
-
         String personId = filters.get("person");
         if (personId != null && !personId.isBlank()) {
-            query.addCriteria(Criteria.where("connected_persons.$id").is(
-                    new org.bson.types.ObjectId(personId)));
+            query.addCriteria(Criteria.where("connected_persons").is(personId));
         }
 
         for (Map.Entry<String, String> entry : filters.entrySet()) {
@@ -99,9 +84,9 @@ public class BuildingService {
         return mongoTemplate.find(query, Building.class).stream().map(this::toDto).toList();
     }
 
-    public BuildingDto createBuilding(BuildingCreateDto building) {
-        List<Person> connectedPeople = cs.getPersonsByIds(building.connectedPersons());
-        List<Building> connectedBuildings = cs.getBuildingsByIds(building.connectedObjects());
+    public BuildingDto createBuilding(BuildingCreateDto building, String updatedBy) {
+        List<String> connectedPeople = building.connectedPersons() != null ? building.connectedPersons() : List.of();
+        List<String> connectedBuildings = building.connectedObjects() != null ? building.connectedObjects() : List.of();
         List<Image> images = cs.saveImages(building.images());
         List<Source> sources = cs.saveSources(building.sources());
 
@@ -125,19 +110,20 @@ public class BuildingService {
                 null,
                 false,
                 Instant.now(),
-                Instant.now()
+                Instant.now(),
+                updatedBy
         );
 
         return toDto(br.save(newBuilding));
     }
 
-    public BuildingDto updateBuilding(String id, BuildingUpdateDto patch) {
+    public BuildingDto updateBuilding(String id, BuildingUpdateDto patch, String updatedBy) {
         Building existing = getBuilding(id);
 
-        List<Person> connectedPeople = patch.connectedPersons() != null
-                ? cs.getPersonsByIds(patch.connectedPersons()) : existing.connectedPersons();
-        List<Building> connectedBuildings = patch.connectedObjects() != null
-                ? cs.getBuildingsByIds(patch.connectedObjects()) : existing.connectedObjects();
+        List<String> connectedPeople = patch.connectedPersons() != null
+                ? patch.connectedPersons() : existing.connectedPersons();
+        List<String> connectedBuildings = patch.connectedObjects() != null
+                ? patch.connectedObjects() : existing.connectedObjects();
         List<Image> images = patch.imageIds() != null
                 ? cs.getImagesByIds(patch.imageIds()) : existing.images();
         List<Source> sources = patch.sources() != null
@@ -163,7 +149,8 @@ public class BuildingService {
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
                 existing.createdAt(),
-                Instant.now()
+                Instant.now(),
+                updatedBy
         );
 
         return toDto(br.save(updated));
@@ -174,14 +161,14 @@ public class BuildingService {
         br.deleteById(id);
     }
 
-    public BuildingDto setPublished(String id, boolean value) {
+    public BuildingDto setPublished(String id, boolean value, String updatedBy) {
         Building existing = getBuilding(id);
         Building updated = new Building(
                 existing._id(), existing.name(), existing.address(), existing.latitude(), existing.longitude(),
                 existing.architect(), existing.yearsBuilt(), existing.history(), existing.design(),
                 existing.connectionWithBenua(), existing.description(), existing.interestingFacts(),
                 existing.connectedPersons(), existing.connectedObjects(), existing.images(), existing.sources(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now()
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(br.save(updated));
     }
@@ -200,13 +187,11 @@ public class BuildingService {
 
     public BuildingDto toDto(Building b) {
         List<BuildingDto.SimpleEntity> persons = b.connectedPersons() == null ? List.of() :
-                b.connectedPersons().stream()
-                        .map(p -> new BuildingDto.SimpleEntity(p._id(), p.name()))
-                        .toList();
+                cs.getPersonsByIds(b.connectedPersons()).stream()
+                  .map(p -> new BuildingDto.SimpleEntity(p._id(), p.name())).toList();
         List<BuildingDto.SimpleEntity> objects = b.connectedObjects() == null ? List.of() :
-                b.connectedObjects().stream()
-                        .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name()))
-                        .toList();
+                cs.getBuildingsByIds(b.connectedObjects()).stream()
+                  .map(o -> new BuildingDto.SimpleEntity(o._id(), o.name())).toList();
         return new BuildingDto(
                 b._id(), b.name(), b.address(), b.latitude(), b.longitude(),
                 b.architect(), b.yearsBuilt(), b.history(), b.design(), b.connectionWithBenua(),

@@ -28,6 +28,7 @@ app:
     secret: ${JWT_SECRET:please-change-me-in-production-32chars!}
     ttl-ms: ${JWT_TTL_MS:3600000}
   s3:
+    enabled: ${YC_S3_ENABLED:false}
     endpoint: ${YC_S3_ENDPOINT:https://storage.yandexcloud.net}
     region: ${YC_S3_REGION:ru-central1}
     bucket: ${YC_S3_BUCKET:}
@@ -39,5 +40,5 @@ app:
     allowed-mime: image/jpeg,image/png,image/webp
   admin:
     bootstrap:
-      username: ${ADMIN_USERNAME:}
-      password: ${ADMIN_PASSWORD:}
+      username: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:admin}

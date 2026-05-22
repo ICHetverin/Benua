@@ -1,12 +1,11 @@
 package com.benua.backend.dto;
 
-import com.benua.backend.model.Excursion;
+import com.benua.backend.model.PublicExcursion;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.Instant;
 import java.util.List;
 
-public record ExcursionDto(
+public record PublicExcursionDto(
         @JsonProperty("_id") String _id,
         String name,
         String description,
@@ -14,12 +13,10 @@ public record ExcursionDto(
         String guide,
         List<String> passingMethods,
         List<String> keyPoints,
-        List<Excursion.ContentSection> textContent,
+        List<PublicExcursion.ContentSection> textContent,
         String coverPhoto,
         String routePhoto,
-        List<Excursion.ExcursionSource> sources,
+        List<PublicExcursion.ExcursionSource> sources,
         Boolean isPublished,
-        Integer sortOrder,
-        Instant createdAt,
-        Instant updatedAt
+        Integer sortOrder
 ) {}

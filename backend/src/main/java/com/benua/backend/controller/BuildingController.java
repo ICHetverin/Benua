@@ -28,9 +28,9 @@ public class BuildingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    public BuildingDto createBuilding(@RequestBody @Valid BuildingCreateDto building) {
+    public BuildingDto createBuilding(@RequestBody @Valid BuildingCreateDto building, Authentication auth) {
         log.info("createBuilding: {}", building.name());
-        return bs.createBuilding(building);
+        return bs.createBuilding(building, auth.getName());
     }
 
     @GetMapping
@@ -54,8 +54,8 @@ public class BuildingController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public BuildingDto updateBuilding(@PathVariable String id, @RequestBody BuildingUpdateDto patch) {
-        return bs.updateBuilding(id, patch);
+    public BuildingDto updateBuilding(@PathVariable String id, @RequestBody BuildingUpdateDto patch, Authentication auth) {
+        return bs.updateBuilding(id, patch, auth.getName());
     }
 
     @DeleteMapping("/{id}")
@@ -67,8 +67,8 @@ public class BuildingController {
 
     @PatchMapping("/{id}/publish")
     @PreAuthorize("hasRole('ADMIN')")
-    public BuildingDto setPublished(@PathVariable String id, @RequestParam boolean value) {
-        return bs.setPublished(id, value);
+    public BuildingDto setPublished(@PathVariable String id, @RequestParam boolean value, Authentication auth) {
+        return bs.setPublished(id, value, auth.getName());
     }
 
     @PostMapping("/reorder")

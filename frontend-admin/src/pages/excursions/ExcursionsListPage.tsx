@@ -7,10 +7,10 @@ import { formatDate } from 'shared/lib/format';
 import type { ExcursionDto } from 'entities/excursion/types';
 import { ROUTES } from 'shared/config/routes';
 
-const MODE_LABELS: Record<string, string> = {
-  PEDESTRIAN: 'Пешая',
-  BUS: 'Автобусная',
-  MIXED: 'Смешанная',
+const PASSING_METHOD_LABELS: Record<string, string> = {
+  on_foot: 'Пешая',
+  by_bus: 'Автобусная',
+  mixed: 'Смешанная',
 };
 
 export function ExcursionsListPage() {
@@ -29,18 +29,21 @@ export function ExcursionsListPage() {
   };
 
   const columns = [
-    { title: 'Название', dataIndex: 'title', key: 'title' },
+    { title: 'Название', dataIndex: 'name', key: 'name' },
     {
-      title: 'Режим',
-      dataIndex: 'mode',
-      key: 'mode',
-      render: (v: string) => <Tag>{MODE_LABELS[v] ?? v}</Tag>,
+      title: 'Время',
+      dataIndex: 'time',
+      key: 'time',
+      render: (v?: string) => v ?? '—',
     },
     {
-      title: 'Длительность',
-      dataIndex: 'duration_minutes',
-      key: 'duration_minutes',
-      render: (v?: number) => (v ? `${v} мин` : '—'),
+      title: 'Способ',
+      dataIndex: 'passing_methods',
+      key: 'passing_methods',
+      render: (methods?: string[]) =>
+        methods?.length
+          ? methods.map((m) => <Tag key={m}>{PASSING_METHOD_LABELS[m] ?? m}</Tag>)
+          : '—',
     },
     {
       title: 'Опубликовано',

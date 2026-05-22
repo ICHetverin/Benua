@@ -107,7 +107,7 @@ public class DataMigrationService {
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
                         dto.sources() != null ? dto.sources() : List.of(),
-                        null, true, Instant.now(), Instant.now()
+                        null, true, Instant.now(), Instant.now(), null
                 ));
                 log.info("Saved person (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -140,7 +140,7 @@ public class DataMigrationService {
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
                         dto.sources() != null ? dto.sources() : List.of(),
-                        null, true, Instant.now(), Instant.now()
+                        null, true, Instant.now(), Instant.now(), null
                 ));
                 log.info("Saved building (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -165,11 +165,11 @@ public class DataMigrationService {
                         existing.connectionWithBenua(),
                         existing.description(),
                         existing.interestingFacts(),
-                        resolvePersons(dto.connectedPersons()),
-                        resolveBuildings(dto.connectedObjects()),
+                        dto.connectedPersons() != null ? dto.connectedPersons() : List.of(),
+                        dto.connectedObjects() != null ? dto.connectedObjects() : List.of(),
                         existing.images(),
                         existing.sources(),
-                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now()
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now(), null
                 ));
                 log.info("Updated person connections: {}", dto.id());
             } catch (Exception e) {
@@ -198,11 +198,11 @@ public class DataMigrationService {
                         existing.connectionWithBenua(),
                         existing.description(),
                         existing.interestingFacts(),
-                        resolvePersons(dto.connectedPersons()),
-                        resolveBuildings(dto.connectedObjects()),
+                        dto.connectedPersons() != null ? dto.connectedPersons() : List.of(),
+                        dto.connectedObjects() != null ? dto.connectedObjects() : List.of(),
                         existing.images(),
                         existing.sources(),
-                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now()
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now(), null
                 ));
                 log.info("Updated building connections: {}", dto.id());
             } catch (Exception e) {
@@ -214,22 +214,6 @@ public class DataMigrationService {
     private boolean hasConnections(List<String> connectedPersons, List<String> connectedObjects) {
         return (connectedPersons != null && !connectedPersons.isEmpty())
                 || (connectedObjects != null && !connectedObjects.isEmpty());
-    }
-
-    private List<Person> resolvePersons(List<String> ids) {
-        if (ids == null) return List.of();
-        return ids.stream()
-                .map(id -> personRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Person not found: " + id)))
-                .toList();
-    }
-
-    private List<Building> resolveBuildings(List<String> ids) {
-        if (ids == null) return List.of();
-        return ids.stream()
-                .map(id -> buildingRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Building not found: " + id)))
-                .toList();
     }
 
 }

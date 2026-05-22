@@ -47,15 +47,15 @@ public class PersonController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
-    public PersonDto createPerson(@RequestBody @Valid PersonCreateDto person) {
+    public PersonDto createPerson(@RequestBody @Valid PersonCreateDto person, Authentication auth) {
         log.info("createPerson: {}", person.name());
-        return ps.createPerson(person);
+        return ps.createPerson(person, auth.getName());
     }
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public PersonDto updatePerson(@PathVariable String id, @RequestBody PersonUpdateDto patch) {
-        return ps.updatePerson(id, patch);
+    public PersonDto updatePerson(@PathVariable String id, @RequestBody PersonUpdateDto patch, Authentication auth) {
+        return ps.updatePerson(id, patch, auth.getName());
     }
 
     @DeleteMapping("/{id}")
@@ -67,8 +67,8 @@ public class PersonController {
 
     @PatchMapping("/{id}/publish")
     @PreAuthorize("hasRole('ADMIN')")
-    public PersonDto setPublished(@PathVariable String id, @RequestParam boolean value) {
-        return ps.setPublished(id, value);
+    public PersonDto setPublished(@PathVariable String id, @RequestParam boolean value, Authentication auth) {
+        return ps.setPublished(id, value, auth.getName());
     }
 
     @PostMapping("/reorder")
