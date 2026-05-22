@@ -2,19 +2,18 @@ package com.benua.backend.controller;
 
 import com.benua.backend.dto.PersonCreateDto;
 import com.benua.backend.dto.PersonDto;
-import com.benua.backend.model.Person;
+import com.benua.backend.dto.PersonUpdateDto;
 import com.benua.backend.service.PersonService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/persons")
@@ -26,52 +25,56 @@ public class PersonController {
         this.ps = ps;
     }
 
-    @GetMapping()
-    public ResponseEntity<List<PersonDto>> getAllPersons(@RequestParam Map<String, String> allParams,
-                                                      @RequestParam(defaultValue = "0") int offset,
-                                                      @RequestParam(defaultValue = "10") int limit) {
-        allParams.remove("offset");
-        allParams.remove("limit");
-
-        try {
-            List<PersonDto> result = ps.getPersonsDto(allParams, offset, limit);
-            log.info("getAllPersons returned {} items for filters={}, offset={}, limit={}", result.size(), allParams, offset, limit);
-            return ResponseEntity.ok(result); // HTTP 200, пустой список → []
-        } catch (Exception e) {
-            log.error("Error in getAllPersons with filters={}, offset={}, limit={}", allParams, offset, limit, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
-        }
+    @GetMapping
+    public List<PersonDto> getAllPersons(
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication auth) {
+        allParams.remove("page");
+        allParams.remove("size");
+        boolean onlyPublished = auth == null || !auth.isAuthenticated();
+        log.info("getAllPersons: filters={}, page={}, size={}, onlyPublished={}", allParams, page, size, onlyPublished);
+        return ps.getPersonsDto(allParams, page, size, onlyPublished);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonDto> getPersonById(@PathVariable @NotBlank String id) {
-        log.info("Called getPersonById: id={}", id);
-
-        try {
-            Person person = ps.getPerson(id);
-            return ResponseEntity.ok(ps.toDto(person)); // HTTP 200
-        } catch (NoSuchElementException e) {
-            log.warn("No person found for id={}", id, e);
-            return ResponseEntity.notFound().build(); // HTTP 404
-        } catch (Exception e) {
-            log.error("Error while getting person by id={}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
-        }
+    public PersonDto getPersonById(@PathVariable String id) {
+        log.info("getPersonById: id={}", id);
+        return ps.toDto(ps.getPerson(id));
     }
 
     @PostMapping
-    public ResponseEntity<PersonDto> createPerson(@RequestBody @Valid PersonCreateDto person) {
-        log.info("Called createPerson with payload={}", person);
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
+    public PersonDto createPerson(@RequestBody @Valid PersonCreateDto person, Authentication auth) {
+        log.info("createPerson: {}", person.name());
+        return ps.createPerson(person, auth.getName());
+    }
 
-        try {
-            PersonDto saved = ps.createPerson(person);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved); // HTTP 201
-        } catch (NoSuchElementException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            log.error("Error creating person with payload={}", person, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
-        }
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public PersonDto updatePerson(@PathVariable String id, @RequestBody PersonUpdateDto patch, Authentication auth) {
+        return ps.updatePerson(id, patch, auth.getName());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deletePerson(@PathVariable String id) {
+        ps.deletePerson(id);
+    }
+
+    @PatchMapping("/{id}/publish")
+    @PreAuthorize("hasRole('ADMIN')")
+    public PersonDto setPublished(@PathVariable String id, @RequestParam boolean value, Authentication auth) {
+        return ps.setPublished(id, value, auth.getName());
+    }
+
+    @PostMapping("/reorder")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reorder(@RequestBody List<String> idsInOrder) {
+        ps.reorder(idsInOrder);
     }
 }

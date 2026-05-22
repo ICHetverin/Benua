@@ -1,0 +1,90 @@
+.carousel {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.imageWrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--darker-beige);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0 0;
+  border-top: 1px solid rgba(35, 28, 7, 0.15);
+}
+
+.captionLabel {
+  font-family: var(--font-lora);
+  font-size: 0.68rem;
+  font-style: italic;
+  color: #888;
+}
+
+.captionText {
+  font-family: var(--font-lora);
+  font-size: 0.75rem;
+  color: var(--black);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.75rem 0 0;
+}
+
+.arrow {
+  background: none;
+  border: none;
+  font-family: var(--font-lora);
+  font-size: 1rem;
+  color: var(--black);
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.arrow:hover {
+  opacity: 1;
+}
+
+.dots {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--black);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.dotActive {
+  background-color: var(--black);
+}
+
+@media (max-width: 768px) {
+  .imageWrapper {
+    aspect-ratio: 16 / 9;
+  }
+}

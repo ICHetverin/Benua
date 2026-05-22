@@ -1,0 +1,43 @@
+/* Loading / error states */
+.stateWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+    gap: 1rem;
+    padding: var(--page-padding);
+}
+
+.stateText {
+    font-family: var(--font-lora);
+    font-size: 0.9rem;
+    color: var(--black);
+    margin: 0;
+}
+
+.backLink {
+    font-family: var(--font-lora);
+    font-size: 0.85rem;
+    color: var(--dark-red);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s;
+}
+
+.backLink:hover {
+    opacity: 0.75;
+}
+
+/* ── Content body (text sections + carousel) ── */
+.contentBody {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem var(--page-padding) 1rem;
+}
+
+@media (max-width: 768px) {
+    .contentBody {
+        padding: 2rem 1.5rem 0.5rem;
+    }
+}

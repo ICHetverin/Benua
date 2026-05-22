@@ -4,4 +4,5 @@ export const NAV_ITEMS = [
   { href: "/objects", label: "Объекты" },
   { href: "/persons", label: "Персоналии" },
   { href: "/excursions", label: "Экскурсии" },
+  { href: "/game", label: "Игра" },
 ];

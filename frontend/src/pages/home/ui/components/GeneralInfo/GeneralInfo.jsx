@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styles from "./GeneralInfo.module.css";
 import fullNameLogo from "shared/assets/images/logo/full_name_logo.png";
 
@@ -12,6 +13,9 @@ export const GeneralInfo = () => {
           карту зданий, персоналий и событий, сочетая научную достоверность с
           современными форматами: 3D-макетами, инфографикой и мультимедиа.
         </p>
+        <Link to="/about" className={styles.aboutLink}>
+          Подробнее о проекте →
+        </Link>
       </div>
     </section>
   );

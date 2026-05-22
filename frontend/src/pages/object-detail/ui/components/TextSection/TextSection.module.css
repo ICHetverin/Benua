@@ -1,0 +1,52 @@
+.section {
+    margin-bottom: 2.5rem;
+}
+
+.title {
+    font-family: var(--font-lora);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--black);
+    margin: 0 0 0.85rem;
+}
+
+.paragraph {
+    font-family: var(--font-lora);
+    font-size: 0.8rem;
+    line-height: 1.75;
+    color: var(--black);
+    margin: 0;
+    text-align: justify;
+}
+
+/* ── Arrow list ── */
+.arrowList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.arrowItem {
+    display: flex;
+    gap: 0.5rem;
+    font-family: var(--font-lora);
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--black);
+}
+
+.arrow {
+    flex-shrink: 0;
+    color: var(--dark-red);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .paragraph {
+        text-align: left;
+    }
+}

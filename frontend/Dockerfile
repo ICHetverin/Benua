@@ -1,12 +1,22 @@
-FROM node:18-alpine AS build
-WORKDIR /app
-COPY package.json package-lock.json ./
+FROM node:20-alpine AS public-build
+WORKDIR /pub
+COPY frontend/package*.json ./
 RUN npm ci
-COPY . .
+COPY frontend/ ./
+RUN npm run build
+
+FROM node:20-alpine AS admin-build
+WORKDIR /admin
+COPY frontend-admin/package.json ./
+RUN npm install
+COPY frontend-admin/ ./
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=public-build /pub/build /usr/share/nginx/html
+COPY --from=admin-build /admin/dist /usr/share/nginx/html/admin
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

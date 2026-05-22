@@ -1,25 +1,47 @@
-import { useParams } from 'react-router-dom';
-import { getExcursionById } from 'entities/excursions';
-import styles from '../styles/ExcursionDetails.module.css';
+import { useParams, Link } from "react-router-dom";
+import { useExcursionById } from "entities/excursions";
+import { ExcursionHero } from "./components/ExcursionHero/ExcursionHero";
+import { ExcursionRoute } from "./components/ExcursionRoute/ExcursionRoute";
+import { AudioGuide } from "./components/AudioGuide/AudioGuide";
+import styles from "./ExcursionDetails.module.css";
 
 export function ExcursionDetails() {
   const { id } = useParams();
-  const excursion = getExcursionById(Number(id));
-  console.log(id)
+  const { data: excursion, isLoading, isError } = useExcursionById(id);
+
+  if (isLoading) {
+    return (
+      <div className={styles.stateWrapper}>
+        <p className={styles.stateText}>Загрузка...</p>
+      </div>
+    );
+  }
+
+  if (isError || !excursion) {
+    return (
+      <div className={styles.stateWrapper}>
+        <p className={styles.stateText}>Экскурсия не найдена.</p>
+        <Link to="/excursions" className={styles.backLink}>
+          ← Все экскурсии
+        </Link>
+      </div>
+    );
+  }
+
+  const audioUrl = excursion.sources?.find((s) =>
+    /\.(mp3|wav|ogg|m4a)(\?.*)?$/i.test(s.url ?? "")
+  )?.url ?? null;
 
   return (
-    <div className='page'>
-        <div className={styles.headSection}>
+    <>
+      <ExcursionHero excursion={excursion} />
 
-            <div className={styles.title}>
-                <div className={styles.backDrop}>
-                    Экскурсии
-                </div>
-                <h2>{excursion.title.toUpperCase()}</h2>
-            </div>
+      <ExcursionRoute
+        buildings={excursion.buildings ?? []}
+        excursionImages={excursion.images ?? []}
+      />
 
-
-        </div>
-    </div>
+      <AudioGuide audioUrl={audioUrl} />
+    </>
   );
 }

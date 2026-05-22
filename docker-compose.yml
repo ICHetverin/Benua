@@ -27,6 +27,8 @@ services:
     container_name: benua-backend
     env_file:
       - .env
+    environment:
+      MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/benua?authSource=admin"
     ports:
       - "8080:8080"
     depends_on:
@@ -51,6 +53,24 @@ services:
       - /app/node_modules
     stdin_open: true
     tty: true
+    depends_on:
+      - backend
+    networks:
+      - benua-net
+
+  frontend-admin:
+    build:
+      context: ./frontend-admin
+      dockerfile: Dockerfile.dev
+    container_name: benua-frontend-admin
+    environment:
+      - VITE_API_URL=http://localhost:8080
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "3001:5173"
+    volumes:
+      - ./frontend-admin:/app
+      - /app/node_modules
     depends_on:
       - backend
     networks:

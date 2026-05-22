@@ -2,19 +2,18 @@ package com.benua.backend.controller;
 
 import com.benua.backend.dto.BuildingCreateDto;
 import com.benua.backend.dto.BuildingDto;
-import com.benua.backend.model.Building;
+import com.benua.backend.dto.BuildingUpdateDto;
 import com.benua.backend.service.BuildingService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/objects")
@@ -27,55 +26,55 @@ public class BuildingController {
     }
 
     @PostMapping
-    public ResponseEntity<BuildingDto> createBuilding(@RequestBody @Valid BuildingCreateDto building) {
-        log.info("Called createBuilding with payload={}", building);
-
-        try {
-            BuildingDto saved = bs.createBuilding(building);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved); // HTTP 201
-        } catch (NoSuchElementException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            log.error("Error creating building with payload={}", building, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
+    public BuildingDto createBuilding(@RequestBody @Valid BuildingCreateDto building, Authentication auth) {
+        log.info("createBuilding: {}", building.name());
+        return bs.createBuilding(building, auth.getName());
     }
 
     @GetMapping
-    public ResponseEntity<List<BuildingDto>> getAllBuildings(
+    public List<BuildingDto> getAllBuildings(
             @RequestParam Map<String, String> allParams,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
+            @RequestParam(defaultValue = "10") int size,
+            Authentication auth) {
         allParams.remove("page");
         allParams.remove("size");
-
-        log.info("Called getAllBuildings with filters={}, page={}, size={}", allParams, page, size);
-
-        try {
-            List<BuildingDto> result = bs.getBuildingsDto(allParams, page, size);
-            log.info("getAllBuildings returned {} items for filters={}, page={}, size={}", result.size(), allParams, page, size);
-            return ResponseEntity.ok(result); // HTTP 200, пустой список → []
-        } catch (Exception e) {
-            log.error("Error in getAllBuildings with filters={}, page={}, size={}", allParams, page, size, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
-        }
+        boolean onlyPublished = auth == null || !auth.isAuthenticated();
+        log.info("getAllBuildings: filters={}, page={}, size={}, onlyPublished={}", allParams, page, size, onlyPublished);
+        return bs.getBuildingsDto(allParams, page, size, onlyPublished);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BuildingDto> getBuildingById(@PathVariable @NotBlank String id) {
-        log.info("Called getBuildingById: id={}", id);
-        try {
-            Building building = bs.getBuilding(id);
-            log.info("Success getById");
-            return ResponseEntity.ok(bs.toDto(building)); // HTTP 200
-        } catch (NoSuchElementException e) {
-            log.warn("No building found for id={}", id, e);
-            return ResponseEntity.notFound().build(); // HTTP 404
-        } catch (Exception e) {
-            log.error("Error while getting building by id={}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // HTTP 500
-        }
+    public BuildingDto getBuildingById(@PathVariable String id) {
+        log.info("getBuildingById: id={}", id);
+        return bs.toDto(bs.getBuilding(id));
+    }
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public BuildingDto updateBuilding(@PathVariable String id, @RequestBody BuildingUpdateDto patch, Authentication auth) {
+        return bs.updateBuilding(id, patch, auth.getName());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteBuilding(@PathVariable String id) {
+        bs.deleteBuilding(id);
+    }
+
+    @PatchMapping("/{id}/publish")
+    @PreAuthorize("hasRole('ADMIN')")
+    public BuildingDto setPublished(@PathVariable String id, @RequestParam boolean value, Authentication auth) {
+        return bs.setPublished(id, value, auth.getName());
+    }
+
+    @PostMapping("/reorder")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reorder(@RequestBody List<String> idsInOrder) {
+        bs.reorder(idsInOrder);
     }
 }

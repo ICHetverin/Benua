@@ -3,7 +3,9 @@ package com.benua.backend.dto;
 import com.benua.backend.model.Description;
 import com.benua.backend.model.Image;
 import com.benua.backend.model.Source;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -13,7 +15,7 @@ import java.util.List;
  * связанные личности и объекты передаются как минимальные сущности (Simple Entity)
  */
 public record PersonDto(
-        String _id,
+        @JsonProperty("_id") String _id,
         String name,
         String lifeYears,
         String birthPlace,
@@ -24,12 +26,16 @@ public record PersonDto(
         List<SimpleEntity> connectedPersons,
         List<SimpleEntity> connectedObjects,
         List<Image> images,
-        List<Source> sources
+        List<Source> sources,
+        Integer sortOrder,
+        Boolean isPublished,
+        Instant createdAt,
+        Instant updatedAt
 ) {
     /**
      * Минимальный объект для вложенных связей: только _id и name
      * @param _id уникальный идентификатор
      * @param name имя человека
      */
-    public record SimpleEntity(String _id, String name) {}
+    public record SimpleEntity(@JsonProperty("_id") String _id, String name) {}
 }

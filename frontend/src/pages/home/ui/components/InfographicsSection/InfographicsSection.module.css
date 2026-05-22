@@ -1,0 +1,128 @@
+.section {
+    padding: 0 var(--page-padding) 4rem;
+    background-color: var(--beige);
+}
+
+.container {
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.headerLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 600px;
+}
+
+.title {
+    margin-bottom: 0;
+}
+
+.subtitle {
+    font-family: var(--font-lora);
+    font-size: 0.8rem;
+    color: var(--black);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.seeAllLink {
+    font-family: var(--font-lora);
+    font-size: 0.8rem;
+    color: var(--black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+    padding-bottom: 0.1rem;
+}
+
+.seeAllLink:hover {
+    color: var(--dark-red);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.cardImageWrapper {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background-color: var(--darker-beige);
+}
+
+.cardImagePlaceholder {
+    width: 100%;
+    height: 100%;
+    background-color: #c8bfaf;
+}
+
+.serebryakova .cardImagePlaceholder {
+    background-color: #8a7060;
+}
+
+.gerb .cardImagePlaceholder {
+    background-color: #b0a070;
+}
+
+.theater .cardImagePlaceholder {
+    background-color: #7a8a9a;
+}
+
+.cardFooter {
+    padding: 0.6rem 0;
+}
+
+.cardTitle {
+    font-family: var(--font-lora);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--black);
+    margin: 0;
+    letter-spacing: 0.03em;
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 0 1.5rem 3rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -37,8 +38,13 @@ public record Person(
         @Valid List<Description> description,
         @Field("interesting_facts") List<String> interestingFacts,
 
-        @DBRef(lazy=true) @Valid @Field("connected_persons") List<Person> connectedPersons,
-        @DBRef(lazy=true) @Valid @Field("connected_objects") List<Building> connectedObjects,
-        @DBRef(lazy = true) @Valid List<Image> images,
-        @DBRef(lazy = true) @Valid List<Source> sources
+        @Field("connected_persons") List<String> connectedPersons,
+        @Field("connected_objects") List<String> connectedObjects,
+        @DBRef @Valid List<Image> images,
+        @DBRef @Valid List<Source> sources,
+        @Field("sort_order") Integer sortOrder,
+        @Field("is_published") Boolean isPublished,
+        @Field("created_at") Instant createdAt,
+        @Field("updated_at") Instant updatedAt,
+        @Field("updated_by") String updatedBy
 ) {}

@@ -4,13 +4,10 @@ import com.benua.backend.model.*;
 import com.benua.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -32,18 +29,18 @@ public class DataMigrationService {
     private final SourceRepository sourceRepository;
     private final PersonRepository personRepository;
     private final BuildingRepository buildingRepository;
-    private final ObjectMapper objectMapper;
+    private final JsonReader jsonReader;
 
     public DataMigrationService(ImageRepository imageRepository,
                                 SourceRepository sourceRepository,
                                 PersonRepository personRepository,
                                 BuildingRepository buildingRepository,
-                                ObjectMapper objectMapper) {
+                                JsonReader jsonReader) {
         this.imageRepository = imageRepository;
         this.sourceRepository = sourceRepository;
         this.personRepository = personRepository;
         this.buildingRepository = buildingRepository;
-        this.objectMapper = objectMapper;
+        this.jsonReader = jsonReader;
     }
 
     public void migrate() {
@@ -52,8 +49,8 @@ public class DataMigrationService {
         migrateImages();
         migrateSources();
 
-        List<PersonSeedDto> personDtos = readJson("data/persons.json", new TypeReference<>() {});
-        List<BuildingSeedDto> buildingDtos = readJson("data/buildings.json", new TypeReference<>() {});
+        List<PersonSeedDto> personDtos = jsonReader.readJson("data/persons.json", new TypeReference<>() {});
+        List<BuildingSeedDto> buildingDtos = jsonReader.readJson("data/buildings.json", new TypeReference<>() {});
 
         savePersonsWithoutConnections(personDtos);
         saveBuildingsWithoutConnections(buildingDtos);
@@ -65,19 +62,21 @@ public class DataMigrationService {
     }
 
     private void migrateImages() {
-        List<Image> images = readJson("data/images.json", new TypeReference<>() {});
-        for (Image image : images) {
-            if (imageRepository.existsById(image._id())) {
-                log.warn("Image already exists, skipping: {}", image._id());
+        List<ImageSeedDto> images = jsonReader.readJson("data/images.json", new TypeReference<>() {});
+        for (ImageSeedDto dto : images) {
+            if (imageRepository.existsById(dto._id())) {
+                log.warn("Image already exists, skipping: {}", dto._id());
                 continue;
             }
-            imageRepository.save(image);
-            log.info("Saved image: {}", image._id());
+            imageRepository.save(new Image(dto._id(), dto.text(), dto.url_to_s3(), null));
+            log.info("Saved image: {}", dto._id());
         }
     }
 
+    private record ImageSeedDto(String _id, String text, String url_to_s3) {}
+
     private void migrateSources() {
-        List<Source> sources = readJson("data/sources.json", new TypeReference<>() {});
+        List<Source> sources = jsonReader.readJson("data/sources.json", new TypeReference<>() {});
         for (Source source : sources) {
             if (sourceRepository.existsById(source._id())) {
                 log.warn("Source already exists, skipping: {}", source._id());
@@ -107,7 +106,8 @@ public class DataMigrationService {
                         List.of(),
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
-                        dto.sources() != null ? dto.sources() : List.of()
+                        dto.sources() != null ? dto.sources() : List.of(),
+                        null, true, Instant.now(), Instant.now(), null
                 ));
                 log.info("Saved person (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -139,7 +139,8 @@ public class DataMigrationService {
                         List.of(),
                         List.of(),
                         dto.images() != null ? dto.images() : List.of(),
-                        dto.sources() != null ? dto.sources() : List.of()
+                        dto.sources() != null ? dto.sources() : List.of(),
+                        null, null, null, true, Instant.now(), Instant.now(), null
                 ));
                 log.info("Saved building (pass 1): {}", dto.id());
             } catch (Exception e) {
@@ -164,10 +165,11 @@ public class DataMigrationService {
                         existing.connectionWithBenua(),
                         existing.description(),
                         existing.interestingFacts(),
-                        resolvePersons(dto.connectedPersons()),
-                        resolveBuildings(dto.connectedObjects()),
+                        dto.connectedPersons() != null ? dto.connectedPersons() : List.of(),
+                        dto.connectedObjects() != null ? dto.connectedObjects() : List.of(),
                         existing.images(),
-                        existing.sources()
+                        existing.sources(),
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now(), null
                 ));
                 log.info("Updated person connections: {}", dto.id());
             } catch (Exception e) {
@@ -196,10 +198,12 @@ public class DataMigrationService {
                         existing.connectionWithBenua(),
                         existing.description(),
                         existing.interestingFacts(),
-                        resolvePersons(dto.connectedPersons()),
-                        resolveBuildings(dto.connectedObjects()),
+                        dto.connectedPersons() != null ? dto.connectedPersons() : List.of(),
+                        dto.connectedObjects() != null ? dto.connectedObjects() : List.of(),
                         existing.images(),
-                        existing.sources()
+                        existing.sources(),
+                        existing.buildingType(), existing.buildingSubtype(),
+                        existing.sortOrder(), existing.isPublished(), existing.createdAt(), Instant.now(), null
                 ));
                 log.info("Updated building connections: {}", dto.id());
             } catch (Exception e) {
@@ -213,31 +217,4 @@ public class DataMigrationService {
                 || (connectedObjects != null && !connectedObjects.isEmpty());
     }
 
-    private List<Person> resolvePersons(List<String> ids) {
-        if (ids == null) return List.of();
-        return ids.stream()
-                .map(id -> personRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Person not found: " + id)))
-                .toList();
-    }
-
-    private List<Building> resolveBuildings(List<String> ids) {
-        if (ids == null) return List.of();
-        return ids.stream()
-                .map(id -> buildingRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Building not found: " + id)))
-                .toList();
-    }
-
-    private <T> List<T> readJson(String path, TypeReference<List<T>> typeRef) {
-        try {
-            ClassPathResource resource = new ClassPathResource(path);
-            try (InputStream is = resource.getInputStream()) {
-                return objectMapper.readValue(is, typeRef);
-            }
-        } catch (IOException e) {
-            log.warn("JSON file not found or unreadable: {}. Skipping.", path);
-            return List.of();
-        }
-    }
 }

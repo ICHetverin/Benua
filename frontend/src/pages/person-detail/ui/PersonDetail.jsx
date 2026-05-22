@@ -1,100 +1,71 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { usePersonById, PersonCard } from 'entities/person';
-import { ObjectCard } from 'entities/object';
-import styles from '../styles/PersonDetail.module.css';
+import { useParams, Link } from 'react-router-dom';
+import { usePersonById } from 'entities/person';
+import { PersonHero } from './components/PersonHero/PersonHero';
+import { InterestingFacts } from './components/InterestingFacts/InterestingFacts';
+import { TextSection } from './components/TextSection/TextSection';
+import { ImageCarousel } from './components/ImageCarousel/ImageCarousel';
+import { KeyWorks } from './components/KeyWorks/KeyWorks';
+import { SourcesList } from './components/SourcesList/SourcesList';
+import styles from './PersonDetail.module.css';
 
 export function PersonDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { data: person, isLoading, isError } = usePersonById(id);
 
-  if (isLoading) return <div className={styles.page}><p className={styles.status}>Загрузка...</p></div>;
-  if (isError || !person) return <div className={styles.page}><p className={styles.statusError}>Персона не найдена</p></div>;
+  if (isLoading) {
+    return (
+      <div className={styles.stateWrapper}>
+        <p className={styles.stateText}>Загрузка...</p>
+      </div>
+    );
+  }
+
+  if (isError || !person) {
+    return (
+      <div className={styles.stateWrapper}>
+        <p className={styles.stateText}>Персона не найдена.</p>
+        <Link to="/persons" className={styles.backLink}>← Все персоналии</Link>
+      </div>
+    );
+  }
+
+  const biographyBlock = person.description?.find(
+    (d) => d.topic?.toLowerCase().includes('биограф')
+  );
+  const worksBlock = person.description?.find(
+    (d) => d.topic?.toLowerCase().includes('произведен')
+  );
+  const otherBlocks = (person.description ?? []).filter(
+    (d) => d !== biographyBlock && d !== worksBlock
+  );
+
+  const carouselImages = person.images?.slice(1) ?? [];
 
   return (
-    <div className={styles.page}>
-      <button type="button" className={styles.back} onClick={() => navigate(-1)}>← Назад</button>
+    <>
+      <PersonHero person={person} />
 
-      <div className={styles.hero}>
-        <div className={styles.photoWrapper}>
-          {person.images?.[0]?.url_to_s3
-            ? <img className={styles.photo} src={person.images[0].url_to_s3} alt={person.name} />
-            : <div className={styles.photoPlaceholder} />
-          }
-        </div>
-        <div className={styles.info}>
-          <h1 className={styles.name}>{person.name}</h1>
-          {person.life_years && <p className={styles.meta}>{person.life_years}</p>}
-          {person.profession && <p className={styles.meta}>{person.profession}</p>}
-          {person.birth_place && <p className={styles.meta}>Место рождения: {person.birth_place}</p>}
-        </div>
+      <InterestingFacts facts={person.interesting_facts ?? []} />
+
+      <div className={styles.contentBody}>
+        {biographyBlock && (
+          <TextSection title={biographyBlock.topic} content={biographyBlock.content} />
+        )}
+
+        {otherBlocks.map((block, i) => (
+          <TextSection key={i} title={block.topic} content={block.content} />
+        ))}
+
+        {worksBlock && (
+          <TextSection title={worksBlock.topic} content={worksBlock.content} />
+        )}
+
+        {carouselImages.length > 0 && <ImageCarousel images={carouselImages} />}
       </div>
 
-      {person.connection_with_benua && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Связь с Бенуа</h2>
-          <p className={styles.text}>{person.connection_with_benua}</p>
-        </section>
-      )}
+      <KeyWorks objects={person.connected_objects ?? []} />
 
-      {person.description?.length > 0 && (
-        <section className={styles.section}>
-          {person.description.map((d, i) => (
-            <div key={i} className={styles.topic}>
-              <h2 className={styles.topicTitle}>{d.topic}</h2>
-              <p className={styles.topicContent}>{d.content}</p>
-            </div>
-          ))}
-        </section>
-      )}
-
-      {person.interesting_facts?.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Интересные факты</h2>
-          <ul className={styles.factsList}>
-            {person.interesting_facts.map((fact, i) => (
-              <li key={i} className={styles.factsItem}>{fact}</li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {person.sources?.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Источники</h2>
-          <ul className={styles.sourcesList}>
-            {person.sources.map((src) => (
-              <li key={src.id}>
-                <a href={src.url} className={styles.sourceLink} target="_blank" rel="noopener noreferrer">
-                  {src.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {person.connected_persons?.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Связанные персоны</h2>
-          <div className={styles.grid}>
-            {person.connected_persons.map((p) => (
-              <PersonCard key={p._id} person={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {person.connected_objects?.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Связанные объекты</h2>
-          <div className={styles.grid}>
-            {person.connected_objects.map((obj) => (
-              <ObjectCard key={obj._id} object={obj} />
-            ))}
-          </div>
-        </section>
-      )}
-    </div>
+      <SourcesList sources={person.sources ?? []} />
+    </>
   );
 }
