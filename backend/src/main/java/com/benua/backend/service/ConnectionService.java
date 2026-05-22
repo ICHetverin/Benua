@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Логика для устранения циклической связи BuildingService <-> PersonService в create
@@ -58,13 +59,13 @@ public class ConnectionService {
     public Person getPersonById(String id) {
         if (id == null || id.isBlank()) return null;
         return personRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Person not found by id: " + id));
+                .orElseThrow(() -> new java.util.NoSuchElementException("Person not found by id: " + id));
     }
 
     public Image getImageById(String id) {
         if (id == null || id.isBlank()) return null;
         return imageRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Image not found by id: " + id));
+                .orElseThrow(() -> new java.util.NoSuchElementException("Image not found by id: " + id));
     }
 
     public List<Image> saveImages(List<ImageCreateDto> images) {
