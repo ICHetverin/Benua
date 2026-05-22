@@ -1,0 +1,125 @@
+.section {
+    padding: 3rem var(--page-padding) 4rem;
+    background-color: var(--beige);
+}
+
+.container {
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
+.title {
+    font-family: var(--font-decor);
+    font-size: 1.9rem;
+    font-weight: 400;
+    color: var(--dark-red);
+    margin: 0 0 2rem;
+    line-height: 1.2;
+}
+
+/* ── Grid ── */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+/* ── Person card ── */
+.personCard {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s ease;
+}
+
+.personCard:hover {
+    background-color: var(--darker-beige);
+}
+
+.personCard:focus-visible {
+    box-shadow: 0 0 0 2px var(--dark-blue);
+}
+
+.photoWrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.personCard:hover .photo {
+    transform: scale(1.04);
+}
+
+.photoPlaceholder {
+    width: 100%;
+    height: 100%;
+    background-color: #b8b4ac;
+}
+
+.cardContent {
+    padding: 0.6rem 0.2rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.personName {
+    font-family: var(--font-lora);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--black);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.personCard:hover .personName {
+    color: var(--dark-red);
+}
+
+.personDesc {
+    font-family: var(--font-lora);
+    font-size: 0.7rem;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 2.5rem 1.5rem 3rem;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
