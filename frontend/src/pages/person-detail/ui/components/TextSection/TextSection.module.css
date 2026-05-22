@@ -1,0 +1,26 @@
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-family: var(--font-decor);
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: var(--dark-red);
+  margin: 0 0 1.2rem;
+}
+
+.paragraph {
+  font-family: var(--font-lora);
+  font-size: 0.8rem;
+  line-height: 1.8;
+  color: var(--black);
+  margin: 0;
+  text-align: justify;
+}
+
+@media (max-width: 768px) {
+  .paragraph {
+    text-align: left;
+  }
+}

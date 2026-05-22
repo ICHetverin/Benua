@@ -7,6 +7,7 @@ export function Persons() {
 
   return (
     <div className={styles.page}>
+      <h1 className={styles.title}>Персоналии</h1>
       <CatalogGrid
         items={persons}
         renderCard={(person) => <PersonCard key={person._id} person={person} />}

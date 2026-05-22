@@ -4,20 +4,19 @@ import styles from '../styles/PersonCard.module.css';
 export function PersonCard({ person }) {
   const navigate = useNavigate();
 
-  const handleNavigate = () => {
-    navigate(`/persons/${person._id}`);
-  };
+  const handleNavigate = () => navigate(`/persons/${person._id}`);
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
       handleNavigate();
     }
   };
 
-  const descriptionText = Array.isArray(person.description)
-    ? (person.description[0]?.content || person.description[0]?.topic || '')
-    : (person.description || '');
+  const descriptionText = person.profession
+    || (Array.isArray(person.description)
+      ? person.description[0]?.content || person.description[0]?.topic || ''
+      : person.description || '');
 
   return (
     <article
@@ -27,15 +26,15 @@ export function PersonCard({ person }) {
       role="link"
       tabIndex={0}
     >
-      <div className={styles.photoWrapper}>
+      <div className={styles.imageWrapper}>
         {person.images?.[0]?.url_to_s3
-          ? <img className={styles.photo} src={person.images[0].url_to_s3} alt={person.name} loading="lazy" />
-          : <div className={styles.photoPlaceholder} />
+          ? <img className={styles.image} src={person.images[0].url_to_s3} alt={person.name} loading="lazy" />
+          : <div className={styles.imagePlaceholder} />
         }
       </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{person.name}</h3>
-        <p className={styles.description}>{descriptionText}</p>
+        {descriptionText && <p className={styles.description}>{descriptionText}</p>}
       </div>
     </article>
   );
