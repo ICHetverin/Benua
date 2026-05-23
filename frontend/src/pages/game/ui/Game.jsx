@@ -4,10 +4,10 @@ import { usePersons } from "entities/person";
 import styles from "./Game.module.css";
 
 import alexanderImage from "shared/assets/images/benua-game/alexander-nikolaevich.jpg";
-import albertImage from "shared/assets/images/benua-game/albert-nikolaevich.png";
+import albertImage from "shared/assets/images/benua-game/albert-nikolaevich.jpg";
 import mariaImage from "shared/assets/images/benua-game/maria-kuznetsova.jpg";
 import yuliyImage from "shared/assets/images/benua-game/yuliy-yulievich.jpg";
-import leontyImage from "shared/assets/images/benua-game/leonty-nikolaevich.png";
+import leontyImage from "shared/assets/images/benua-game/leonty-nikolaevich.jpeg";
 import nikolayLeontievichImage from "shared/assets/images/benua-game/nikolay-leontievich.jpg";
 import nikolayNikolaevichImage from "shared/assets/images/benua-game/nikolay-nikolaevich.jpg";
 import mikhailImage from "shared/assets/images/benua-game/mikhail-nikolaevich.jpg";
@@ -32,6 +32,7 @@ const people = {
     role: "пейзажист-акварелист, академик Императорской Академии художеств",
     years: "1852-1936",
     image: albertImage,
+    siteCardNames: ["Альберт Николаевич Бенуа"],
     cardUrl: "https://drive.google.com/drive/folders/15VwYSz3PYdJ_Xp9JJbDoRShgSQ_rKFCT?usp=share_link",
     description: [
       "Талантливый русский художник-акварелист и архитектор, яркий представитель творческой династии Бенуа. По воспоминаниям Александра Бенуа, Альберт был одаренным импровизатором с оптимистичной натурой.",
@@ -44,6 +45,7 @@ const people = {
     role: "оперная певица",
     years: "1880-1966",
     image: mariaImage,
+    siteCardNames: ["Мария Николаевна Кузнецова-Бенуа"],
     cardUrl: "https://drive.google.com/drive/folders/1ejaOv7Pae4L8QgJqMgB3YpqZpy70P2VZ?usp=share_link",
     description: [
       "Русская оперная певица, лирико-колоратурное сопрано, дочь портретиста Н.Д. Кузнецова. После переезда в Петербург начала учиться пению и в 1905 году стала солисткой Мариинского театра.",
@@ -56,6 +58,7 @@ const people = {
     role: "русский архитектор из семьи Бенуа",
     years: "1852-1929",
     image: yuliyImage,
+    siteCardNames: ["Юлий Юльевич Бенуа"],
     cardUrl: "https://drive.google.com/drive/folders/1ASQs8AXKqAtYoWPi8cvsTBt_8Xlx2YFl?usp=share_link",
     description: [
       "Русский архитектор, академик архитектуры и представитель знаменитой династии. Учился в гимназии Карла Мая и на архитектурном отделении Императорской Академии художеств.",
@@ -81,6 +84,7 @@ const people = {
     role: "архитектор, главный зодчий Петергофа",
     years: "1813-1898",
     image: nikolayLeontievichImage,
+    siteCardNames: ["Николай Леонтьевич Бенуа"],
     cardUrl: "https://docs.google.com/document/d/1kAoIzrL7166rBAmnd6n5s3MuFJr6eByi/edit?usp=sharing&ouid=101939425111691666209&rtpof=true&sd=true",
     description: [
       "Выдающийся русский архитектор и основатель знаменитой творческой династии в России. Был зачислен в Академию художеств в 14 лет и окончил ее с большой золотой медалью.",
@@ -93,6 +97,7 @@ const people = {
     role: "офицер, командир 12-го гусарского Ахтырского полка",
     years: "1858-1915",
     image: nikolayNikolaevichImage,
+    siteCardNames: ["Николай Николаевич Бенуа"],
     cardUrl: "https://share.google/owMfbYbnqdnWuqlXt",
     description: [
       "Представитель династии, избравший путь военного. Он был сыном архитектора Николая Леонтьевича Бенуа и родным братом художников Альберта, Леонтия и Александра Бенуа.",
@@ -105,6 +110,7 @@ const people = {
     role: "морской офицер",
     years: "1862-1930",
     image: mikhailImage,
+    siteCardNames: ["Михаил Николаевич Бенуа"],
     cardUrl: "https://docs.google.com/document/d/1iwTbQMDKn3WeThtwNeMDDSvTQk8MWWH5pELcS8J9q58/edit?usp=sharing",
     description: [
       "Морской офицер, участник кругосветного плавания, впоследствии предприниматель и директор правления пароходного общества «Кавказ и Меркурий».",
@@ -117,6 +123,7 @@ const people = {
     role: "капитан, основатель звуковой разведки",
     years: "1881-1938",
     image: nikolayAlbertovichImage,
+    siteCardNames: ["Николай Альбертович Бенуа"],
     cardUrl: "https://docs.google.com/document/d/1Au0qJoWf-jmXiPjhCsl4W0Rd9cK7nMd4/edit?usp=sharing&ouid=101939425111691666209&rtpof=true&sd=true",
     description: [
       "Российский офицер, изобретатель и основатель звуковой разведки. Он был сыном художника-акварелиста Альберта Николаевича Бенуа и внуком архитектора Николая Леонтьевича Бенуа.",
@@ -143,6 +150,8 @@ const introQuestion = {
     },
   ],
 };
+
+const heroPortraitKeys = ["alexander", "albert", "maria", "mikhail", "leonty"];
 
 const branches = {
   art: {
@@ -366,6 +375,7 @@ export function Game() {
   const currentBranch = branch ? branches[branch] : null;
   const currentQuestion = currentBranch?.questions[questionIndex];
   const result = resultKey ? people[resultKey] : null;
+  const resultSitePath = result ? getSitePersonPath(result, sitePersons) : null;
 
   const progress = useMemo(() => {
     if (!currentBranch) {
@@ -425,15 +435,10 @@ export function Game() {
     setQuestionIndex((index) => index - 1);
   };
 
-  const openCard = (person) => {
-    const sitePath = getSitePersonPath(person, sitePersons);
-
+  const openCard = (sitePath) => {
     if (sitePath) {
       navigate(sitePath);
-      return;
     }
-
-    window.open(person.cardUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -454,8 +459,8 @@ export function Game() {
         </div>
 
         <div className={styles.portraitStrip} aria-hidden="true">
-          {Object.entries(people).slice(0, 5).map(([key, person]) => (
-            <img key={key} src={person.image} alt="" className={styles.stripImage} />
+          {heroPortraitKeys.map((key) => (
+            <img key={key} src={people[key].image} alt="" className={styles.stripImage} />
           ))}
         </div>
       </section>
@@ -475,7 +480,6 @@ export function Game() {
                   type="button"
                   onClick={() => startBranch(option.branch)}
                 >
-                  <span>{branches[option.branch].title}</span>
                   {option.text}
                 </button>
               ))}
@@ -537,7 +541,8 @@ export function Game() {
                 <button
                   className={styles.primaryLink}
                   type="button"
-                  onClick={() => openCard(result)}
+                  onClick={() => openCard(resultSitePath)}
+                  disabled={!resultSitePath}
                 >
                   Открыть карточку
                 </button>
@@ -550,33 +555,6 @@ export function Game() {
         )}
       </section>
 
-      <section className={styles.peopleSection}>
-        <div className={styles.peopleHeader}>
-          <span className={styles.eyebrow}>Персонажи игры</span>
-          <h2 className={styles.peopleTitle}>Карточки представителей семьи Бенуа</h2>
-        </div>
-        <div className={styles.peopleGrid}>
-          {Object.entries(people).map(([key, person]) => (
-            <article className={styles.personCard} key={key}>
-              <img src={person.image} alt={person.name} className={styles.personImage} />
-              <div className={styles.personBody}>
-                <h3 className={styles.personName}>{person.name}</h3>
-                <p className={styles.personMeta}>
-                  {person.years} · {person.role}
-                </p>
-                <p className={styles.personText}>{person.description[0]}</p>
-                <button
-                  className={styles.personLink}
-                  type="button"
-                  onClick={() => openCard(person)}
-                >
-                  Подробнее
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
     </main>
   );
 }
