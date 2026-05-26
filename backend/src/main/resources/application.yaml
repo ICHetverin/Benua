@@ -35,6 +35,8 @@ app:
     access-key: ${YC_S3_ACCESS_KEY:}
     secret-key: ${YC_S3_SECRET_KEY:}
     public-base-url: ${YC_S3_PUBLIC_BASE_URL:}
+    # TTL presigned URL в секундах (по умолчанию 1 час)
+    presigned-url-ttl-seconds: ${YC_S3_PRESIGNED_TTL:3600}
   uploads:
     max-size-mb: 10
     allowed-mime: image/jpeg,image/png,image/webp

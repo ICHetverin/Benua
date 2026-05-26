@@ -29,10 +29,14 @@ public class PersonService {
     private final ConnectionService cs;
     private final MongoTemplate mongoTemplate;
 
-    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs) {
+    private final ImageService imageService;
+
+    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs,
+                         ImageService imageService) {
         this.mongoTemplate = mongoTemplate;
         this.pr = pr;
         this.cs = cs;
+        this.imageService = imageService;
     }
 
     public Person getPerson(String id) {
@@ -171,7 +175,8 @@ public class PersonService {
                   .map(o -> new PersonDto.SimpleEntity(o._id(), o.name())).toList();
         return new PersonDto(
                 p._id(), p.name(), p.lifeYears(), p.birthPlace(), p.profession(), p.connectionWithBenua(),
-                p.description(), p.interestingFacts(), persons, objects, p.images(), p.sources(),
+                p.description(), p.interestingFacts(), persons, objects,
+                imageService.toDtoList(p.images()), p.sources(),
                 p.sortOrder(), p.isPublished(), p.createdAt(), p.updatedAt()
         );
     }

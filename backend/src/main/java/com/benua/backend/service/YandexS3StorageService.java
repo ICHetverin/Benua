@@ -9,9 +9,13 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -24,16 +28,19 @@ public class YandexS3StorageService implements StorageService {
     private static final Logger log = LoggerFactory.getLogger(YandexS3StorageService.class);
 
     private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
     private final String bucket;
     private final String publicBaseUrl;
     private final List<String> allowedMimes;
 
     public YandexS3StorageService(
             S3Client s3Client,
+            S3Presigner s3Presigner,
             @Value("${app.s3.bucket}") String bucket,
             @Value("${app.s3.public-base-url}") String publicBaseUrl,
             @Value("${app.uploads.allowed-mime}") String allowedMime) {
         this.s3Client = s3Client;
+        this.s3Presigner = s3Presigner;
         this.bucket = bucket;
         this.publicBaseUrl = publicBaseUrl;
         this.allowedMimes = Arrays.asList(allowedMime.split(","));
@@ -79,6 +86,20 @@ public class YandexS3StorageService implements StorageService {
     @Override
     public String publicUrl(String key) {
         return publicBaseUrl + "/" + key;
+    }
+
+    @Override
+    public String generatePresignedUrl(String s3Key, Duration duration) {
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(duration)
+                .getObjectRequest(GetObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(s3Key)
+                        .build())
+                .build();
+        String url = s3Presigner.presignGetObject(presignRequest).url().toString();
+        log.debug("Generated presigned URL for key={}, ttl={}s", s3Key, duration.getSeconds());
+        return url;
     }
 
     private String extensionForMime(String mime) {

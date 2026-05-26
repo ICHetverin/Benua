@@ -22,4 +22,10 @@ public class NoOpStorageService implements StorageService {
     public String publicUrl(String key) {
         return key != null ? key : "";
     }
+
+    @Override
+    public String generatePresignedUrl(String s3Key, java.time.Duration duration) {
+        // S3 не настроен — возвращаем ключ как есть (fallback)
+        return s3Key != null ? s3Key : "";
+    }
 }

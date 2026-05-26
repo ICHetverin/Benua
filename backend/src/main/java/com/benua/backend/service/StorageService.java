@@ -7,5 +7,11 @@ public interface StorageService {
     void delete(String key);
     String publicUrl(String key);
 
+    /**
+     * Генерирует presigned URL для приватного доступа к объекту в S3.
+     * При отключённом S3 (NoOp) возвращает переданный ключ как есть.
+     */
+    String generatePresignedUrl(String s3Key, java.time.Duration duration);
+
     record UploadedObject(String key, String publicUrl) {}
 }

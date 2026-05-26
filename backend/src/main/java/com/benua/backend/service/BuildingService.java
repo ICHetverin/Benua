@@ -28,11 +28,14 @@ public class BuildingService {
     private final BuildingRepository br;
     private final ConnectionService cs;
     private final MongoTemplate mongoTemplate;
+    private final ImageService imageService;
 
-    public BuildingService(BuildingRepository br, ConnectionService cs, MongoTemplate mongoTemplate) {
+    public BuildingService(BuildingRepository br, ConnectionService cs, MongoTemplate mongoTemplate,
+                           ImageService imageService) {
         this.br = br;
         this.cs = cs;
         this.mongoTemplate = mongoTemplate;
+        this.imageService = imageService;
     }
 
     public Building getBuilding(String id) {
@@ -203,7 +206,8 @@ public class BuildingService {
         return new BuildingDto(
                 b._id(), b.name(), b.address(), b.latitude(), b.longitude(),
                 b.architect(), b.yearsBuilt(), b.history(), b.design(), b.connectionWithBenua(),
-                b.description(), b.interestingFacts(), persons, objects, b.images(), b.sources(),
+                b.description(), b.interestingFacts(), persons, objects,
+                imageService.toDtoList(b.images()), b.sources(),
                 b.buildingType(), b.buildingSubtype(),
                 b.sortOrder(), b.isPublished(), b.createdAt(), b.updatedAt()
         );
