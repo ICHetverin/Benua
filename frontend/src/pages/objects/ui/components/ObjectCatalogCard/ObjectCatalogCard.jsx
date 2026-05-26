@@ -31,7 +31,11 @@ const formatPersons = (persons = []) => {
 export const ObjectCatalogCard = ({ object }) => {
   const navigate = useNavigate();
 
-  const coverUrl = object.images?.[0]?.url_to_s3;
+  const coverImage =
+    (object.featured_image_id &&
+      object.images?.find((img) => img._id === object.featured_image_id)) ||
+    object.images?.[0];
+  const coverUrl = coverImage?.url_to_s3;
   const personsText = formatPersons(object.connected_persons);
 
   return (

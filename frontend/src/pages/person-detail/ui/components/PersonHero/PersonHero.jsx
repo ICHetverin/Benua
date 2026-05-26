@@ -19,7 +19,10 @@ const PersonIcon = () => (
 );
 
 export const PersonHero = ({ person }) => {
-  const coverImage = person.images?.[0];
+  const coverImage =
+    (person.featured_image_id &&
+      person.images?.find((img) => img._id === person.featured_image_id)) ||
+    person.images?.[0];
 
   return (
     <section className={styles.hero}>

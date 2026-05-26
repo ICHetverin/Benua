@@ -27,10 +27,15 @@ export function PersonCard({ person }) {
       tabIndex={0}
     >
       <div className={styles.imageWrapper}>
-        {person.images?.[0]?.url_to_s3
-          ? <img className={styles.image} src={person.images[0].url_to_s3} alt={person.name} loading="lazy" />
-          : <div className={styles.imagePlaceholder} />
-        }
+        {(() => {
+          const coverImage =
+            (person.featured_image_id &&
+              person.images?.find((img) => img._id === person.featured_image_id)) ||
+            person.images?.[0];
+          return coverImage?.url_to_s3
+            ? <img className={styles.image} src={coverImage.url_to_s3} alt={person.name} loading="lazy" />
+            : <div className={styles.imagePlaceholder} />;
+        })()}
       </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{person.name}</h3>
