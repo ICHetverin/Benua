@@ -43,6 +43,7 @@ export interface BuildingCreateDto {
   connected_persons?: string[];
   connected_objects?: string[];
   images?: InlineImage[];
+  image_ids?: string[];
 }
 
 export interface BuildingUpdateDto {

@@ -87,7 +87,10 @@ public class BuildingService {
     public BuildingDto createBuilding(BuildingCreateDto building, String updatedBy) {
         List<String> connectedPeople = building.connectedPersons() != null ? building.connectedPersons() : List.of();
         List<String> connectedBuildings = building.connectedObjects() != null ? building.connectedObjects() : List.of();
-        List<Image> images = cs.saveImages(building.images());
+        // Prefer pre-uploaded imageIds (from /admin/images); fall back to inline ImageCreateDto
+        List<Image> images = (building.imageIds() != null && !building.imageIds().isEmpty())
+                ? cs.getImagesByIds(building.imageIds())
+                : cs.saveImages(building.images());
         List<Source> sources = cs.saveSources(building.sources());
 
         Building newBuilding = new Building(

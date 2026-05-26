@@ -4,7 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { usePerson, useCreatePerson, useUpdatePerson } from 'entities/person/queries';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import { RichTextEditor } from 'features/rich-text/RichTextEditor';
+import { ImageUploader } from 'features/image-uploader/ImageUploader';
 import type { PersonCreateDto, PersonUpdateDto } from 'entities/person/types';
+import type { ImageDto } from 'entities/image/types';
 import { ROUTES } from 'shared/config/routes';
 
 interface Props {
@@ -37,10 +39,13 @@ export function PersonEditPage({ mode }: Props) {
           is_published: existing.is_published ?? false,
           connected_persons: existing.connected_persons?.map((p) => p._id) ?? [],
           connected_objects: existing.connected_objects?.map((o) => o._id) ?? [],
+          images: existing.images ?? [],
         }
-      : { is_published: false, description: [], interesting_facts: [] };
+      : { is_published: false, description: [], interesting_facts: [], images: [] };
 
   const onFinish = async (values: Record<string, unknown>) => {
+    const uploadedImages = (values.images as ImageDto[] | undefined) ?? [];
+    const imageIds = uploadedImages.map((img) => img._id);
     try {
       if (mode === 'create') {
         const dto: PersonCreateDto = {
@@ -53,6 +58,7 @@ export function PersonEditPage({ mode }: Props) {
           interesting_facts: values.interesting_facts as string[] | undefined,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
+          image_ids: imageIds,
         };
         await createMutation.mutateAsync(dto);
         message.success('Персона создана');
@@ -68,7 +74,7 @@ export function PersonEditPage({ mode }: Props) {
           is_published: values.is_published as boolean,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
-          image_ids: (existing?.images ?? []).map((img) => img._id),
+          image_ids: imageIds,
         };
         await updateMutation.mutateAsync(dto);
         message.success('Персона обновлена');
@@ -152,6 +158,11 @@ export function PersonEditPage({ mode }: Props) {
             </>
           )}
         </Form.List>
+
+        <Divider>Фотографии</Divider>
+        <Form.Item name="images">
+          <ImageUploader />
+        </Form.Item>
 
         <Divider />
         <Form.Item name="is_published" label="Опубликовано" valuePropName="checked">

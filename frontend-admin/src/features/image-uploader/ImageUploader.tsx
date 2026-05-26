@@ -1,8 +1,10 @@
 import { Upload, Modal, message } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { InboxOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { imageApi } from 'entities/image/api';
 import type { ImageDto } from 'entities/image/types';
+
+const { Dragger } = Upload;
 
 interface Props {
   value?: ImageDto[];
@@ -16,11 +18,19 @@ export function ImageUploader({ value = [], onChange, maxCount }: Props) {
     name: img.text || img._id,
     status: 'done' as const,
     url: img.url_to_s3,
+    thumbUrl: img.url_to_s3,
   }));
 
-  const handleUpload: UploadProps['customRequest'] = async ({ file, onSuccess, onError }) => {
+  const handleUpload: UploadProps['customRequest'] = async ({
+    file,
+    onSuccess,
+    onError,
+    onProgress,
+  }) => {
     try {
+      onProgress?.({ percent: 20 });
       const uploaded = await imageApi.upload(file as File);
+      onProgress?.({ percent: 100 });
       onChange?.([...value, uploaded]);
       onSuccess?.(uploaded);
     } catch (err) {
@@ -33,6 +43,7 @@ export function ImageUploader({ value = [], onChange, maxCount }: Props) {
     new Promise((resolve) => {
       Modal.confirm({
         title: 'Удалить фото?',
+        content: 'Файл будет удалён из хранилища. Это действие необратимо.',
         okText: 'Удалить',
         okButtonProps: { danger: true },
         cancelText: 'Отмена',
@@ -50,21 +61,29 @@ export function ImageUploader({ value = [], onChange, maxCount }: Props) {
       });
     });
 
+  const atLimit = !!maxCount && fileList.length >= maxCount;
+
   return (
-    <Upload
-      listType="picture-card"
+    <Dragger
+      listType="picture"
       fileList={fileList}
       customRequest={handleUpload}
       onRemove={handleRemove}
       accept="image/jpeg,image/png,image/webp"
-      maxCount={maxCount}
+      multiple={!maxCount || maxCount > 1}
+      disabled={atLimit}
+      style={atLimit ? { pointerEvents: 'none', opacity: 0.5 } : undefined}
     >
-      {(!maxCount || fileList.length < maxCount) && (
-        <div>
-          <PlusOutlined />
-          <div style={{ marginTop: 8 }}>Загрузить</div>
-        </div>
-      )}
-    </Upload>
+      <p className="ant-upload-drag-icon">
+        <InboxOutlined />
+      </p>
+      <p className="ant-upload-text">
+        Перетащите изображения сюда или нажмите для выбора
+      </p>
+      <p className="ant-upload-hint">
+        JPG, PNG, WebP · не более 10 МБ на файл
+        {maxCount ? ` · максимум ${maxCount} шт.` : ''}
+      </p>
+    </Dragger>
   );
 }
