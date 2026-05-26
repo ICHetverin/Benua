@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Form, Input, Button, Space, Typography, message, Spin, Switch, Divider } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -17,13 +18,19 @@ export function PersonEditPage({ mode }: Props) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const watchedFeaturedId = Form.useWatch('featured_image_id', form) as string | undefined;
+  const [featuredId, setFeaturedId] = useState<string | null>(null);
 
   const { data: existing, isLoading } = usePerson(id ?? '');
   const createMutation = useCreatePerson();
   const updateMutation = useUpdatePerson(id ?? '');
 
   const isPending = createMutation.isPending || updateMutation.isPending;
+
+  useEffect(() => {
+    if (mode === 'edit' && existing) {
+      setFeaturedId(existing.featured_image_id ?? null);
+    }
+  }, [mode, existing?._id]);
 
   if (mode === 'edit' && isLoading) return <Spin />;
 
@@ -58,7 +65,7 @@ export function PersonEditPage({ mode }: Props) {
   const onFinish = async (values: Record<string, unknown>) => {
     const uploadedImages = (values.images as ImageDto[] | undefined) ?? [];
     const imageIds = uploadedImages.map((img) => img._id);
-    const featuredImageId = (values.featured_image_id as string | null | undefined) ?? null;
+    const featuredImageId = featuredId;
 
     try {
       if (mode === 'create') {
@@ -185,13 +192,10 @@ export function PersonEditPage({ mode }: Props) {
 
         {/* ── Фотографии ── */}
         <Divider>Фотографии</Divider>
-        <Form.Item name="featured_image_id" hidden>
-          <Input />
-        </Form.Item>
         <Form.Item name="images">
           <ImageUploader
-            featuredImageId={watchedFeaturedId}
-            onFeaturedChange={(fid) => form.setFieldValue('featured_image_id', fid)}
+            featuredImageId={featuredId}
+            onFeaturedChange={setFeaturedId}
           />
         </Form.Item>
 
