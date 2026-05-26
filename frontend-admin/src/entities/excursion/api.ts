@@ -3,7 +3,7 @@ import type { ExcursionDto, ExcursionCreateDto, ExcursionUpdateDto } from './typ
 
 export const excursionApi = {
   list: (params?: Record<string, unknown>): Promise<ExcursionDto[]> =>
-    adminApi.get('/excursions', { params: { size: 100, ...params } }),
+    adminApi.get('/excursions', { params: { size: 10000, ...params } }),
 
   get: (id: string): Promise<ExcursionDto> => adminApi.get(`/excursions/${id}`),
 
