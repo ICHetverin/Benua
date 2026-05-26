@@ -18,5 +18,7 @@ public record PersonUpdateDto(
         @JsonProperty("image_ids") List<String> imageIds,
         @JsonProperty("sources") List<SourceCreateDto> sources,
         @JsonProperty("sort_order") Integer sortOrder,
-        @JsonProperty("is_published") Boolean isPublished
+        @JsonProperty("is_published") Boolean isPublished,
+        @JsonProperty("featured_image_id") String featuredImageId,
+        @JsonProperty("authors") List<String> authors
 ) {}

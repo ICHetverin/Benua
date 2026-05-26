@@ -3,7 +3,7 @@ import type { PersonDto, PersonCreateDto, PersonUpdateDto } from './types';
 
 export const personApi = {
   list: (params?: Record<string, unknown>): Promise<PersonDto[]> =>
-    adminApi.get('/persons', { params: { size: 100, ...params } }),
+    adminApi.get('/persons', { params: { size: 10000, ...params } }),
 
   get: (id: string): Promise<PersonDto> => adminApi.get(`/persons/${id}`),
 

@@ -29,10 +29,15 @@ export function ObjectCard({ object }) {
       tabIndex={0}
     >
       <div className={styles.imageWrapper}>
-        {object.images?.[0]
-          ? <img className={styles.image} src={object.images[0].url_to_s3} alt={object.name} loading="lazy" />
-          : <div className={styles.imagePlaceholder} />
-        }
+        {(() => {
+          const coverImage =
+            (object.featured_image_id &&
+              object.images?.find((img) => img._id === object.featured_image_id)) ||
+            object.images?.[0];
+          return coverImage?.url_to_s3
+            ? <img className={styles.image} src={coverImage.url_to_s3} alt={object.name} loading="lazy" />
+            : <div className={styles.imagePlaceholder} />;
+        })()}
       </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{object.name}</h3>

@@ -24,5 +24,7 @@ public record BuildingUpdateDto(
         @JsonProperty("building_type") String buildingType,
         @JsonProperty("building_subtype") String buildingSubtype,
         @JsonProperty("sort_order") Integer sortOrder,
-        @JsonProperty("is_published") Boolean isPublished
+        @JsonProperty("is_published") Boolean isPublished,
+        @JsonProperty("featured_image_id") String featuredImageId,
+        @JsonProperty("authors") List<String> authors
 ) {}

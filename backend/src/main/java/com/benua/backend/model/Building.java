@@ -54,5 +54,9 @@ public record Building(
         @Field("is_published") Boolean isPublished,
         @Field("created_at") Instant createdAt,
         @Field("updated_at") Instant updatedAt,
-        @Field("updated_by") String updatedBy
+        @Field("updated_by") String updatedBy,
+        /** ID изображения, которое отображается первым / в превью карточки */
+        @Field("featured_image_id") String featuredImageId,
+        /** Авторы — кто выполнял поиск и отбор информации */
+        @Field("authors") List<String> authors
 ) {}

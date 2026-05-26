@@ -119,7 +119,9 @@ public class BuildingService {
                 false,
                 Instant.now(),
                 Instant.now(),
-                updatedBy
+                updatedBy,
+                building.featuredImageId(),
+                building.authors()
         );
 
         return toDto(br.save(newBuilding));
@@ -160,7 +162,9 @@ public class BuildingService {
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
                 existing.createdAt(),
                 Instant.now(),
-                updatedBy
+                updatedBy,
+                patch.featuredImageId() != null ? patch.featuredImageId() : existing.featuredImageId(),
+                patch.authors() != null ? patch.authors() : existing.authors()
         );
 
         return toDto(br.save(updated));
@@ -179,7 +183,8 @@ public class BuildingService {
                 existing.connectionWithBenua(), existing.description(), existing.interestingFacts(),
                 existing.connectedPersons(), existing.connectedObjects(), existing.images(), existing.sources(),
                 existing.buildingType(), existing.buildingSubtype(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy,
+                existing.featuredImageId(), existing.authors()
         );
         return toDto(br.save(updated));
     }
@@ -209,7 +214,8 @@ public class BuildingService {
                 b.description(), b.interestingFacts(), persons, objects,
                 imageService.toDtoList(b.images()), b.sources(),
                 b.buildingType(), b.buildingSubtype(),
-                b.sortOrder(), b.isPublished(), b.createdAt(), b.updatedAt()
+                b.sortOrder(), b.isPublished(), b.createdAt(), b.updatedAt(),
+                b.featuredImageId(), b.authors()
         );
     }
 }

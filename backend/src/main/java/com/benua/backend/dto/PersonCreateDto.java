@@ -18,5 +18,7 @@ public record PersonCreateDto(
         @JsonProperty("connected_objects") List<String> connectedObjects,
         @JsonProperty("images") List<ImageCreateDto> images,
         @JsonProperty("image_ids") List<String> imageIds,
-        @JsonProperty("sources") List<SourceCreateDto> sources
+        @JsonProperty("featured_image_id") String featuredImageId,
+        @JsonProperty("sources") List<SourceCreateDto> sources,
+        @JsonProperty("authors") List<String> authors
 ) {}
