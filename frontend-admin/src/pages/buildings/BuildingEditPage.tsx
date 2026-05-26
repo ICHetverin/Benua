@@ -4,7 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useBuilding, useCreateBuilding, useUpdateBuilding } from 'entities/building/queries';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import { RichTextEditor } from 'features/rich-text/RichTextEditor';
+import { ImageUploader } from 'features/image-uploader/ImageUploader';
 import type { BuildingCreateDto, BuildingUpdateDto } from 'entities/building/types';
+import type { ImageDto } from 'entities/image/types';
 import { ROUTES } from 'shared/config/routes';
 
 const BUILDING_CATEGORIES = [
@@ -104,10 +106,13 @@ export function BuildingEditPage({ mode }: Props) {
           is_published: existing.is_published ?? false,
           connected_persons: existing.connected_persons?.map((p) => p._id) ?? [],
           connected_objects: existing.connected_objects?.map((o) => o._id) ?? [],
+          images: existing.images ?? [],
         }
-      : { is_published: false, description: [], interesting_facts: [] };
+      : { is_published: false, description: [], interesting_facts: [], images: [] };
 
   const onFinish = async (values: Record<string, unknown>) => {
+    const uploadedImages = (values.images as ImageDto[] | undefined) ?? [];
+    const imageIds = uploadedImages.map((img) => img._id);
     try {
       if (mode === 'create') {
         const dto: BuildingCreateDto = {
@@ -125,6 +130,7 @@ export function BuildingEditPage({ mode }: Props) {
           is_published: values.is_published as boolean,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
+          image_ids: imageIds,
         };
         await createMutation.mutateAsync(dto);
         message.success('Объект создан');
@@ -144,7 +150,7 @@ export function BuildingEditPage({ mode }: Props) {
           is_published: values.is_published as boolean,
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
-          image_ids: (existing?.images ?? []).map((img) => img._id),
+          image_ids: imageIds,
         };
         await updateMutation.mutateAsync(dto);
         message.success('Объект обновлён');
@@ -255,6 +261,11 @@ export function BuildingEditPage({ mode }: Props) {
               )
             }
           />
+        </Form.Item>
+
+        <Divider>Фотографии</Divider>
+        <Form.Item name="images">
+          <ImageUploader />
         </Form.Item>
 
         <Divider />

@@ -87,7 +87,10 @@ public class PersonService {
     public PersonDto createPerson(PersonCreateDto person, String updatedBy) {
         List<String> connectedPeople = person.connectedPersons() != null ? person.connectedPersons() : List.of();
         List<String> connectedBuildings = person.connectedObjects() != null ? person.connectedObjects() : List.of();
-        List<Image> images = cs.saveImages(person.images());
+        // Prefer pre-uploaded imageIds (from /admin/images); fall back to inline ImageCreateDto
+        List<Image> images = (person.imageIds() != null && !person.imageIds().isEmpty())
+                ? cs.getImagesByIds(person.imageIds())
+                : cs.saveImages(person.images());
         List<Source> sources = cs.saveSources(person.sources());
 
         Person newPerson = new Person(

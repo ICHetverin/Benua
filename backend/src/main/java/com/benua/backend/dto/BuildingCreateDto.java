@@ -22,6 +22,7 @@ public record BuildingCreateDto(
         @JsonProperty("connected_objects") List<String> connectedObjects,
         @JsonProperty("sources") List<SourceCreateDto> sources,
         @JsonProperty("images") List<ImageCreateDto> images,
+        @JsonProperty("image_ids") List<String> imageIds,
         @JsonProperty("building_type") String buildingType,
         @JsonProperty("building_subtype") String buildingSubtype
 ) {}

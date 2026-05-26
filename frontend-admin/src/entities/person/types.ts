@@ -44,6 +44,7 @@ export interface PersonCreateDto {
   connected_persons?: string[];
   connected_objects?: string[];
   images?: InlineImage[];
+  image_ids?: string[];
 }
 
 export interface PersonUpdateDto {
