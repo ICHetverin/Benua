@@ -6,10 +6,10 @@ export const personKeys = {
   detail: (id) => ['persons', id],
 };
 
-export const usePersons = () =>
+export const usePersons = (search = '') =>
   useQuery({
-    queryKey: personKeys.all,
-    queryFn: getPersons,
+    queryKey: [...personKeys.all, search],
+    queryFn: () => getPersons(search),
   });
 
 export const usePersonById = (id) =>

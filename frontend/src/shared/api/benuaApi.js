@@ -25,16 +25,21 @@ const normalizeList = (items) => {
   return items;
 };
 
-export const getPersons = () => api.get('/persons', { params: { size: 1000 } }).then(normalizeList);
+export const getPersons = (search) =>
+  api.get('/persons', { params: { size: 1000, ...(search ? { search } : {}) } }).then(normalizeList);
 export const getPersonById = (id) => api.get(`/persons/${id}`).then(normalizeId);
 
-export const getObjects = () => api.get('/objects', { params: { size: 1000 } }).then(normalizeList);
+export const getObjects = (search) =>
+  api.get('/objects', { params: { size: 1000, ...(search ? { search } : {}) } }).then(normalizeList);
 export const getObjectById = (id) => api.get(`/objects/${id}`).then(normalizeId);
 
 export const search = (query) => api.get('/search', { params: { q: query } });
 
 export const getPublicExcursions = () =>
   api.get('/excursions', { params: { size: 1000 } }).then(normalizeList);
+
+export const getExcursions = (search) =>
+  api.get('/excursions', { params: { size: 1000, ...(search ? { search } : {}) } }).then(normalizeList);
 
 export const getPublicExcursionById = (id) =>
   api.get(`/excursions/${id}`).then(normalizeId);
