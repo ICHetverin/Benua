@@ -41,6 +41,16 @@ public class ImageController {
         return imageService.toDto(saved);
     }
 
+    /** Переименовывает изображение (обновляет поле text). */
+    @PatchMapping("/{id}")
+    public ImageDto rename(@PathVariable String id, @RequestBody java.util.Map<String, String> body) {
+        Image existing = imageRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Image not found: " + id));
+        String newText = body.getOrDefault("text", existing.text());
+        Image updated = new Image(existing._id(), newText, existing.urlToS3(), existing.s3Key());
+        return imageService.toDto(imageRepository.save(updated));
+    }
+
     /** Возвращает свежий presigned URL для существующего изображения. */
     @GetMapping("/{id}/url")
     public ImageDto refreshUrl(@PathVariable String id) {

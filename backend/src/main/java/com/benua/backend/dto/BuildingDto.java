@@ -35,7 +35,9 @@ public record BuildingDto(
         Integer sortOrder,
         Boolean isPublished,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        String featuredImageId,
+        List<String> authors
 ) {
     /**
      * Минимальный объект для вложенных связей: только _id и name

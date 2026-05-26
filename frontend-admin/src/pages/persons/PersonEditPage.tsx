@@ -17,6 +17,7 @@ export function PersonEditPage({ mode }: Props) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const watchedFeaturedId = Form.useWatch('featured_image_id', form) as string | undefined;
 
   const { data: existing, isLoading } = usePerson(id ?? '');
   const createMutation = useCreatePerson();
@@ -40,12 +41,25 @@ export function PersonEditPage({ mode }: Props) {
           connected_persons: existing.connected_persons?.map((p) => p._id) ?? [],
           connected_objects: existing.connected_objects?.map((o) => o._id) ?? [],
           images: existing.images ?? [],
+          featured_image_id: existing.featured_image_id ?? null,
+          sources: existing.sources?.map((s) => ({ text: s.text, url: s.url })) ?? [],
+          authors: existing.authors ?? [],
         }
-      : { is_published: false, description: [], interesting_facts: [], images: [] };
+      : {
+          is_published: false,
+          description: [],
+          interesting_facts: [],
+          images: [],
+          featured_image_id: null,
+          sources: [],
+          authors: [],
+        };
 
   const onFinish = async (values: Record<string, unknown>) => {
     const uploadedImages = (values.images as ImageDto[] | undefined) ?? [];
     const imageIds = uploadedImages.map((img) => img._id);
+    const featuredImageId = (values.featured_image_id as string | null | undefined) ?? null;
+
     try {
       if (mode === 'create') {
         const dto: PersonCreateDto = {
@@ -59,6 +73,11 @@ export function PersonEditPage({ mode }: Props) {
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
           image_ids: imageIds,
+          featured_image_id: featuredImageId ?? undefined,
+          sources: (values.sources as { text?: string; url?: string }[] | undefined)
+            ?.filter((s) => s?.text || s?.url)
+            .map((s) => ({ text: s.text ?? '', url: s.url ?? '' })),
+          authors: (values.authors as string[] | undefined)?.filter(Boolean),
         };
         await createMutation.mutateAsync(dto);
         message.success('Персона создана');
@@ -75,6 +94,11 @@ export function PersonEditPage({ mode }: Props) {
           connected_persons: values.connected_persons as string[] | undefined,
           connected_objects: values.connected_objects as string[] | undefined,
           image_ids: imageIds,
+          featured_image_id: featuredImageId ?? undefined,
+          sources: (values.sources as { text?: string; url?: string }[] | undefined)
+            ?.filter((s) => s?.text || s?.url)
+            .map((s) => ({ text: s.text ?? '', url: s.url ?? '' })),
+          authors: (values.authors as string[] | undefined)?.filter(Boolean),
         };
         await updateMutation.mutateAsync(dto);
         message.success('Персона обновлена');
@@ -159,10 +183,60 @@ export function PersonEditPage({ mode }: Props) {
           )}
         </Form.List>
 
+        {/* ── Фотографии ── */}
         <Divider>Фотографии</Divider>
-        <Form.Item name="images">
-          <ImageUploader />
+        <Form.Item name="featured_image_id" hidden>
+          <Input />
         </Form.Item>
+        <Form.Item name="images">
+          <ImageUploader
+            featuredImageId={watchedFeaturedId}
+            onFeaturedChange={(fid) => form.setFieldValue('featured_image_id', fid)}
+          />
+        </Form.Item>
+
+        {/* ── Источники ── */}
+        <Divider>Источники</Divider>
+        <Form.List name="sources">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name }) => (
+                <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 8 }}>
+                  <Form.Item name={[name, 'text']} style={{ marginBottom: 0, width: 340 }}>
+                    <Input placeholder="Название источника" />
+                  </Form.Item>
+                  <Form.Item name={[name, 'url']} style={{ marginBottom: 0, width: 280 }}>
+                    <Input placeholder="https://..." />
+                  </Form.Item>
+                  <MinusCircleOutlined style={{ color: '#ff4d4f' }} onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
+                Добавить источник
+              </Button>
+            </>
+          )}
+        </Form.List>
+
+        {/* ── Авторы ── */}
+        <Divider>Авторы (поиск и отбор информации)</Divider>
+        <Form.List name="authors">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name }) => (
+                <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 8 }}>
+                  <Form.Item name={name} style={{ flex: 1, marginBottom: 0 }}>
+                    <Input placeholder="Фамилия Имя..." style={{ width: 400 }} />
+                  </Form.Item>
+                  <MinusCircleOutlined style={{ color: '#ff4d4f' }} onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
+                Добавить автора
+              </Button>
+            </>
+          )}
+        </Form.List>
 
         <Divider />
         <Form.Item name="is_published" label="Опубликовано" valuePropName="checked">

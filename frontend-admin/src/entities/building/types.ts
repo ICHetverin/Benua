@@ -17,12 +17,15 @@ export interface BuildingDto {
   connected_persons?: SimpleEntity[];
   connected_objects?: SimpleEntity[];
   images?: ImageDto[];
+  sources?: { _id: string; text: string; url: string }[];
   building_type?: string;
   building_subtype?: string;
   is_published?: boolean;
   sort_order?: number;
   created_at?: string;
   updated_at?: string;
+  featured_image_id?: string;
+  authors?: string[];
 }
 
 export interface BuildingCreateDto {
@@ -44,6 +47,9 @@ export interface BuildingCreateDto {
   connected_objects?: string[];
   images?: InlineImage[];
   image_ids?: string[];
+  featured_image_id?: string;
+  sources?: { text: string; url: string }[];
+  authors?: string[];
 }
 
 export interface BuildingUpdateDto {
@@ -65,4 +71,7 @@ export interface BuildingUpdateDto {
   image_ids?: string[];
   sort_order?: number;
   is_published?: boolean;
+  featured_image_id?: string;
+  sources?: { text: string; url: string }[];
+  authors?: string[];
 }

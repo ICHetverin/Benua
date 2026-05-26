@@ -101,7 +101,8 @@ public class PersonService {
                 null, person.name(), person.lifeYears(), person.birthPlace(), person.profession(),
                 person.connectionWithBenua(), person.description(), person.interestingFacts(),
                 connectedPeople, connectedBuildings, images, sources,
-                null, false, Instant.now(), Instant.now(), updatedBy
+                null, false, Instant.now(), Instant.now(), updatedBy,
+                person.featuredImageId(), person.authors()
         );
 
         return toDto(pr.save(newPerson));
@@ -131,7 +132,9 @@ public class PersonService {
                 connectedPeople, connectedBuildings, images, sources,
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
-                existing.createdAt(), Instant.now(), updatedBy
+                existing.createdAt(), Instant.now(), updatedBy,
+                patch.featuredImageId() != null ? patch.featuredImageId() : existing.featuredImageId(),
+                patch.authors() != null ? patch.authors() : existing.authors()
         );
 
         return toDto(pr.save(updated));
@@ -149,7 +152,8 @@ public class PersonService {
                 existing.profession(), existing.connectionWithBenua(), existing.description(),
                 existing.interestingFacts(), existing.connectedPersons(), existing.connectedObjects(),
                 existing.images(), existing.sources(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy,
+                existing.featuredImageId(), existing.authors()
         );
         return toDto(pr.save(updated));
     }
@@ -177,7 +181,8 @@ public class PersonService {
                 p._id(), p.name(), p.lifeYears(), p.birthPlace(), p.profession(), p.connectionWithBenua(),
                 p.description(), p.interestingFacts(), persons, objects,
                 imageService.toDtoList(p.images()), p.sources(),
-                p.sortOrder(), p.isPublished(), p.createdAt(), p.updatedAt()
+                p.sortOrder(), p.isPublished(), p.createdAt(), p.updatedAt(),
+                p.featuredImageId(), p.authors()
         );
     }
 }
