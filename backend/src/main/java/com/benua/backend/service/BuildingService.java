@@ -28,11 +28,14 @@ public class BuildingService {
     private final BuildingRepository br;
     private final ConnectionService cs;
     private final MongoTemplate mongoTemplate;
+    private final ImageService imageService;
 
-    public BuildingService(BuildingRepository br, ConnectionService cs, MongoTemplate mongoTemplate) {
+    public BuildingService(BuildingRepository br, ConnectionService cs, MongoTemplate mongoTemplate,
+                           ImageService imageService) {
         this.br = br;
         this.cs = cs;
         this.mongoTemplate = mongoTemplate;
+        this.imageService = imageService;
     }
 
     public Building getBuilding(String id) {
@@ -87,7 +90,10 @@ public class BuildingService {
     public BuildingDto createBuilding(BuildingCreateDto building, String updatedBy) {
         List<String> connectedPeople = building.connectedPersons() != null ? building.connectedPersons() : List.of();
         List<String> connectedBuildings = building.connectedObjects() != null ? building.connectedObjects() : List.of();
-        List<Image> images = cs.saveImages(building.images());
+        // Prefer pre-uploaded imageIds (from /admin/images); fall back to inline ImageCreateDto
+        List<Image> images = (building.imageIds() != null && !building.imageIds().isEmpty())
+                ? cs.getImagesByIds(building.imageIds())
+                : cs.saveImages(building.images());
         List<Source> sources = cs.saveSources(building.sources());
 
         Building newBuilding = new Building(
@@ -113,7 +119,9 @@ public class BuildingService {
                 false,
                 Instant.now(),
                 Instant.now(),
-                updatedBy
+                updatedBy,
+                building.featuredImageId(),
+                building.authors()
         );
 
         return toDto(br.save(newBuilding));
@@ -154,7 +162,9 @@ public class BuildingService {
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
                 existing.createdAt(),
                 Instant.now(),
-                updatedBy
+                updatedBy,
+                patch.featuredImageId() != null ? patch.featuredImageId() : existing.featuredImageId(),
+                patch.authors() != null ? patch.authors() : existing.authors()
         );
 
         return toDto(br.save(updated));
@@ -173,7 +183,8 @@ public class BuildingService {
                 existing.connectionWithBenua(), existing.description(), existing.interestingFacts(),
                 existing.connectedPersons(), existing.connectedObjects(), existing.images(), existing.sources(),
                 existing.buildingType(), existing.buildingSubtype(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy,
+                existing.featuredImageId(), existing.authors()
         );
         return toDto(br.save(updated));
     }
@@ -200,9 +211,11 @@ public class BuildingService {
         return new BuildingDto(
                 b._id(), b.name(), b.address(), b.latitude(), b.longitude(),
                 b.architect(), b.yearsBuilt(), b.history(), b.design(), b.connectionWithBenua(),
-                b.description(), b.interestingFacts(), persons, objects, b.images(), b.sources(),
+                b.description(), b.interestingFacts(), persons, objects,
+                imageService.toDtoList(b.images()), b.sources(),
                 b.buildingType(), b.buildingSubtype(),
-                b.sortOrder(), b.isPublished(), b.createdAt(), b.updatedAt()
+                b.sortOrder(), b.isPublished(), b.createdAt(), b.updatedAt(),
+                b.featuredImageId(), b.authors()
         );
     }
 }

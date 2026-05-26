@@ -29,10 +29,14 @@ public class PersonService {
     private final ConnectionService cs;
     private final MongoTemplate mongoTemplate;
 
-    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs) {
+    private final ImageService imageService;
+
+    public PersonService(MongoTemplate mongoTemplate, PersonRepository pr, ConnectionService cs,
+                         ImageService imageService) {
         this.mongoTemplate = mongoTemplate;
         this.pr = pr;
         this.cs = cs;
+        this.imageService = imageService;
     }
 
     public Person getPerson(String id) {
@@ -87,14 +91,18 @@ public class PersonService {
     public PersonDto createPerson(PersonCreateDto person, String updatedBy) {
         List<String> connectedPeople = person.connectedPersons() != null ? person.connectedPersons() : List.of();
         List<String> connectedBuildings = person.connectedObjects() != null ? person.connectedObjects() : List.of();
-        List<Image> images = cs.saveImages(person.images());
+        // Prefer pre-uploaded imageIds (from /admin/images); fall back to inline ImageCreateDto
+        List<Image> images = (person.imageIds() != null && !person.imageIds().isEmpty())
+                ? cs.getImagesByIds(person.imageIds())
+                : cs.saveImages(person.images());
         List<Source> sources = cs.saveSources(person.sources());
 
         Person newPerson = new Person(
                 null, person.name(), person.lifeYears(), person.birthPlace(), person.profession(),
                 person.connectionWithBenua(), person.description(), person.interestingFacts(),
                 connectedPeople, connectedBuildings, images, sources,
-                null, false, Instant.now(), Instant.now(), updatedBy
+                null, false, Instant.now(), Instant.now(), updatedBy,
+                person.featuredImageId(), person.authors()
         );
 
         return toDto(pr.save(newPerson));
@@ -124,7 +132,9 @@ public class PersonService {
                 connectedPeople, connectedBuildings, images, sources,
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
-                existing.createdAt(), Instant.now(), updatedBy
+                existing.createdAt(), Instant.now(), updatedBy,
+                patch.featuredImageId() != null ? patch.featuredImageId() : existing.featuredImageId(),
+                patch.authors() != null ? patch.authors() : existing.authors()
         );
 
         return toDto(pr.save(updated));
@@ -142,7 +152,8 @@ public class PersonService {
                 existing.profession(), existing.connectionWithBenua(), existing.description(),
                 existing.interestingFacts(), existing.connectedPersons(), existing.connectedObjects(),
                 existing.images(), existing.sources(),
-                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy
+                existing.sortOrder(), value, existing.createdAt(), Instant.now(), updatedBy,
+                existing.featuredImageId(), existing.authors()
         );
         return toDto(pr.save(updated));
     }
@@ -168,8 +179,10 @@ public class PersonService {
                   .map(o -> new PersonDto.SimpleEntity(o._id(), o.name())).toList();
         return new PersonDto(
                 p._id(), p.name(), p.lifeYears(), p.birthPlace(), p.profession(), p.connectionWithBenua(),
-                p.description(), p.interestingFacts(), persons, objects, p.images(), p.sources(),
-                p.sortOrder(), p.isPublished(), p.createdAt(), p.updatedAt()
+                p.description(), p.interestingFacts(), persons, objects,
+                imageService.toDtoList(p.images()), p.sources(),
+                p.sortOrder(), p.isPublished(), p.createdAt(), p.updatedAt(),
+                p.featuredImageId(), p.authors()
         );
     }
 }

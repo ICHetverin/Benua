@@ -1,7 +1,6 @@
 package com.benua.backend.dto;
 
 import com.benua.backend.model.Description;
-import com.benua.backend.model.Image;
 import com.benua.backend.model.Source;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,12 +24,14 @@ public record PersonDto(
         List<String> interestingFacts,
         List<SimpleEntity> connectedPersons,
         List<SimpleEntity> connectedObjects,
-        List<Image> images,
+        List<ImageDto> images,
         List<Source> sources,
         Integer sortOrder,
         Boolean isPublished,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        String featuredImageId,
+        List<String> authors
 ) {
     /**
      * Минимальный объект для вложенных связей: только _id и name

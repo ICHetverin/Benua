@@ -237,94 +237,14 @@
   color: var(--dark-blue);
 }
 
-.peopleSection {
-  padding-top: 0.5rem;
+.primaryLink:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-.peopleHeader {
-  max-width: 760px;
-  margin-bottom: 1.5rem;
-}
-
-.peopleTitle {
-  font-family: var(--font-lora);
-  font-size: 1.7rem;
-  font-weight: 400;
-  color: var(--black);
-  margin: 0;
-}
-
-.peopleGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.personCard {
-  display: flex;
-  flex-direction: column;
-  border: 1.5px solid var(--grey-stroke);
-  border-radius: 6px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.22);
-}
-
-.personImage {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  background: var(--darker-beige);
-}
-
-.personBody {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding: 1rem;
-}
-
-.personName {
-  font-family: var(--font-lora);
-  font-size: 1.1rem;
-  font-weight: 500;
-  line-height: 1.3;
-  color: var(--black);
-  margin: 0 0 0.45rem;
-}
-
-.personMeta,
-.personText {
-  font-size: 0.9rem;
-  line-height: 1.55;
-  margin: 0;
-}
-
-.personMeta {
-  color: var(--dark-red);
-  margin-bottom: 0.8rem;
-}
-
-.personText {
-  flex: 1;
-  color: var(--black);
-}
-
-.personLink {
-  align-self: flex-start;
-  margin-top: 1rem;
-  padding: 0;
-  border: none;
-  background: transparent;
-  font-family: var(--font-lora);
-  font-size: 0.9rem;
-  color: var(--dark-red);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.personLink:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+.primaryLink:disabled:hover {
+  background: var(--dark-blue);
+  color: var(--white);
 }
 
 @media (max-width: 1024px) {
@@ -385,7 +305,4 @@
     max-width: 320px;
   }
 
-  .peopleGrid {
-    grid-template-columns: 1fr;
-  }
 }
