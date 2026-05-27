@@ -17,19 +17,35 @@ const VIEWS = [
 
 export function Cemeteries() {
   const [viewIndex, setViewIndex] = useState(0);
-  // "left" | "right" | null — направление последней анимации
-  const [slideDir, setSlideDir] = useState(null);
-  const animTimeout = useRef(null);
+  // exitDir  — направление выхода  текущего слова: "toLeft" | "toRight" | null
+  // enterDir — направление входа   нового слова:   "fromRight" | "fromLeft" | null
+  const [exitDir,  setExitDir]  = useState(null);
+  const [enterDir, setEnterDir] = useState(null);
+  const t1 = useRef(null);
+  const t2 = useRef(null);
 
   const navigate = (dir) => {
-    // dir: +1 = вперёд (вправо→влево), -1 = назад (влево→вправо)
-    if (animTimeout.current) clearTimeout(animTimeout.current);
-    setSlideDir(dir > 0 ? "right" : "left");
-    // Даём CSS-классу появиться, затем меняем контент
-    animTimeout.current = setTimeout(() => {
-      setViewIndex((i) => (i + dir + VIEWS.length) % VIEWS.length);
-      setSlideDir(null);
-    }, 260);
+    // Блокируем повторный клик во время анимации
+    if (exitDir || enterDir) return;
+
+    const nextIndex  = (viewIndex + dir + VIEWS.length) % VIEWS.length;
+    // dir > 0 (→): старое уходит влево, новое приходит справа
+    // dir < 0 (←): старое уходит вправо, новое приходит слева
+    const exitTo  = dir > 0 ? "toLeft"    : "toRight";
+    const enterFrom = dir > 0 ? "fromRight" : "fromLeft";
+
+    clearTimeout(t1.current);
+    clearTimeout(t2.current);
+
+    setExitDir(exitTo);
+
+    t1.current = setTimeout(() => {
+      setViewIndex(nextIndex);
+      setExitDir(null);
+      setEnterDir(enterFrom);
+
+      t2.current = setTimeout(() => setEnterDir(null), 280);
+    }, 240);
   };
 
   const { label, layout, data } = VIEWS[viewIndex];
@@ -54,8 +70,10 @@ export function Cemeteries() {
             <span className={styles.labelWrap}>
               <span
                 className={`${styles.titleHighlight} ${
-                  slideDir === "right" ? styles.slideOutLeft  :
-                  slideDir === "left"  ? styles.slideOutRight : ""
+                  exitDir  === "toLeft"    ? styles.slideOutLeft    :
+                  exitDir  === "toRight"   ? styles.slideOutRight   :
+                  enterDir === "fromRight" ? styles.slideInFromRight :
+                  enterDir === "fromLeft"  ? styles.slideInFromLeft  : ""
                 }`}
               >
                 {label}
