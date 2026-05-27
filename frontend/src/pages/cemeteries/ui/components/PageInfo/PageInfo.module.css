@@ -2,39 +2,34 @@
   margin-top: 4rem;
   padding-top: 2.5rem;
   border-top: 1px solid var(--dark-red);
-  /* Полная ширина — ограничений max-width нет */
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-/* Двухколоночный layout: слева описание, справа источники/авторы */
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: start;
-}
-
-/* ── Левая колонка: описание + фичи ── */
+/* ── 1. Лид — полная ширина ── */
 .lead {
   font-family: var(--font-lora);
   font-size: 0.82rem;
   line-height: 1.6;
   color: var(--black);
-  margin-bottom: 1.5rem;
+  margin: 0;
 }
 
+/* ── 2. Фичи — без выделения ── */
 .features {
-  background: rgba(138, 48, 51, 0.04);
-  border-left: 3px solid var(--dark-red);
-  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .featuresTitle {
   font-family: var(--font-lora);
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 400;
   color: var(--black);
-  margin-bottom: 0.6rem;
+  margin: 0;
 }
 
 .featuresList {
@@ -42,61 +37,66 @@
   padding-left: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.25rem;
+  margin: 0;
 }
 
 .featuresList li {
+  font-family: var(--font-lora);
+  font-size: 0.82rem;
+  color: var(--black);
+  line-height: 1.45;
+}
+
+/* ── 3. Два блока в карточках ── */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.card {
+  border: 1.5px solid var(--black);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cardTitle {
+  font-family: var(--font-lora);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--black);
+  margin: 0;
+}
+
+.cardList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.cardList li {
   font-family: var(--font-lora);
   font-size: 0.75rem;
   color: var(--black);
   line-height: 1.45;
 }
 
-/* ── Правая колонка: источники + авторы ── */
-.credits {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-.creditsTitle {
-  font-family: var(--font-lora);
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--black);
-  margin-bottom: 0.6rem;
-}
-
-.creditsList {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.28rem;
-}
-
-.creditsList li {
-  font-family: var(--font-lora);
-  font-size: 0.72rem;
-  color: var(--black);
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
+/* ── Адаптив ── */
 @media (max-width: 768px) {
   .info {
     margin-top: 2.5rem;
     padding-top: 2rem;
+    gap: 1.25rem;
   }
 
-  .credits {
+  .cards {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
   }
 }
