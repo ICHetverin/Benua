@@ -1,3 +1,4 @@
+import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./TextSection.module.css";
 
 /**
@@ -22,7 +23,7 @@ const renderContent = (content) => {
           const text = line.startsWith("→") ? line.slice(1).trim() : line;
           return (
             <li key={i} className={styles.arrowItem}>
-              <span className={styles.arrow}>→</span>
+              <ArrowIcon className={styles.arrow} width={14} height={14} />
               <span>{text}</span>
             </li>
           );

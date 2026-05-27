@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./GeneralInfo.module.css";
 import { ReactComponent as BenuaRedLogo } from "shared/assets/icons/benua_red.svg";
+import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 
 export const GeneralInfo = () => {
   return (
@@ -14,7 +15,7 @@ export const GeneralInfo = () => {
           современными форматами: 3D-макетами, инфографикой и мультимедиа.
         </p>
         <Link to="/about" className={styles.aboutLink}>
-          Подробнее о проекте →
+          Подробнее о проекте <ArrowIcon width={14} height={14} />
         </Link>
       </div>
     </section>

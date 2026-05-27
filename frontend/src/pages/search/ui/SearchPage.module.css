@@ -80,7 +80,9 @@
 }
 
 .cemeteriesLink {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
   margin-top: 1.25rem;
   font-family: var(--font-lora);
   font-size: 0.95rem;
