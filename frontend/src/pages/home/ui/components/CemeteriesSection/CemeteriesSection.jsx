@@ -10,20 +10,26 @@ export const CemeteriesSection = () => {
       </div>
       <div className={styles.content}>
         <h2 className={styles.title}>Кладбища</h2>
-        <p className={styles.description}>
-          Перечень мест захоронения членов семьи Бенуа на кладбищах
-          Санкт-Петербурга, так и в других местах в России и за рубежом.
-        </p>
-        <RippleButton
-          href="/cemeteries"
-          className={styles.navButton}
-          spanClassName={styles.customRipple}
-        >
-          <span className={styles.navButtonContent}>
-            Перейти
-            <ArrowIcon width={24} height={24} className={styles.arrowIcon} />
-          </span>
-        </RippleButton>
+        <div className={styles.innerContainer}>
+          <div className={styles.leftColumn}>
+            <RippleButton
+              href="/cemeteries"
+              className={styles.navButton}
+              spanClassName={styles.customRipple}
+            >
+              <span className={styles.navButtonContent}>
+                Перейти
+                <ArrowIcon width={24} height={24} className={styles.arrowIcon} />
+              </span>
+            </RippleButton>
+          </div>
+          <div className={styles.rightColumn}>
+            <p className={styles.description}>
+              Перечень мест захоронения членов семьи Бенуа на кладбищах
+              Санкт-Петербурга, так и в других местах в России и за рубежом.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
