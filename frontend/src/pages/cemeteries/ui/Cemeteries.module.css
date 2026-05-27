@@ -37,8 +37,6 @@
 .labelWrap {
   display: inline-block;
   overflow: hidden;
-  /* минимальная ширина чтобы контейнер не прыгал при смене слова */
-  min-width: 6ch;
 }
 
 .titleHighlight {
