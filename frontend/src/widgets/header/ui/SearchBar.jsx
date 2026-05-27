@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
-import { SearchIcon } from "shared/assets/icons/SearchIcon";
 import styles from "./SearchBar.module.css";
 
 export const SearchBar = ({ isOpen, onClose }) => {
@@ -54,20 +53,10 @@ export const SearchBar = ({ isOpen, onClose }) => {
         />
         <button
           type="submit"
-          className={styles.submitButton}
-          aria-label="Найти"
+          className={styles.searchTextButton}
           tabIndex={isOpen ? 0 : -1}
         >
-          <SearchIcon className={styles.submitIcon} />
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          className={styles.closeButton}
-          aria-label="Закрыть поиск"
-          tabIndex={isOpen ? 0 : -1}
-        >
-          ✕
+          Поиск
         </button>
       </form>
     </div>

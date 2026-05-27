@@ -55,51 +55,25 @@
   font-size: 0.875rem;
 }
 
-/* ── Submit (search icon) button ── */
-.submitButton {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background-color: var(--dark-blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background-color 0.2s;
-}
-
-.submitButton:hover {
-  background-color: #003285;
-}
-
-.submitIcon {
-  width: 22px;
-  height: 22px;
-  color: #ffffff;
-}
-
-/* ── Close (✕) button ── */
-.closeButton {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+/* ── «Поиск» text submit button ── */
+.searchTextButton {
+  height: 48px;
+  padding: 0 1.5rem;
   border: 1.5px solid var(--dark-blue);
-  background: transparent;
-  color: var(--dark-blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  border-radius: 4px;
+  background: var(--dark-blue);
+  color: #ffffff;
+  font-family: var(--font-lora);
   font-size: 1rem;
+  cursor: pointer;
   flex-shrink: 0;
+  letter-spacing: 0.03em;
   transition: background-color 0.2s, color 0.2s;
 }
 
-.closeButton:hover {
-  background-color: var(--dark-blue);
-  color: #ffffff;
+.searchTextButton:hover {
+  background: transparent;
+  color: var(--dark-blue);
 }
 
 /* ── Mobile ── */
@@ -111,16 +85,16 @@
 
   .input {
     font-size: 0.875rem;
-    height: 40px;
+    height: 44px;
   }
 
   .input::placeholder {
     font-size: 0.78rem;
   }
 
-  .submitButton,
-  .closeButton {
-    width: 40px;
-    height: 40px;
+  .searchTextButton {
+    height: 44px;
+    padding: 0 1rem;
+    font-size: 0.875rem;
   }
 }

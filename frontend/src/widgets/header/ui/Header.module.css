@@ -100,10 +100,31 @@
     background-color: #003285;
 }
 
+/* Активное состояние (поиск открыт) — кнопка становится крестиком */
+.searchButtonActive {
+    background-color: transparent;
+    border: 1.5px solid var(--dark-blue);
+}
+
+.searchButtonActive:hover {
+    background-color: var(--dark-blue);
+}
+
+.searchButtonActive:hover .closeIcon {
+    color: #ffffff;
+}
+
 .searchIcon {
     width: 35px;
     height: 35px;
     color: white;
+}
+
+.closeIcon {
+    font-size: 1.1rem;
+    color: var(--dark-blue);
+    line-height: 1;
+    transition: color 0.2s;
 }
 
 /* ── Burger button ─────────────────────────────── */

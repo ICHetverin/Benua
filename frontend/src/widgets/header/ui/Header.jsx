@@ -20,9 +20,9 @@ export const Header = () => {
     };
   }, [isNavOpen]);
 
-  const handleOpenSearch = () => {
-    setIsNavOpen(false);
-    setIsSearchOpen(true);
+  const handleToggleSearch = () => {
+    if (!isSearchOpen) setIsNavOpen(false);
+    setIsSearchOpen((prev) => !prev);
   };
 
   const handleCloseSearch = () => {
@@ -72,11 +72,16 @@ export const Header = () => {
 
           <div className={styles.searchButtonContainer}>
             <button
-              onClick={handleOpenSearch}
-              className={styles.searchButton}
-              aria-label="Открыть поиск"
+              onClick={handleToggleSearch}
+              className={clsx(styles.searchButton, { [styles.searchButtonActive]: isSearchOpen })}
+              aria-label={isSearchOpen ? "Закрыть поиск" : "Открыть поиск"}
+              aria-expanded={isSearchOpen}
             >
-              <SearchIcon className={styles.searchIcon} />
+              {isSearchOpen ? (
+                <span className={styles.closeIcon}>✕</span>
+              ) : (
+                <SearchIcon className={styles.searchIcon} />
+              )}
             </button>
           </div>
         </div>
