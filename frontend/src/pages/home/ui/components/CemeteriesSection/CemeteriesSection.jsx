@@ -15,7 +15,7 @@ export const CemeteriesSection = () => {
           Санкт-Петербурга, так и в других местах в России и за рубежом.
         </p>
         <RippleButton
-          href="/catalog"
+          href="/cemeteries"
           className={styles.navButton}
           spanClassName={styles.customRipple}
         >

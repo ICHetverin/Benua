@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { NAV_ITEMS } from "shared/lib/navigation";
 import { SearchIcon } from "shared/assets/icons/SearchIcon";
 import logo from "shared/assets/images/logo/logo_black.png";
@@ -7,6 +7,8 @@ import styles from "./Header.module.css";
 import clsx from "clsx";
 
 export const Header = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +23,10 @@ export const Header = () => {
   }, [isSearchOpen]);
 
   useEffect(() => {
+    setSearchQuery(searchParams.get("query") ?? "");
+  }, [searchParams]);
+
+  useEffect(() => {
     document.body.style.overflow = isNavOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -32,6 +38,19 @@ export const Header = () => {
       setSearchQuery("");
     }
     setIsSearchOpen(!isSearchOpen);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+
+    const trimmedQuery = searchQuery.trim();
+    if (!trimmedQuery) {
+      return;
+    }
+
+    setIsSearchOpen(false);
+    setIsNavOpen(false);
+    navigate(`/search?query=${encodeURIComponent(trimmedQuery)}`);
   };
 
   return (
@@ -74,7 +93,7 @@ export const Header = () => {
           <span className={styles.burgerLine} />
         </button>
 
-        <div className={styles.searchContainer}>
+        <form className={styles.searchContainer} onSubmit={handleSearchSubmit}>
           <div
             className={`
             ${styles.searchWrapper}
@@ -98,14 +117,15 @@ export const Header = () => {
             </div>
 
             <button
-              onClick={handleToggleSearch}
+              type={isSearchOpen ? "submit" : "button"}
+              onClick={isSearchOpen ? undefined : handleToggleSearch}
               className={styles.searchButton}
-              aria-label="Открыть поиск"
+              aria-label={isSearchOpen ? "Найти" : "Открыть поиск"}
             >
               <SearchIcon className={styles.searchIcon} />
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </nav>
   );
