@@ -1,6 +1,6 @@
 .mapWrapper {
   width: 100%;
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto 3rem;
 }
 
@@ -15,7 +15,7 @@
 .russiaImg path {
   fill: var(--darker-beige);
   stroke: var(--beige);
-  stroke-width: 0.6px;
+  stroke-width: 1.2px;
 }
 
 @media (max-width: 768px) {
