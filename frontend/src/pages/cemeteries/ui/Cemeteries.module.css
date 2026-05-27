@@ -26,37 +26,59 @@
   color: var(--black);
 }
 
-/* Обёртка для стрелок + надписи */
+/* Обёртка стрелки + лейбл */
 .titleToggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.55rem;
+}
+
+/* Контейнер лейбла — скрывает overflow при анимации */
+.labelWrap {
+  display: inline-block;
+  overflow: hidden;
+  /* минимальная ширина чтобы контейнер не прыгал при смене слова */
+  min-width: 6ch;
 }
 
 .titleHighlight {
+  display: inline-block;
   color: var(--dark-red);
   font-family: var(--font-decor);
   font-size: inherit;
+  /* базовое состояние */
+  opacity: 1;
+  transform: translateX(0);
+  transition: transform 0.26s ease, opacity 0.26s ease;
+}
+
+/* Нажали → (вперёд): текущий уезжает влево */
+.slideOutLeft {
+  transform: translateX(-60px);
+  opacity: 0;
+}
+
+/* Нажали ← (назад): текущий уезжает вправо */
+.slideOutRight {
+  transform: translateX(60px);
+  opacity: 0;
 }
 
 /* Кнопки-стрелки */
 .arrowBtn {
   background: none;
   border: none;
-  padding: 0 0.1rem;
+  padding: 0;
   cursor: pointer;
-  font-size: 1.1rem;
-  color: var(--dark-red);
-  opacity: 0.7;
-  line-height: 1;
-  transition: opacity 0.15s, transform 0.1s;
-  /* Выровнять по вертикали с текстом */
   display: inline-flex;
   align-items: center;
+  line-height: 1;
+  transition: opacity 0.15s, transform 0.12s;
+  flex-shrink: 0;
 }
 
 .arrowBtn:hover {
-  opacity: 1;
+  opacity: 0.75;
 }
 
 .arrowBtn:active {
@@ -81,5 +103,10 @@
 
   .pageHeader {
     margin-bottom: 1.5rem;
+  }
+
+  .arrowBtn img {
+    width: 28px;
+    height: 28px;
   }
 }
