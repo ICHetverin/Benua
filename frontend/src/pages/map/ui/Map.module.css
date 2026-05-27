@@ -1,0 +1,35 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-padding-y) var(--page-padding);
+  /* Карта должна занимать всё доступное место в MainLayout */
+  flex: 1;
+  min-height: 0;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: var(--font-lora);
+  font-size: 1rem;
+  color: var(--black);
+  opacity: 0.7;
+}
+
+/* Карта растягивается на оставшуюся высоту страницы */
+.mapContainer {
+  flex: 1;
+  min-height: 500px;
+}
+
+@media (max-width: 768px) {
+  .mapContainer {
+    min-height: 400px;
+  }
+}
