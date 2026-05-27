@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import styles from "./GeneralInfo.module.css";
-import fullNameLogo from "shared/assets/images/logo/full_name_logo.png";
+import { ReactComponent as BenuaRedLogo } from "shared/assets/icons/benua_red.svg";
 
 export const GeneralInfo = () => {
   return (
     <section className={styles.generalInfo}>
       <div className={styles.generalInfoContainer}>
-        <img className={styles.fullNameLogo} src={fullNameLogo} alt="logo" />
+        <BenuaRedLogo className={styles.fullNameLogo} />
         <p className={styles.generalInfoText}>
           Наш проект — онлайн-портал о местах Санкт-Петербурга, связанных с
           династией Бенуа. Мы визуализируем вклад семьи через интерактивную
