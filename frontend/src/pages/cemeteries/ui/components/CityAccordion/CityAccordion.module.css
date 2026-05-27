@@ -1,0 +1,113 @@
+.section {
+  border-bottom: 1px solid rgba(35, 28, 7, 0.12);
+  transition: background 0.2s;
+}
+
+.section.highlighted {
+  background: rgba(138, 48, 51, 0.04);
+  border-radius: 4px;
+}
+
+/* Заголовок-кнопка */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1.2rem 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 1rem;
+}
+
+.header:hover .cityName {
+  opacity: 0.75;
+}
+
+.cityName {
+  font-family: var(--font-decor);
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: var(--dark-red);
+  margin: 0;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+/* Шеврон */
+.chevron {
+  display: flex;
+  align-items: center;
+  color: var(--dark-red);
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  transform: rotate(0deg);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Аккордеон */
+.content {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+}
+
+.contentOpen {
+  max-height: 3000px;
+  opacity: 1;
+}
+
+.inner {
+  padding-bottom: 2rem;
+}
+
+/* Блок кладбища */
+.cemeteryBlock {
+  margin-bottom: 1.5rem;
+}
+
+.cemeteryBlock:last-child {
+  margin-bottom: 0;
+}
+
+.cemeteryName {
+  font-family: var(--font-lora);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--dark-red);
+}
+
+/* Сетка персоналий: 2 колонки если несколько кладбищ */
+.personsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 3rem;
+}
+
+/* Одно кладбище без названия — одна колонка (полная ширина) */
+.personsGridFull {
+  grid-template-columns: 1fr;
+  max-width: 620px;
+}
+
+@media (max-width: 768px) {
+  .cityName {
+    font-size: 1.35rem;
+  }
+
+  .personsGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
