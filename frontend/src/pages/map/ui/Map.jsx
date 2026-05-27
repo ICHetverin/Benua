@@ -10,9 +10,7 @@ export const Map = () => {
           Здания и места, связанные с семьёй Бенуа в&nbsp;Санкт-Петербурге
         </p>
       </div>
-      <div className={styles.mapContainer}>
-        <YandexMap />
-      </div>
+      <YandexMap />
     </div>
   );
 };

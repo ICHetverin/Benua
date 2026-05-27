@@ -7,6 +7,4 @@
 .main {
     flex: 1;
     padding-top: 71px;
-    display: flex;
-    flex-direction: column;
 }
