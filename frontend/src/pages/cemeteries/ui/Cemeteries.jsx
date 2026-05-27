@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { petersburgCemeteriesData } from "../model/petersburgCemeteriesData";
 import { cemeteriesData }           from "../model/cemeteriesData";
 import { worldCemeteriesData }      from "../model/worldCemeteriesData";
 import { PetersburgView } from "./components/PetersburgView/PetersburgView";
 import { CityAccordion }  from "./components/CityAccordion/CityAccordion";
 import { PageInfo }       from "./components/PageInfo/PageInfo";
+import { RussiaMap }      from "./components/RussiaMap/RussiaMap";
 import leftArrow  from "shared/assets/icons/left.svg";
 import rightArrow from "shared/assets/icons/right.svg";
 import styles from "./Cemeteries.module.css";
@@ -48,7 +49,13 @@ export function Cemeteries() {
     }, 240);
   };
 
-  const { label, layout, data } = VIEWS[viewIndex];
+  const { label, layout, data, key: viewKey } = VIEWS[viewIndex];
+
+  /* Скролл к городу при клике на маркер карты */
+  const scrollToCity = useCallback((cityId) => {
+    const el = document.getElementById(`city-${cityId}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -95,11 +102,21 @@ export function Cemeteries() {
       {layout === "peterburg" ? (
         <PetersburgView cemeteries={data} />
       ) : (
-        <div className={styles.citiesList}>
-          {data.map((cityData) => (
-            <CityAccordion key={cityData.id} cityData={cityData} />
-          ))}
-        </div>
+        <>
+          {/* Карта России — только для вида "россия" */}
+          {viewKey === "russia" && (
+            <RussiaMap cities={data} onCityClick={scrollToCity} />
+          )}
+
+          <div className={styles.citiesList}>
+            {data.map((cityData) => (
+              <CityAccordion
+                key={cityData.id}
+                cityData={cityData}
+              />
+            ))}
+          </div>
+        </>
       )}
 
       {/* ── Информация внизу ── */}
