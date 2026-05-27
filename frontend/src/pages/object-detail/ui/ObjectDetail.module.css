@@ -41,24 +41,3 @@
         padding: var(--page-padding-y) 1.5rem;
     }
 }
-
-/* ── Authors ── */
-.authors {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 1rem var(--page-padding) 2rem;
-    font-family: var(--font-lora);
-    font-size: 0.82rem;
-    color: var(--black);
-    opacity: 0.7;
-}
-
-.authorsLabel {
-    font-style: italic;
-}
-
-@media (max-width: 768px) {
-    .authors {
-        padding: 1rem 1.5rem 2rem;
-    }
-}
