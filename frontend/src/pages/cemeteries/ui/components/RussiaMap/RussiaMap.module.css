@@ -16,6 +16,11 @@
   fill: var(--darker-beige);
   stroke: var(--beige);
   stroke-width: 1.2px;
+  transition: fill 0.2s ease;
+}
+
+.russiaImg:hover path {
+  fill: var(--dark-blue);
 }
 
 @media (max-width: 768px) {
