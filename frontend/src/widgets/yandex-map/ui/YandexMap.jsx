@@ -54,16 +54,26 @@ function createPinLayout(ymaps) {
       filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));
       cursor: pointer;
     ">
-      <img
-        src="/map_marker.svg"
-        width="46"
-        height="47"
-        style="
-          display: block;
-          filter: brightness(0) saturate(100%) invert(22%) sepia(60%) saturate(600%) hue-rotate(315deg) brightness(90%) contrast(100%);
-        "
-        alt=""
-      />
+      <div style="
+        width: 36px;
+        height: 36px;
+        background-color: #8A3033;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <img
+          src="/map_marker.svg"
+          width="20"
+          height="20"
+          style="
+            display: block;
+            filter: brightness(0) invert(1);
+          "
+          alt=""
+        />
+      </div>
     </div>
   `);
 }
@@ -126,8 +136,8 @@ export function YandexMap() {
           iconLayout: PinLayout,
           iconShape: {
             type: 'Circle',
-            coordinates: [0, -24], // центр пина (смещение для drop-shadow)
-            radius: 23,
+            coordinates: [0, -18], // центр круга (половина высоты 36px)
+            radius: 18,
           },
           balloonCloseButton: true,
           hideIconOnBalloonOpen: false,
