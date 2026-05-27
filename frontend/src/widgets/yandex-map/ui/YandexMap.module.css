@@ -1,0 +1,42 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  /* Явная высота через viewport — не зависит от цепочки height:100% у родителей */
+  height: calc(100vh - var(--navbar-height) - 220px);
+  min-height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--darker-beige);
+}
+
+/* Карта абсолютно заполняет весь wrapper — гарантирует ненулевой размер для ymaps */
+.map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Оверлей для состояний загрузки / ошибки / ожидания ymaps */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(250, 243, 231, 0.75);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.overlayText {
+  font-family: var(--font-lora);
+  font-size: 1rem;
+  color: var(--dark-red);
+  padding: 12px 20px;
+  background-color: var(--beige);
+  border: 1px solid var(--darker-beige);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
