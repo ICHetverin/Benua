@@ -1,0 +1,54 @@
+.card {
+  padding: 0.55rem 0;
+  border-top: 1px solid rgba(35, 28, 7, 0.15);
+}
+
+.card:last-child {
+  border-bottom: 1px solid rgba(35, 28, 7, 0.15);
+}
+
+.card.clickable {
+  cursor: pointer;
+}
+
+.card.clickable:hover .name {
+  color: var(--dark-red);
+  text-decoration: underline;
+}
+
+.name {
+  font-family: var(--font-lora);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 0.15rem;
+  line-height: 1.35;
+  transition: color 0.15s;
+}
+
+.dates {
+  font-family: var(--font-lora);
+  font-size: 0.72rem;
+  color: var(--dark-red);
+  margin-bottom: 0.3rem;
+  font-weight: 400;
+}
+
+.description {
+  font-family: var(--font-lora);
+  font-size: 0.72rem;
+  color: var(--black);
+  line-height: 1.45;
+  opacity: 0.82;
+}
+
+@media (max-width: 768px) {
+  .name {
+    font-size: 0.85rem;
+  }
+
+  .dates,
+  .description {
+    font-size: 0.7rem;
+  }
+}

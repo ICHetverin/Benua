@@ -15,6 +15,7 @@ import { Game } from "pages/game";
 import { PersonDetail } from "pages/person-detail";
 import { ObjectDetail } from "pages/object-detail";
 import { NotFound } from "pages/not-found";
+import { Cemeteries } from "pages/cemeteries";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
       { path: "excursions/:id", element: <ExcursionDetails /> },
       { path: "about", element: <About /> },
       { path: "game", element: <Game /> },
+      { path: "cemeteries", element: <Cemeteries /> },
       { path: "*", element: <NotFound /> },
     ],
   },

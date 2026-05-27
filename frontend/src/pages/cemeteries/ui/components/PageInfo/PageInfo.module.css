@@ -1,0 +1,92 @@
+.info {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(35, 28, 7, 0.15);
+}
+
+/* Основное описание */
+.description {
+  margin-bottom: 2.5rem;
+}
+
+.lead {
+  font-family: var(--font-lora);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--black);
+  margin-bottom: 1.5rem;
+  max-width: 780px;
+}
+
+.features {
+  background: rgba(138, 48, 51, 0.04);
+  border-left: 3px solid var(--dark-red);
+  padding: 1rem 1.25rem;
+  max-width: 520px;
+}
+
+.featuresTitle {
+  font-family: var(--font-lora);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.6rem;
+}
+
+.featuresList {
+  list-style: disc;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.featuresList li {
+  font-family: var(--font-lora);
+  font-size: 0.75rem;
+  color: var(--black);
+  line-height: 1.45;
+}
+
+/* Блок авторов/источников */
+.credits {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 720px;
+}
+
+.creditsTitle {
+  font-family: var(--font-lora);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.6rem;
+}
+
+.creditsList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.creditsList li {
+  font-family: var(--font-lora);
+  font-size: 0.72rem;
+  color: var(--black);
+  line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+  .info {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+  }
+
+  .credits {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

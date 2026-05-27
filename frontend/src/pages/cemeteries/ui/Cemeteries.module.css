@@ -1,0 +1,70 @@
+.page {
+  padding: var(--page-padding);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Заголовок ── */
+.pageHeader {
+  text-align: left;
+  margin-bottom: 2.5rem;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-decor);
+  font-size: 2.3rem;
+  font-weight: 400;
+  color: var(--black);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.titleMain {
+  color: var(--black);
+}
+
+.titleHighlight {
+  color: var(--dark-red);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.arrow {
+  font-size: 1.1rem;
+  color: var(--dark-red);
+  opacity: 0.7;
+  user-select: none;
+}
+
+/* ── Список городов ── */
+.citiesList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Адаптив ── */
+@media (max-width: 768px) {
+  .page {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .pageHeader {
+    margin-bottom: 1.5rem;
+  }
+}
