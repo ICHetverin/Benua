@@ -1,28 +1,47 @@
 import { useState } from "react";
-import { cemeteriesData } from "../model/cemeteriesData";
-import { worldCemeteriesData } from "../model/worldCemeteriesData";
-import { CityAccordion } from "./components/CityAccordion/CityAccordion";
-import { PageInfo } from "./components/PageInfo/PageInfo";
+import { petersburgCemeteriesData } from "../model/petersburgCemeteriesData";
+import { cemeteriesData }           from "../model/cemeteriesData";
+import { worldCemeteriesData }      from "../model/worldCemeteriesData";
+import { PetersburgView } from "./components/PetersburgView/PetersburgView";
+import { CityAccordion }  from "./components/CityAccordion/CityAccordion";
+import { PageInfo }       from "./components/PageInfo/PageInfo";
 import styles from "./Cemeteries.module.css";
 
+/**
+ * Порядок видов (зациклен): ПЕТЕРБУРГ → РОССИЯ → МИР → ПЕТЕРБУРГ
+ */
 const VIEWS = [
-  { key: "russia", label: "РОССИЯ", data: cemeteriesData },
-  { key: "world",  label: "МИР",    data: worldCemeteriesData },
+  {
+    key:    "peterburg",
+    label:  "ПЕТЕРБУРГ",
+    layout: "peterburg",
+    data:   petersburgCemeteriesData,
+  },
+  {
+    key:    "russia",
+    label:  "РОССИЯ",
+    layout: "cities",
+    data:   cemeteriesData,
+  },
+  {
+    key:    "world",
+    label:  "МИР",
+    layout: "cities",
+    data:   worldCemeteriesData,
+  },
 ];
 
 export function Cemeteries() {
-  const [viewIndex, setViewIndex] = useState(0);
+  const [viewIndex, setViewIndex] = useState(0); // 0 = Петербург по умолчанию
 
-  const prev = () =>
-    setViewIndex((i) => (i - 1 + VIEWS.length) % VIEWS.length);
-  const next = () =>
-    setViewIndex((i) => (i + 1) % VIEWS.length);
+  const prev = () => setViewIndex((i) => (i - 1 + VIEWS.length) % VIEWS.length);
+  const next = () => setViewIndex((i) => (i + 1) % VIEWS.length);
 
-  const { label, data } = VIEWS[viewIndex];
+  const { label, layout, data } = VIEWS[viewIndex];
 
   return (
     <div className={styles.page}>
-      {/* Заголовок с переключателем */}
+      {/* ── Заголовок с переключателем ── */}
       <header className={styles.pageHeader}>
         <h1 className={styles.title}>
           <span className={styles.titleMain}>МЕСТА ЗАХОРОНЕНИЯ В</span>
@@ -49,14 +68,18 @@ export function Cemeteries() {
         </h1>
       </header>
 
-      {/* Список городов / стран */}
-      <div className={styles.citiesList}>
-        {data.map((cityData) => (
-          <CityAccordion key={cityData.id} cityData={cityData} />
-        ))}
-      </div>
+      {/* ── Контент ── */}
+      {layout === "peterburg" ? (
+        <PetersburgView cemeteries={data} />
+      ) : (
+        <div className={styles.citiesList}>
+          {data.map((cityData) => (
+            <CityAccordion key={cityData.id} cityData={cityData} />
+          ))}
+        </div>
+      )}
 
-      {/* Информация внизу */}
+      {/* ── Информация внизу ── */}
       <PageInfo />
     </div>
   );
