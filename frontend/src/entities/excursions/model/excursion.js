@@ -1,15 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { getPublicExcursions, getPublicExcursionById } from 'shared/api/benuaApi';
+import {
+  getExcursions,
+  getPublicExcursionById,
+  getPublicExcursions,
+} from 'shared/api/benuaApi';
 
 export const excursionKeys = {
   all: ['public-excursions'],
   detail: (id) => ['public-excursions', id],
 };
 
-export const useExcursions = () =>
+export const useExcursions = (search = '') =>
   useQuery({
-    queryKey: excursionKeys.all,
-    queryFn: getPublicExcursions,
+    queryKey: [...excursionKeys.all, search],
+    queryFn: () => (search ? getExcursions(search) : getPublicExcursions()),
   });
 
 export const useExcursionById = (id) =>

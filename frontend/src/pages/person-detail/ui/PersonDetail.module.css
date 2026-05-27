@@ -31,11 +31,11 @@
 .contentBody {
   max-width: 760px;
   margin: 0 auto;
-  padding: 3rem var(--page-padding) 1rem;
+  padding: var(--page-padding-y) var(--page-padding);
 }
 
 @media (max-width: 768px) {
   .contentBody {
-    padding: 2rem 1.5rem 0.5rem;
+    padding: var(--page-padding-y) 1.5rem;
   }
 }

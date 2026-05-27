@@ -1,0 +1,132 @@
+.page {
+  padding: var(--page-padding-y) var(--page-padding);
+}
+
+/* ── Заголовок ── */
+.pageHeader {
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-decor);
+  font-size: 2.3rem;
+  font-weight: 400;
+  color: var(--black);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.titleMain {
+  color: var(--black);
+}
+
+/* Обёртка стрелки + лейбл */
+.titleToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+/* Контейнер лейбла — скрывает overflow при анимации */
+.labelWrap {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.titleHighlight {
+  display: inline-block;
+  color: var(--dark-red);
+  font-family: var(--font-decor);
+  font-size: inherit;
+  /* базовое состояние */
+  opacity: 1;
+  transform: translateX(0);
+  transition: transform 0.26s ease, opacity 0.26s ease;
+}
+
+/* ── Выход: transition на дефолтных свойствах titleHighlight ── */
+
+/* → : текущее уходит влево */
+.slideOutLeft {
+  transform: translateX(-60px);
+  opacity: 0;
+}
+
+/* ← : текущее уходит вправо */
+.slideOutRight {
+  transform: translateX(60px);
+  opacity: 0;
+}
+
+/* ── Вход: keyframe-анимации для нового слова ── */
+
+/* → : новое приходит справа */
+.slideInFromRight {
+  animation: kfFromRight 0.26s ease forwards;
+}
+
+/* ← : новое приходит слева */
+.slideInFromLeft {
+  animation: kfFromLeft 0.26s ease forwards;
+}
+
+@keyframes kfFromRight {
+  from { transform: translateX(60px);  opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes kfFromLeft {
+  from { transform: translateX(-60px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+/* Кнопки-стрелки */
+.arrowBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  transition: opacity 0.15s, transform 0.12s;
+  flex-shrink: 0;
+}
+
+.arrowBtn:hover {
+  opacity: 0.75;
+}
+
+.arrowBtn:active {
+  transform: scale(0.88);
+}
+
+/* ── Список городов/стран ── */
+.citiesList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Адаптив ── */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--page-padding-y) 1.5rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .pageHeader {
+    margin-bottom: 1.5rem;
+  }
+
+  .arrowBtn img {
+    width: 28px;
+    height: 28px;
+  }
+}

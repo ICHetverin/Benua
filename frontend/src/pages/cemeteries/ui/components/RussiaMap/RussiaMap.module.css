@@ -1,0 +1,87 @@
+.mapWrapper {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto 3.5rem;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Контур России */
+.russiaShape {
+  fill: #e8dcc8;
+  stroke: #b5a488;
+  stroke-width: 1.2;
+  transition: fill 0.2s;
+}
+
+/* Маркеры-кружки */
+.markerGroup {
+  cursor: pointer;
+}
+
+.markerGlow {
+  fill: var(--dark-red);
+  opacity: 0.18;
+  transition: opacity 0.2s, rx 0.2s, ry 0.2s;
+}
+
+.markerGlowActive {
+  fill: var(--dark-red);
+  opacity: 0.30;
+}
+
+.marker {
+  fill: var(--dark-red);
+  opacity: 0.85;
+  transition: opacity 0.2s, rx 0.2s, ry 0.2s;
+}
+
+.marker:hover,
+.markerGroup:hover .marker {
+  opacity: 1;
+}
+
+.markerActive {
+  fill: var(--dark-blue);
+  opacity: 1;
+}
+
+/* Тултип */
+.tooltipBg {
+  fill: var(--dark-red);
+  opacity: 0.92;
+}
+
+.tooltipText {
+  font-family: var(--font-lora);
+  font-size: 11px;
+  fill: #fff;
+  pointer-events: none;
+}
+
+/* Постоянные подписи */
+.cityLabel {
+  font-family: var(--font-lora);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  fill: var(--dark-blue);
+  pointer-events: none;
+}
+
+.cityLabelSub {
+  font-family: var(--font-lora);
+  font-size: 8px;
+  fill: #555;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .mapWrapper {
+    margin-bottom: 2rem;
+  }
+}
