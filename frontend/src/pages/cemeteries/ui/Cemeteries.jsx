@@ -10,9 +10,9 @@ import rightArrow from "shared/assets/icons/right.svg";
 import styles from "./Cemeteries.module.css";
 
 const VIEWS = [
-  { key: "peterburg", label: "ПЕТЕРБУРГ", layout: "peterburg", data: petersburgCemeteriesData },
-  { key: "russia",    label: "РОССИЯ",    layout: "cities",    data: cemeteriesData },
-  { key: "world",     label: "МИР",       layout: "cities",    data: worldCemeteriesData },
+  { key: "peterburg", label: "ПЕТЕРБУРГЕ", layout: "peterburg", data: petersburgCemeteriesData },
+  { key: "russia",    label: "РОССИИ",    layout: "cities",    data: cemeteriesData },
+  { key: "world",     label: "МИРЕ",       layout: "cities",    data: worldCemeteriesData },
 ];
 
 export function Cemeteries() {
