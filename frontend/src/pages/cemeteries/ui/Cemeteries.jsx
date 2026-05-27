@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { petersburgCemeteriesData } from "../model/petersburgCemeteriesData";
 import { cemeteriesData }           from "../model/cemeteriesData";
 import { worldCemeteriesData }      from "../model/worldCemeteriesData";
@@ -51,12 +51,6 @@ export function Cemeteries() {
 
   const { label, layout, data, key: viewKey } = VIEWS[viewIndex];
 
-  /* Скролл к городу при клике на маркер карты */
-  const scrollToCity = useCallback((cityId) => {
-    const el = document.getElementById(`city-${cityId}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
-
   return (
     <div className={styles.page}>
       {/* ── Заголовок с переключателем ── */}
@@ -104,9 +98,7 @@ export function Cemeteries() {
       ) : (
         <>
           {/* Карта России — только для вида "россия" */}
-          {viewKey === "russia" && (
-            <RussiaMap cities={data} onCityClick={scrollToCity} />
-          )}
+          {viewKey === "russia" && <RussiaMap />}
 
           <div className={styles.citiesList}>
             {data.map((cityData) => (
