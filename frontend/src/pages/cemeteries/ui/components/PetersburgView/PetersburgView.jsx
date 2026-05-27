@@ -1,9 +1,28 @@
 import { BurialPersonCard } from "../BurialPersonCard/BurialPersonCard";
 import styles from "./PetersburgView.module.css";
 
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 export function PetersburgView({ cemeteries }) {
   return (
     <div className={styles.wrapper}>
+      {cemeteries.length > 0 && (
+        <nav className={styles.nav}>
+          {cemeteries.map((cemetery) => (
+            <button
+              key={cemetery.id}
+              className={styles.navItem}
+              onClick={() => scrollTo(cemetery.id)}
+            >
+              {cemetery.name}
+            </button>
+          ))}
+        </nav>
+      )}
+
       {cemeteries.map((cemetery) => (
         <section key={cemetery.id} className={styles.section} id={cemetery.id}>
           <h2 className={styles.cemeteryTitle}>{cemetery.name}</h2>
