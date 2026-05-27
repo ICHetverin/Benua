@@ -1,6 +1,6 @@
 .hero {
   background-color: var(--dark-red);
-  padding: 3rem var(--page-padding) 4rem;
+  padding: var(--page-padding-y) var(--page-padding) 4rem;
   color: var(--white);
 }
 
@@ -114,7 +114,7 @@
 
 @media (max-width: 768px) {
   .hero {
-    padding: 2rem 1.5rem 3rem;
+    padding: var(--page-padding-y) 1.5rem 3rem;
   }
 
   .title {

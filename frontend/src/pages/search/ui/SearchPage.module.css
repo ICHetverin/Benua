@@ -1,7 +1,7 @@
 .page {
   width: min(1240px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 48px 0 80px;
+  padding: var(--page-padding-y) 0;
 }
 
 .title {
@@ -97,7 +97,7 @@
 @media (max-width: 768px) {
   .page {
     width: min(100% - 24px, 1240px);
-    padding: 32px 0 56px;
+    padding: var(--page-padding-y) 0;
   }
 
   .summary,

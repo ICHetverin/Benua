@@ -19,6 +19,7 @@
 
     /* Page padding */
     --page-padding: 4rem;
+    --page-padding-y: 2rem;
 
     /* Navbar height */
     --navbar-height: 71px;
