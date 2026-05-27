@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Form, Input, Button, Space, Typography, message, Spin, Switch, Divider } from 'antd';
+import { useState, useEffect, useMemo } from 'react';
+import { Form, AutoComplete, Input, Button, Space, Typography, message, Spin, Switch, Divider } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useBurial, useCreateBurial, useUpdateBurial } from 'entities/burial/queries';
+import { useBurial, useCreateBurial, useUpdateBurial, useBurials } from 'entities/burial/queries';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
 import { ImageUploader } from 'features/image-uploader/ImageUploader';
 import type { BurialCreateDto, BurialUpdateDto } from 'entities/burial/types';
@@ -19,16 +19,40 @@ export function BurialEditPage({ mode }: Props) {
   const [featuredId, setFeaturedId] = useState<string | null>(null);
 
   const { data: existing, isLoading } = useBurial(id ?? '');
+  const { data: allBurials } = useBurials();
   const createMutation = useCreateBurial();
   const updateMutation = useUpdateBurial(id ?? '');
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
+  const [cityInput, setCityInput] = useState('');
+
   useEffect(() => {
     if (mode === 'edit' && existing) {
       setFeaturedId(null);
+      setCityInput(existing.city ?? '');
     }
   }, [mode, existing?._id]);
+
+  const cityOptions = useMemo(() => {
+    const cities = [...new Set((allBurials ?? []).map((b) => b.city).filter(Boolean))];
+    const q = cityInput.trim().toLowerCase();
+    return cities
+      .filter((c) => c.toLowerCase().includes(q))
+      .map((c) => ({ value: c }));
+  }, [allBurials, cityInput]);
+
+  const cemeteryOptions = useMemo(() => {
+    const city = cityInput.trim();
+    const names = [
+      ...new Set(
+        (allBurials ?? [])
+          .filter((b) => b.city === city && b.cemetery_name)
+          .map((b) => b.cemetery_name as string),
+      ),
+    ];
+    return names.map((n) => ({ value: n }));
+  }, [allBurials, cityInput]);
 
   if (mode === 'edit' && isLoading) return <Spin />;
 
@@ -107,10 +131,24 @@ export function BurialEditPage({ mode }: Props) {
           <Input placeholder="1826–1894" />
         </Form.Item>
         <Form.Item name="city" label="Город" rules={[{ required: true, message: 'Введите город' }]}>
-          <Input />
+          <AutoComplete
+            options={cityOptions}
+            onSearch={setCityInput}
+            onChange={(v) => setCityInput(v ?? '')}
+            placeholder="Москва"
+            allowClear
+            filterOption={false}
+          />
         </Form.Item>
         <Form.Item name="cemetery_name" label="Название кладбища (пусто — «Неизвестное место захоронения»)">
-          <Input placeholder="Введенское кладбище" />
+          <AutoComplete
+            options={cemeteryOptions}
+            placeholder="Введенское кладбище"
+            allowClear
+            filterOption={(input, option) =>
+              (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+          />
         </Form.Item>
         <Form.Item name="brief_info" label="Краткая информация">
           <Input.TextArea rows={3} />
