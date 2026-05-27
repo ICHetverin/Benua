@@ -1,0 +1,37 @@
+.mapWrapper {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 3rem;
+}
+
+.worldImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Нейтральные регионы */
+.worldImg path {
+  fill: var(--darker-beige);
+  stroke: var(--beige);
+  stroke-width: 0.4px;
+  transition: fill 0.2s ease;
+}
+
+/* Регионы с захоронениями — красные */
+.worldImg path[data-burial] {
+  fill: var(--dark-red);
+  cursor: pointer;
+}
+
+/* Ховер → синий */
+.worldImg path:hover {
+  fill: var(--dark-blue);
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .mapWrapper {
+    margin-bottom: 2rem;
+  }
+}
