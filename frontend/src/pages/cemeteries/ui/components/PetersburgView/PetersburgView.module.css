@@ -20,6 +20,13 @@
   line-height: 1.2;
 }
 
+.briefInfo {
+  font-size: 0.92rem;
+  color: var(--gray, #666);
+  margin: 0.25rem 0 0.5rem;
+  line-height: 1.5;
+}
+
 /* Сетка карточек + фото */
 .grid {
   display: grid;

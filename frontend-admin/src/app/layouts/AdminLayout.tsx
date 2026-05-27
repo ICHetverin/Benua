@@ -31,7 +31,10 @@ export function AdminLayout() {
       ? [{ key: '/excursions', icon: <CompassOutlined />, label: 'Экскурсии' }]
       : []),
     ...(isAdmin
-      ? [{ key: '/burials', icon: <EnvironmentOutlined />, label: 'Кладбища' }]
+      ? [{ key: '/cemeteries-admin', icon: <EnvironmentOutlined />, label: 'Кладбища Петербурга' }]
+      : []),
+    ...(isAdmin
+      ? [{ key: '/burials', icon: <EnvironmentOutlined />, label: 'Захоронения' }]
       : []),
     ...(isAdmin
       ? [{ key: '/users', icon: <TeamOutlined />, label: 'Пользователи' }]

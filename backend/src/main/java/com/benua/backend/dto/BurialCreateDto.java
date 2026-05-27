@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record BurialCreateDto(
+        @JsonProperty("region") String region,
+        @JsonProperty("cemetery_id") String cemeteryId,
         @JsonProperty("city") String city,
         @JsonProperty("cemetery_name") String cemeteryName,
         @JsonProperty("name") String name,

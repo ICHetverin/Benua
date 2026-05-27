@@ -2,29 +2,31 @@ import { BurialPersonCard } from "../BurialPersonCard/BurialPersonCard";
 import styles from "./PetersburgView.module.css";
 
 /**
- * Плоский список кладбищ для вида «Петербург».
- * Нет city-аккордеона — кладбища идут напрямую как секции.
- * При наличии `cemetery.images` они отображаются вперемешку с карточками.
+ * Список кладбищ для вида «Петербург».
+ * cemetery.images — массив ImageDto { _id, url_to_s3, text }
+ * cemetery.briefInfo — строка или null
  */
 export function PetersburgView({ cemeteries }) {
   return (
     <div className={styles.wrapper}>
       {cemeteries.map((cemetery) => (
         <section key={cemetery.id} className={styles.section} id={cemetery.id}>
-          {/* Название кладбища с красной чертой */}
           <h2 className={styles.cemeteryTitle}>{cemetery.name}</h2>
 
-          {/* Сетка: карточки персон + опционально фото */}
+          {cemetery.briefInfo && (
+            <p className={styles.briefInfo}>{cemetery.briefInfo}</p>
+          )}
+
           <div className={styles.grid}>
             {cemetery.persons.map((person, idx) => (
               <BurialPersonCard key={idx} person={person} />
             ))}
 
-            {cemetery.images && cemetery.images.map((src, idx) => (
+            {cemetery.images && cemetery.images.map((img, idx) => (
               <div key={`img-${idx}`} className={styles.photoCard}>
                 <img
-                  src={src}
-                  alt={`${cemetery.name} — фото ${idx + 1}`}
+                  src={img.url_to_s3}
+                  alt={img.text || `${cemetery.name} — фото ${idx + 1}`}
                   className={styles.photo}
                   loading="lazy"
                 />

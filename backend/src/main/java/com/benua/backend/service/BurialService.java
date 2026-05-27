@@ -6,6 +6,7 @@ import com.benua.backend.dto.BurialUpdateDto;
 import com.benua.backend.model.Burial;
 import com.benua.backend.model.Image;
 import com.benua.backend.repository.BurialRepository;
+import com.benua.backend.repository.CemeteryRepository;
 import com.benua.backend.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,16 @@ import java.util.NoSuchElementException;
 public class BurialService {
 
     private final BurialRepository burialRepository;
+    private final CemeteryRepository cemeteryRepository;
     private final ConnectionService connectionService;
     private final ImageService imageService;
     private final PersonRepository personRepository;
 
-    public BurialService(BurialRepository burialRepository, ConnectionService connectionService,
-                         ImageService imageService, PersonRepository personRepository) {
+    public BurialService(BurialRepository burialRepository, CemeteryRepository cemeteryRepository,
+                         ConnectionService connectionService, ImageService imageService,
+                         PersonRepository personRepository) {
         this.burialRepository = burialRepository;
+        this.cemeteryRepository = cemeteryRepository;
         this.connectionService = connectionService;
         this.imageService = imageService;
         this.personRepository = personRepository;
@@ -47,12 +51,14 @@ public class BurialService {
 
         Burial burial = new Burial(
                 null,
+                dto.region(),
+                blankToNull(dto.cemeteryId()),
                 dto.city(),
                 dto.cemeteryName(),
                 dto.name(),
                 dto.lifeYears(),
                 dto.briefInfo(),
-                dto.connectedPersonId(),
+                blankToNull(dto.connectedPersonId()),
                 images,
                 false,
                 null,
@@ -72,12 +78,14 @@ public class BurialService {
 
         Burial updated = new Burial(
                 existing._id(),
+                dto.region() != null ? dto.region() : existing.region(),
+                dto.cemeteryId() == null ? existing.cemeteryId() : blankToNull(dto.cemeteryId()),
                 dto.city() != null ? dto.city() : existing.city(),
                 dto.cemeteryName() == null ? existing.cemeteryName() : (dto.cemeteryName().isBlank() ? null : dto.cemeteryName()),
                 dto.name() != null ? dto.name() : existing.name(),
                 dto.lifeYears() != null ? dto.lifeYears() : existing.lifeYears(),
                 dto.briefInfo() != null ? dto.briefInfo() : existing.briefInfo(),
-                dto.connectedPersonId() == null ? existing.connectedPersonId() : (dto.connectedPersonId().isBlank() ? null : dto.connectedPersonId()),
+                dto.connectedPersonId() == null ? existing.connectedPersonId() : blankToNull(dto.connectedPersonId()),
                 images,
                 dto.isPublished() != null ? dto.isPublished() : existing.isPublished(),
                 dto.sortOrder() != null ? dto.sortOrder() : existing.sortOrder(),
@@ -96,7 +104,8 @@ public class BurialService {
     public BurialDto setPublished(String id, boolean value, String updatedBy) {
         Burial existing = findById(id);
         Burial updated = new Burial(
-                existing._id(), existing.city(), existing.cemeteryName(), existing.name(),
+                existing._id(), existing.region(), existing.cemeteryId(),
+                existing.city(), existing.cemeteryName(), existing.name(),
                 existing.lifeYears(), existing.briefInfo(), existing.connectedPersonId(),
                 existing.images(), value, existing.sortOrder(),
                 existing.createdAt(), Instant.now(), updatedBy
@@ -113,14 +122,25 @@ public class BurialService {
         String personName = null;
         if (b.connectedPersonId() != null) {
             personName = personRepository.findById(b.connectedPersonId())
-                    .map(p -> p.name())
-                    .orElse(null);
+                    .map(p -> p.name()).orElse(null);
         }
+
+        String cemeteryName = b.cemeteryName();
+        if ("PETERSBURG".equals(b.region()) && b.cemeteryId() != null && cemeteryName == null) {
+            cemeteryName = cemeteryRepository.findById(b.cemeteryId())
+                    .map(c -> c.name()).orElse(null);
+        }
+
         return new BurialDto(
-                b._id(), b.city(), b.cemeteryName(), b.name(), b.lifeYears(), b.briefInfo(),
+                b._id(), b.region(), b.cemeteryId(), b.city(), cemeteryName,
+                b.name(), b.lifeYears(), b.briefInfo(),
                 b.connectedPersonId(), personName,
                 imageService.toDtoList(b.images()),
                 b.isPublished(), b.sortOrder(), b.createdAt(), b.updatedAt(), b.updatedBy()
         );
+    }
+
+    private static String blankToNull(String s) {
+        return (s == null || s.isBlank()) ? null : s;
     }
 }
