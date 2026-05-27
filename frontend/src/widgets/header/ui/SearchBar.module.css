@@ -57,7 +57,7 @@
 
 /* ── «Поиск» text submit button ── */
 .searchTextButton {
-  height: 48px;
+  align-self: stretch;   /* точно совпадает с высотой инпута */
   padding: 0 1.5rem;
   border: 1.5px solid var(--dark-blue);
   border-radius: 4px;
@@ -93,7 +93,6 @@
   }
 
   .searchTextButton {
-    height: 44px;
     padding: 0 1rem;
     font-size: 0.875rem;
   }
