@@ -1,5 +1,5 @@
 .page {
-    padding: 3rem var(--page-padding) 5rem;
+    padding: var(--page-padding-y) var(--page-padding);
     max-width: 2000px;
     margin: 0 auto;
 }
@@ -34,6 +34,6 @@
 
 @media (max-width: 768px) {
     .page {
-        padding: 2rem 1.5rem 4rem;
+        padding: var(--page-padding-y) 1.5rem;
     }
 }

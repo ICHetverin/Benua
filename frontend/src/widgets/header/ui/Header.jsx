@@ -1,30 +1,17 @@
-import { useState, useEffect, useRef } from "react";
-import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { NAV_ITEMS } from "shared/lib/navigation";
 import { SearchIcon } from "shared/assets/icons/SearchIcon";
 import logo from "shared/assets/images/logo/logo_black.png";
+import { SearchBar } from "./SearchBar";
 import styles from "./Header.module.css";
 import clsx from "clsx";
 
 export const Header = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const inputRef = useRef(null);
   const closeNav = () => setIsNavOpen(false);
-
-  useEffect(() => {
-    if (isSearchOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isSearchOpen]);
-
-  useEffect(() => {
-    setSearchQuery(searchParams.get("query") ?? "");
-  }, [searchParams]);
 
   useEffect(() => {
     document.body.style.overflow = isNavOpen ? "hidden" : "";
@@ -34,99 +21,73 @@ export const Header = () => {
   }, [isNavOpen]);
 
   const handleToggleSearch = () => {
-    if (isSearchOpen) {
-      setSearchQuery("");
-    }
-    setIsSearchOpen(!isSearchOpen);
+    if (!isSearchOpen) setIsNavOpen(false);
+    setIsSearchOpen((prev) => !prev);
   };
 
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-
-    const trimmedQuery = searchQuery.trim();
-    if (!trimmedQuery) {
-      return;
-    }
-
+  const handleCloseSearch = () => {
     setIsSearchOpen(false);
-    setIsNavOpen(false);
-    navigate(`/search?query=${encodeURIComponent(trimmedQuery)}`);
   };
 
   return (
-    <nav className={styles.navbar}>
-      <div className={styles.navbarContainer}>
-        <div className={styles.logoContainer}>
-          <img src={logo} alt="Адреса Бенуа" className={styles.logo} />
-        </div>
+    <>
+      <nav className={styles.navbar}>
+        <div className={styles.navbarContainer}>
+          <div className={styles.logoContainer}>
+            <img src={logo} alt="Адреса Бенуа" className={styles.logo} />
+          </div>
 
-        <div
-          className={clsx(styles.navCollapse, {
-            [styles.show]: isNavOpen,
-          })}
-        >
-          <ul className={styles.navList}>
-            {NAV_ITEMS.map(({ href, label, className }) => (
-              <li key={href} className={styles.navItem}>
-                <NavLink
-                  to={href}
-                  className={({ isActive }) =>
-                    `${styles.navLink} ${className ? styles[className] : ""} ${isActive ? styles.active : ""}`
-                  }
-                  onClick={closeNav}
-                >
-                  {label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <button
-          className={clsx(styles.burgerButton, { [styles.open]: isNavOpen })}
-          onClick={() => setIsNavOpen(!isNavOpen)}
-          aria-label={isNavOpen ? "Закрыть меню" : "Открыть меню"}
-          aria-expanded={isNavOpen}
-        >
-          <span className={styles.burgerLine} />
-          <span className={styles.burgerLine} />
-          <span className={styles.burgerLine} />
-        </button>
-
-        <form className={styles.searchContainer} onSubmit={handleSearchSubmit}>
           <div
-            className={`
-            ${styles.searchWrapper}
-            ${isSearchOpen ? styles.searchOpen : ""}
-          `}
+            className={clsx(styles.navCollapse, {
+              [styles.show]: isNavOpen,
+            })}
           >
-            <div
-              className={`
-              ${styles.searchInputContainer}
-              ${isSearchOpen ? styles.searchInputVisible : ""}
-            `}
-            >
-              <input
-                ref={inputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Поиск..."
-                className={styles.searchInput}
-              />
-            </div>
+            <ul className={styles.navList}>
+              {NAV_ITEMS.map(({ href, label, className }) => (
+                <li key={href} className={styles.navItem}>
+                  <NavLink
+                    to={href}
+                    className={({ isActive }) =>
+                      `${styles.navLink} ${className ? styles[className] : ""} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeNav}
+                  >
+                    {label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
 
+          <button
+            className={clsx(styles.burgerButton, { [styles.open]: isNavOpen })}
+            onClick={() => setIsNavOpen(!isNavOpen)}
+            aria-label={isNavOpen ? "Закрыть меню" : "Открыть меню"}
+            aria-expanded={isNavOpen}
+          >
+            <span className={styles.burgerLine} />
+            <span className={styles.burgerLine} />
+            <span className={styles.burgerLine} />
+          </button>
+
+          <div className={styles.searchButtonContainer}>
             <button
-              type={isSearchOpen ? "submit" : "button"}
-              onClick={isSearchOpen ? undefined : handleToggleSearch}
-              className={styles.searchButton}
-              aria-label={isSearchOpen ? "Найти" : "Открыть поиск"}
+              onClick={handleToggleSearch}
+              className={clsx(styles.searchButton, { [styles.searchButtonActive]: isSearchOpen })}
+              aria-label={isSearchOpen ? "Закрыть поиск" : "Открыть поиск"}
+              aria-expanded={isSearchOpen}
             >
-              <SearchIcon className={styles.searchIcon} />
+              {isSearchOpen ? (
+                <span className={styles.closeIcon}>✕</span>
+              ) : (
+                <SearchIcon className={styles.searchIcon} />
+              )}
             </button>
           </div>
-        </form>
-      </div>
-    </nav>
+        </div>
+      </nav>
+
+      <SearchBar isOpen={isSearchOpen} onClose={handleCloseSearch} />
+    </>
   );
 };

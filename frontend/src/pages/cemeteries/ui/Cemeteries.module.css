@@ -1,5 +1,5 @@
 .page {
-  padding: var(--page-padding);
+  padding: var(--page-padding-y) var(--page-padding);
 }
 
 /* ── Заголовок ── */
@@ -48,16 +48,40 @@
   transition: transform 0.26s ease, opacity 0.26s ease;
 }
 
-/* Нажали → (вперёд): текущий уезжает влево */
+/* ── Выход: transition на дефолтных свойствах titleHighlight ── */
+
+/* → : текущее уходит влево */
 .slideOutLeft {
   transform: translateX(-60px);
   opacity: 0;
 }
 
-/* Нажали ← (назад): текущий уезжает вправо */
+/* ← : текущее уходит вправо */
 .slideOutRight {
   transform: translateX(60px);
   opacity: 0;
+}
+
+/* ── Вход: keyframe-анимации для нового слова ── */
+
+/* → : новое приходит справа */
+.slideInFromRight {
+  animation: kfFromRight 0.26s ease forwards;
+}
+
+/* ← : новое приходит слева */
+.slideInFromLeft {
+  animation: kfFromLeft 0.26s ease forwards;
+}
+
+@keyframes kfFromRight {
+  from { transform: translateX(60px);  opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes kfFromLeft {
+  from { transform: translateX(-60px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
 }
 
 /* Кнопки-стрелки */
@@ -90,7 +114,7 @@
 /* ── Адаптив ── */
 @media (max-width: 768px) {
   .page {
-    padding: 1.5rem;
+    padding: var(--page-padding-y) 1.5rem;
   }
 
   .title {
