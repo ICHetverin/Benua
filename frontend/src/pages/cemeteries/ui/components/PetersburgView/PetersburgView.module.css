@@ -29,6 +29,7 @@
 .section {
   padding-bottom: 2.5rem;
   margin-bottom: 0.5rem;
+  scroll-margin-top: calc(var(--navbar-height) + 1rem);
 }
 
 .cemeteryTitle {
@@ -65,9 +66,10 @@
 }
 
 .photo {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  display: block;
+  max-height: 220px;
+  width: auto;
+  max-width: 100%;
   border-radius: 2px;
 }
 
@@ -93,10 +95,6 @@
   .infoRow {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-
-  .photo {
-    max-height: 200px;
   }
 
   .grid {
