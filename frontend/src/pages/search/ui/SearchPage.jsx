@@ -8,6 +8,7 @@ import { CatalogGrid } from "widgets/catalog-grid";
 import { cemeteriesData } from "pages/cemeteries/model/cemeteriesData";
 import { petersburgCemeteriesData } from "pages/cemeteries/model/petersburgCemeteriesData";
 import { worldCemeteriesData } from "pages/cemeteries/model/worldCemeteriesData";
+import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./SearchPage.module.css";
 
 /* ── Flat index of all burial persons ────────────────────── */
@@ -166,7 +167,7 @@ export function SearchPage() {
                   ))}
                 </ul>
                 <Link to="/cemeteries" className={styles.cemeteriesLink}>
-                  Перейти к разделу «Кладбища» →
+                  Перейти к разделу «Кладбища» <ArrowIcon width={14} height={14} />
                 </Link>
               </>
             )}

@@ -36,6 +36,9 @@
 }
 
 .seeAllLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
     font-family: var(--font-lora);
     font-size: 0.8rem;
     color: var(--black);

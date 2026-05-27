@@ -27,6 +27,9 @@
 }
 
 .aboutLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
     font-family: var(--font-lora);
     font-size: 0.85rem;
     color: var(--black);

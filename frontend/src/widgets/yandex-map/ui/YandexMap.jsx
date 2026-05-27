@@ -54,18 +54,26 @@ function createPinLayout(ymaps) {
       filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));
       cursor: pointer;
     ">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="30"
-        height="38"
-        viewBox="0 0 30 38"
-      >
-        <path
-          d="M15 0C6.72 0 0 6.72 0 15c0 11.25 15 23 15 23S30 26.25 30 15C30 6.72 23.28 0 15 0z"
-          fill="#8A3033"
+      <div style="
+        width: 36px;
+        height: 36px;
+        background-color: #8A3033;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <img
+          src="/map_marker.svg"
+          width="20"
+          height="20"
+          style="
+            display: block;
+            filter: brightness(0) invert(1);
+          "
+          alt=""
         />
-        <circle cx="15" cy="15" r="6" fill="#FAF3E7"/>
-      </svg>
+      </div>
     </div>
   `);
 }
@@ -128,8 +136,8 @@ export function YandexMap() {
           iconLayout: PinLayout,
           iconShape: {
             type: 'Circle',
-            coordinates: [0, -19], // центр пина (смещение для drop-shadow)
-            radius: 15,
+            coordinates: [0, -18], // центр круга (половина высоты 36px)
+            radius: 18,
           },
           balloonCloseButton: true,
           hideIconOnBalloonOpen: false,

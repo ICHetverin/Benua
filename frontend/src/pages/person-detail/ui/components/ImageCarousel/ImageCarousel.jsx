@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ArrowIcon } from 'shared/assets/icons/ArrowIcon';
 import styles from './ImageCarousel.module.css';
 
 export const ImageCarousel = ({ images = [] }) => {
@@ -31,7 +32,7 @@ export const ImageCarousel = ({ images = [] }) => {
 
       {images.length > 1 && (
         <div className={styles.controls}>
-          <button className={styles.arrow} onClick={prev} aria-label="Предыдущее">←</button>
+          <button className={styles.arrow} onClick={prev} aria-label="Предыдущее"><ArrowIcon width={16} height={16} style={{ transform: "rotate(180deg)" }} /></button>
           <div className={styles.dots}>
             {images.map((_, i) => (
               <button
@@ -42,7 +43,7 @@ export const ImageCarousel = ({ images = [] }) => {
               />
             ))}
           </div>
-          <button className={styles.arrow} onClick={next} aria-label="Следующее">→</button>
+          <button className={styles.arrow} onClick={next} aria-label="Следующее"><ArrowIcon width={16} height={16} /></button>
         </div>
       )}
     </div>

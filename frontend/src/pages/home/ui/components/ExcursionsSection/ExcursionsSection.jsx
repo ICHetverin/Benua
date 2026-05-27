@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useExcursions } from "entities/excursions";
 import { HomeExcursionCard } from "./HomeExcursionCard";
+import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./ExcursionsSection.module.css";
 
 export const ExcursionsSection = () => {
@@ -18,7 +19,7 @@ export const ExcursionsSection = () => {
             </p>
           </div>
           <Link to="/excursions" className={styles.seeAllLink}>
-            Смотреть все экскурсии →
+            Смотреть все экскурсии <ArrowIcon width={14} height={14} />
           </Link>
         </div>
 
