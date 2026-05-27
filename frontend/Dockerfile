@@ -3,6 +3,8 @@ WORKDIR /pub
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
+ARG REACT_APP_YANDEX_MAPS_API_KEY
+ENV REACT_APP_YANDEX_MAPS_API_KEY=$REACT_APP_YANDEX_MAPS_API_KEY
 RUN npm run build
 
 FROM node:20-alpine AS admin-build
