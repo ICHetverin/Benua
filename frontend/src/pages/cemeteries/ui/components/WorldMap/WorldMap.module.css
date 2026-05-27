@@ -18,12 +18,6 @@
   transition: fill 0.2s ease;
 }
 
-/* Регионы с захоронениями — красные */
-.worldImg path[data-burial] {
-  fill: var(--dark-red);
-  cursor: pointer;
-}
-
 /* Ховер → синий */
 .worldImg path:hover {
   fill: var(--dark-blue);
