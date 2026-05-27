@@ -20,7 +20,7 @@
 }
 
 .statusError {
-  color: #9f2d20;
+  color: var(--dark-red);
 }
 
 .section {
@@ -31,6 +31,67 @@
   margin: 0 0 20px;
   font-size: 28px;
   line-height: 1.15;
+}
+
+/* ── Burial results list ── */
+.burialList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgba(0, 31, 83, 0.15);
+}
+
+.burialItem {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(0, 31, 83, 0.1);
+  transition: background-color 0.15s;
+}
+
+.burialItem:hover {
+  background-color: var(--darker-beige);
+}
+
+.burialName {
+  font-family: var(--font-lora);
+  font-size: 1rem;
+  color: var(--black);
+  font-weight: 500;
+}
+
+.burialDates {
+  font-family: var(--font-lora);
+  font-size: 0.85rem;
+  color: rgba(35, 28, 7, 0.6);
+  white-space: nowrap;
+}
+
+.burialLocation {
+  font-family: var(--font-lora);
+  font-size: 0.85rem;
+  color: var(--dark-blue);
+  text-align: right;
+}
+
+.cemeteriesLink {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-family: var(--font-lora);
+  font-size: 0.95rem;
+  color: var(--dark-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+
+.cemeteriesLink:hover {
+  color: var(--dark-red);
 }
 
 @media (max-width: 768px) {
@@ -52,5 +113,16 @@
 
   .sectionTitle {
     font-size: 24px;
+  }
+
+  .burialItem {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .burialDates,
+  .burialLocation {
+    text-align: left;
   }
 }
