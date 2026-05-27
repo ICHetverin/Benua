@@ -1,6 +1,6 @@
 import { FOOTER_SECTIONS } from "../lib/constants";
 import { FooterColumn } from "./FooterColumn";
-import { BigBenuaLogo } from "../icons/BigBenuaLogo";
+import { ReactComponent as BenuaWhiteLogo } from "shared/assets/icons/benua_white.svg";
 import { ItmoLogo } from "../icons/ItmoLogo";
 import { VkIcon } from "shared/assets/icons/VkIcon";
 import { TelegramIcon } from "shared/assets/icons/TelegramIcon";
@@ -13,7 +13,7 @@ export const Footer = () => {
       <div className={styles.container}>
         <div className={styles.footerContent}>
           <div className={styles.leftColumn}>
-            <BigBenuaLogo height={227} className={styles.BenuaLogo} />
+            <BenuaWhiteLogo height={227} className={styles.BenuaLogo} />
           </div>
 
           <div className={styles.centerColumns}>

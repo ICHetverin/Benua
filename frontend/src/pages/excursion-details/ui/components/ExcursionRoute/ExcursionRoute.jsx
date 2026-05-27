@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useObjectById } from "entities/object";
+import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./ExcursionRoute.module.css";
 
 /* ── Carousel ─────────────────────────────────── */
@@ -31,7 +32,7 @@ const Carousel = ({ images = [] }) => {
           aria-label="Предыдущее фото"
           disabled={images.length <= 1}
         >
-          ←
+          <ArrowIcon width={16} height={16} style={{ transform: "rotate(180deg)" }} />
         </button>
         <div className={styles.carouselDots}>
           {images.map((_, i) => (
@@ -49,7 +50,7 @@ const Carousel = ({ images = [] }) => {
           aria-label="Следующее фото"
           disabled={images.length <= 1}
         >
-          →
+          <ArrowIcon width={16} height={16} />
         </button>
       </div>
     </div>

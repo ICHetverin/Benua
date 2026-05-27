@@ -13,21 +13,17 @@ export const MapInfo = () => {
   return (
     <section className={styles.mapInfo}>
       <div className={styles.mapInfoContainer}>
-        <h2>{MAP_CONTENT.title}</h2>
+        <h2 className={styles.title}>{MAP_CONTENT.title}</h2>
         <div className={styles.mapInfoInnerContainer}>
           <div className={styles.mapInfoLeftColumn}>
             <RippleButton
               href="/map"
-              className={styles.mapInfoButton}
+              className={styles.navButton}
               spanClassName={styles.customRipple}
             >
-              <span className={styles.mapInfoButtonContent}>
+              <span className={styles.navButtonContent}>
                 Перейти
-                <ArrowIcon
-                  width={24}
-                  height={24}
-                  className={styles.arrowIcon}
-                />
+                <ArrowIcon width={24} height={24} className={styles.arrowIcon} />
               </span>
             </RippleButton>
           </div>
