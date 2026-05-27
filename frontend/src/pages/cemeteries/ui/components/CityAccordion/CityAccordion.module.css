@@ -85,7 +85,7 @@
   letter-spacing: 0.04em;
   margin-bottom: 0.75rem;
   padding-bottom: 0.35rem;
-  border-bottom: 1px solid rgba(35, 28, 7, 0.2);
+  border-bottom: 1px solid var(--dark-red);
 }
 
 /* Сетка персоналий: 2 колонки если несколько кладбищ */

@@ -1,28 +1,32 @@
 .info {
   margin-top: 4rem;
   padding-top: 2.5rem;
-  border-top: 1px solid rgba(35, 28, 7, 0.15);
+  border-top: 1px solid var(--dark-red);
+  /* Полная ширина — ограничений max-width нет */
+  width: 100%;
 }
 
-/* Основное описание */
-.description {
-  margin-bottom: 2.5rem;
+/* Двухколоночный layout: слева описание, справа источники/авторы */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
 }
 
+/* ── Левая колонка: описание + фичи ── */
 .lead {
   font-family: var(--font-lora);
   font-size: 0.82rem;
   line-height: 1.6;
   color: var(--black);
   margin-bottom: 1.5rem;
-  max-width: 780px;
 }
 
 .features {
   background: rgba(138, 48, 51, 0.04);
   border-left: 3px solid var(--dark-red);
   padding: 1rem 1.25rem;
-  max-width: 520px;
 }
 
 .featuresTitle {
@@ -48,12 +52,11 @@
   line-height: 1.45;
 }
 
-/* Блок авторов/источников */
+/* ── Правая колонка: источники + авторы ── */
 .credits {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
-  max-width: 720px;
 }
 
 .creditsTitle {
@@ -77,6 +80,13 @@
   font-size: 0.72rem;
   color: var(--black);
   line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 }
 
 @media (max-width: 768px) {
