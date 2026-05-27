@@ -67,6 +67,12 @@ export function ObjectDetail() {
           title="Связь с семьёй Бенуа"
           content={object.connection_with_benua}
         />
+
+        {/* Авторы */}
+        <TextSection
+          title="Поиск и отбор информации"
+          content={object.authors?.length > 0 ? object.authors.join(', ') : null}
+        />
       </div>
 
       {/* ── 4. Connected persons ── */}
@@ -74,14 +80,6 @@ export function ObjectDetail() {
 
       {/* ── 5. Sources ── */}
       <SourcesList sources={object.sources ?? []} />
-
-      {/* ── 6. Authors ── */}
-      {object.authors?.length > 0 && (
-        <div className={styles.authors}>
-          <span className={styles.authorsLabel}>Поиск и отбор информации: </span>
-          {object.authors.join(', ')}
-        </div>
-      )}
     </>
   );
 }
