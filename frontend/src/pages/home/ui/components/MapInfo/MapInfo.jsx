@@ -14,17 +14,23 @@ export const MapInfo = () => {
     <section className={styles.mapInfo}>
       <div className={styles.mapInfoContainer}>
         <h2 className={styles.title}>{MAP_CONTENT.title}</h2>
-        <p className={styles.description}>{MAP_CONTENT.description}</p>
-        <RippleButton
-          href="/map"
-          className={styles.navButton}
-          spanClassName={styles.customRipple}
-        >
-          <span className={styles.navButtonContent}>
-            Перейти
-            <ArrowIcon width={24} height={24} className={styles.arrowIcon} />
-          </span>
-        </RippleButton>
+        <div className={styles.mapInfoInnerContainer}>
+          <div className={styles.mapInfoLeftColumn}>
+            <RippleButton
+              href="/map"
+              className={styles.navButton}
+              spanClassName={styles.customRipple}
+            >
+              <span className={styles.navButtonContent}>
+                Перейти
+                <ArrowIcon width={24} height={24} className={styles.arrowIcon} />
+              </span>
+            </RippleButton>
+          </div>
+          <div className={styles.mapInfoRightColumn}>
+            <p>{MAP_CONTENT.description}</p>
+          </div>
+        </div>
       </div>
       <div className={styles.mapPictureContainer}>
         <img src={mapPreview} className={styles.mapPreview} alt="mapPreview" />
