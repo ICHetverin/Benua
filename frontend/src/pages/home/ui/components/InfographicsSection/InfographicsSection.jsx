@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./InfographicsSection.module.css";
 
 const INFOGRAPHICS = [
@@ -35,7 +36,7 @@ export const InfographicsSection = () => {
             </p>
           </div>
           <Link to="/catalog" className={styles.seeAllLink}>
-            Смотреть все инфографики →
+            Смотреть все инфографики <ArrowIcon width={14} height={14} />
           </Link>
         </div>
 

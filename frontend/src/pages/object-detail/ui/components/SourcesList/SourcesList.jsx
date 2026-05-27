@@ -1,3 +1,4 @@
+import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./SourcesList.module.css";
 
 export const SourcesList = ({ sources = [] }) => {
@@ -10,7 +11,7 @@ export const SourcesList = ({ sources = [] }) => {
         <ul className={styles.list}>
           {sources.map((src) => (
             <li key={src._id ?? src.url} className={styles.item}>
-              <span className={styles.arrow}>→</span>
+              <ArrowIcon className={styles.arrow} width={12} height={12} />
               <a
                 href={src.url}
                 className={styles.link}
