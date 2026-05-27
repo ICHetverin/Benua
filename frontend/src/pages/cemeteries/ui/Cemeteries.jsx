@@ -6,6 +6,7 @@ import { PetersburgView } from "./components/PetersburgView/PetersburgView";
 import { CityAccordion }  from "./components/CityAccordion/CityAccordion";
 import { PageInfo }       from "./components/PageInfo/PageInfo";
 import { RussiaMap }      from "./components/RussiaMap/RussiaMap";
+import { WorldMap }       from "./components/WorldMap/WorldMap";
 import leftArrow  from "shared/assets/icons/left.svg";
 import rightArrow from "shared/assets/icons/right.svg";
 import styles from "./Cemeteries.module.css";
@@ -99,6 +100,7 @@ export function Cemeteries() {
         <>
           {/* Карта России — только для вида "россия" */}
           {viewKey === "russia" && <RussiaMap />}
+          {viewKey === "world"  && <WorldMap />}
 
           <div className={styles.citiesList}>
             {data.map((cityData) => (
