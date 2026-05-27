@@ -1,5 +1,5 @@
 .page {
-  padding: calc(var(--page-padding) + 1rem) var(--page-padding) var(--page-padding);
+  padding: var(--page-padding-y) var(--page-padding);
   color: var(--black);
 }
 
@@ -268,7 +268,7 @@
 
 @media (max-width: 768px) {
   .page {
-    padding: 2rem 1.5rem;
+    padding: var(--page-padding-y) 1.5rem;
   }
 
   .title {

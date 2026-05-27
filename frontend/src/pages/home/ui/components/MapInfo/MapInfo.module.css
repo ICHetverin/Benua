@@ -8,7 +8,14 @@
 
 .mapInfoContainer {
     flex: 1;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.title {
+    margin-bottom: 0;
 }
 
 .mapInfoInnerContainer {
@@ -16,17 +23,27 @@
     flex-direction: row;
     gap: 2rem;
     align-items: center;
-    justify-content: space-between;
+    width: 100%;
 }
 
 .mapInfoLeftColumn {
-    flex: 1;
+    flex-shrink: 0;
     display: flex;
-    justify-content: left;
+    justify-content: flex-start;
     align-items: flex-start;
 }
 
-.mapInfoButton {
+.mapInfoRightColumn {
+    flex: 1;
+}
+
+.mapInfoRightColumn p {
+    text-indent: 7rem;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.navButton {
     height: 100px;
     width: 100px;
     border-radius: 50%;
@@ -38,31 +55,22 @@
     background: var(--dark-red) !important;
 }
 
-.arrowIcon {
-    color: var(--dark-red);
-    transition: color 0.3s ease;
-}
-
-.mapInfoButton:hover .arrowIcon {
-    color: var(--white);
-}
-
-.mapInfoButtonContent {
+.navButtonContent {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.3rem;
     font-size: 0.8rem;
+    color: var(--dark-red);
+    transition: color 0.3s ease;
 }
 
-.mapInfoRightColumn {
-    flex: 2;
+.navButton:hover .navButtonContent {
+    color: var(--white);
 }
 
-.mapInfoRightColumn p {
-    text-indent: 7rem;
-    text-align: justify;
-    text-justify: inter-word;
+.arrowIcon {
+    transition: color 0.3s ease;
 }
 
 .mapPictureContainer {
@@ -100,6 +108,7 @@
     .mapInfoInnerContainer {
         flex-direction: column;
         gap: 1.5rem;
+        align-items: flex-start;
     }
 
     .mapInfoRightColumn p {

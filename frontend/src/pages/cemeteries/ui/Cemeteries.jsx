@@ -1,90 +1,161 @@
-import { useState, useRef } from "react";
-import { petersburgCemeteriesData } from "../model/petersburgCemeteriesData";
-import { cemeteriesData }           from "../model/cemeteriesData";
-import { worldCemeteriesData }      from "../model/worldCemeteriesData";
+import { useState, useRef, useEffect } from "react";
+import { getBurials, getPbCemeteries } from "shared/api/benuaApi";
 import { PetersburgView } from "./components/PetersburgView/PetersburgView";
 import { CityAccordion }  from "./components/CityAccordion/CityAccordion";
 import { PageInfo }       from "./components/PageInfo/PageInfo";
+import { RussiaMap }      from "./components/RussiaMap/RussiaMap";
+import { WorldMap }       from "./components/WorldMap/WorldMap";
 import leftArrow  from "shared/assets/icons/left.svg";
 import rightArrow from "shared/assets/icons/right.svg";
 import styles from "./Cemeteries.module.css";
 
+/**
+ * Группировка плоского списка захоронений (регион RUSSIA или WORLD)
+ * в формат { id, city, cemeteries: [{ name, persons[] }] }.
+ */
+function groupByCityAndCemetery(burials) {
+  const cityMap = new Map();
+  for (const b of burials) {
+    const cityKey = b.city ?? "Неизвестный город";
+    if (!cityMap.has(cityKey)) {
+      cityMap.set(cityKey, {
+        id: cityKey.toLowerCase().replace(/\s+/g, "-"),
+        city: cityKey,
+        cemeteries: new Map(),
+      });
+    }
+    const cityEntry = cityMap.get(cityKey);
+    const cKey = b.cemetery_name ?? null;
+    if (!cityEntry.cemeteries.has(cKey)) {
+      cityEntry.cemeteries.set(cKey, { name: cKey, persons: [] });
+    }
+    cityEntry.cemeteries.get(cKey).persons.push({
+      name: b.name,
+      dates: b.life_years ?? null,
+      photo: b.images?.[0]?.url_to_s3 ?? null,
+      description: b.brief_info ?? "",
+      personId: b.connected_person_id ?? null,
+    });
+  }
+  return Array.from(cityMap.values()).map((c) => ({
+    ...c,
+    cemeteries: Array.from(c.cemeteries.values()),
+  }));
+}
+
+/**
+ * Собираем данные для PetersburgView:
+ * cemeteries (с фото и описанием) + бурялы, привязанные к каждому кладбищу.
+ */
+function buildPetersburgData(pbCemeteries, burials) {
+  const pbBurials = burials.filter((b) => b.region === "PETERSBURG");
+  return pbCemeteries.map((c) => ({
+    id: c._id,
+    name: c.name,
+    briefInfo: c.brief_info ?? null,
+    images: c.images ?? [],
+    persons: pbBurials
+      .filter((b) => b.cemetery_id === c._id)
+      .map((b) => ({
+        name: b.name,
+        dates: b.life_years ?? null,
+        photo: b.images?.[0]?.url_to_s3 ?? null,
+        description: b.brief_info ?? "",
+        personId: b.connected_person_id ?? null,
+      })),
+  }));
+}
+
 const VIEWS = [
-  { key: "peterburg", label: "ПЕТЕРБУРГЕ", layout: "peterburg", data: petersburgCemeteriesData },
-  { key: "russia",    label: "РОССИИ",    layout: "cities",    data: cemeteriesData },
-  { key: "world",     label: "МИРЕ",       layout: "cities",    data: worldCemeteriesData },
+  { key: "peterburg", label: "ПЕТЕРБУРГЕ", layout: "peterburg" },
+  { key: "russia",    label: "РОССИИ",    layout: "cities" },
+  { key: "world",     label: "МИРЕ",       layout: "cities" },
 ];
 
 export function Cemeteries() {
   const [viewIndex, setViewIndex] = useState(0);
-  // "left" | "right" | null — направление последней анимации
-  const [slideDir, setSlideDir] = useState(null);
-  const animTimeout = useRef(null);
+  const [exitDir,  setExitDir]  = useState(null);
+  const [enterDir, setEnterDir] = useState(null);
+  const t1 = useRef(null);
+  const t2 = useRef(null);
+
+  const [peterData,  setPeterData]  = useState([]);
+  const [russiaData, setRussiaData] = useState([]);
+  const [worldData,  setWorldData]  = useState([]);
+
+  useEffect(() => {
+    Promise.all([getBurials(), getPbCemeteries()])
+      .then(([burials, pbCemeteries]) => {
+        setPeterData(buildPetersburgData(pbCemeteries, burials));
+        setRussiaData(groupByCityAndCemetery(burials.filter((b) => (b.region ?? "RUSSIA") === "RUSSIA")));
+        setWorldData(groupByCityAndCemetery(burials.filter((b) => b.region === "WORLD")));
+      })
+      .catch(() => {});
+  }, []);
 
   const navigate = (dir) => {
-    // dir: +1 = вперёд (вправо→влево), -1 = назад (влево→вправо)
-    if (animTimeout.current) clearTimeout(animTimeout.current);
-    setSlideDir(dir > 0 ? "right" : "left");
-    // Даём CSS-классу появиться, затем меняем контент
-    animTimeout.current = setTimeout(() => {
-      setViewIndex((i) => (i + dir + VIEWS.length) % VIEWS.length);
-      setSlideDir(null);
-    }, 260);
+    if (exitDir || enterDir) return;
+    const nextIndex  = (viewIndex + dir + VIEWS.length) % VIEWS.length;
+    const exitTo     = dir > 0 ? "toLeft"    : "toRight";
+    const enterFrom  = dir > 0 ? "fromRight" : "fromLeft";
+    clearTimeout(t1.current);
+    clearTimeout(t2.current);
+    setExitDir(exitTo);
+    t1.current = setTimeout(() => {
+      setViewIndex(nextIndex);
+      setExitDir(null);
+      setEnterDir(enterFrom);
+      t2.current = setTimeout(() => setEnterDir(null), 280);
+    }, 240);
   };
 
-  const { label, layout, data } = VIEWS[viewIndex];
+  const { label, layout, key: viewKey } = VIEWS[viewIndex];
+  const currentData =
+    viewKey === "peterburg" ? peterData :
+    viewKey === "russia"    ? russiaData : worldData;
 
   return (
     <div className={styles.page}>
-      {/* ── Заголовок с переключателем ── */}
       <header className={styles.pageHeader}>
         <h1 className={styles.title}>
           <span className={styles.titleMain}>МЕСТА ЗАХОРОНЕНИЯ В</span>
-
           <span className={styles.titleToggle}>
-            <button
-              className={styles.arrowBtn}
-              onClick={() => navigate(-1)}
-              aria-label="Предыдущий вид"
-            >
+            <button className={styles.arrowBtn} onClick={() => navigate(-1)} aria-label="Предыдущий вид">
               <img src={leftArrow} alt="←" width={36} height={36} />
             </button>
-
-            {/* Контейнер с overflow:hidden для анимации */}
             <span className={styles.labelWrap}>
               <span
                 className={`${styles.titleHighlight} ${
-                  slideDir === "right" ? styles.slideOutLeft  :
-                  slideDir === "left"  ? styles.slideOutRight : ""
+                  exitDir  === "toLeft"    ? styles.slideOutLeft    :
+                  exitDir  === "toRight"   ? styles.slideOutRight   :
+                  enterDir === "fromRight" ? styles.slideInFromRight :
+                  enterDir === "fromLeft"  ? styles.slideInFromLeft  : ""
                 }`}
               >
                 {label}
               </span>
             </span>
-
-            <button
-              className={styles.arrowBtn}
-              onClick={() => navigate(+1)}
-              aria-label="Следующий вид"
-            >
+            <button className={styles.arrowBtn} onClick={() => navigate(+1)} aria-label="Следующий вид">
               <img src={rightArrow} alt="→" width={36} height={36} />
             </button>
           </span>
         </h1>
       </header>
 
-      {/* ── Контент ── */}
       {layout === "peterburg" ? (
-        <PetersburgView cemeteries={data} />
+        <PetersburgView cemeteries={currentData} />
       ) : (
-        <div className={styles.citiesList}>
-          {data.map((cityData) => (
-            <CityAccordion key={cityData.id} cityData={cityData} />
-          ))}
-        </div>
+        <>
+          {viewKey === "russia" && <RussiaMap />}
+          {viewKey === "world"  && <WorldMap />}
+          <div className={styles.citiesList}>
+            {currentData.map((cityData) => (
+              <CityAccordion key={cityData.id} cityData={cityData} />
+            ))}
+          </div>
+        </>
       )}
 
-      {/* ── Информация внизу ── */}
       <PageInfo />
     </div>
   );

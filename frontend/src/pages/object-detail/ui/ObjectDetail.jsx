@@ -67,6 +67,12 @@ export function ObjectDetail() {
           title="Связь с семьёй Бенуа"
           content={object.connection_with_benua}
         />
+
+        {/* Авторы */}
+        <TextSection
+          title="Поиск и отбор информации"
+          content={object.authors?.length > 0 ? object.authors.join(', ') : null}
+        />
       </div>
 
       {/* ── 4. Connected persons ── */}

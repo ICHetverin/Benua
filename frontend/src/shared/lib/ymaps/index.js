@@ -1,0 +1,1 @@
+export { useYmaps } from './useYmaps';
