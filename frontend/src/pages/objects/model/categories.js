@@ -57,8 +57,10 @@ export const BUILDING_CATEGORIES = [
     value: 'industrial',
     label: 'Промышленные и транспортные объекты',
     subcategories: [
-      { value: 'factories',      label: 'Заводы и фабрики' },
-      { value: 'railway',        label: 'Железнодорожные объекты' },
+      { value: 'factories',       label: 'Заводы и фабрики' },
+      { value: 'railway',         label: 'Железнодорожные объекты' },
+      { value: 'infrastructure',  label: 'Инфраструктура' },
+      { value: 'transport',       label: 'Транспорт' },
     ],
   },
   {

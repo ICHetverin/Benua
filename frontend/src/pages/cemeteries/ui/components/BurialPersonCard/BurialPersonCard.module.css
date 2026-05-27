@@ -29,6 +29,15 @@
   font-weight: 400;
 }
 
+.photo {
+  display: block;
+  width: 60%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 2px;
+  margin-bottom: 0.35rem;
+}
+
 .description {
   font-family: var(--font-lora);
   font-size: 0.72rem;

@@ -43,3 +43,9 @@ export const getExcursions = (search) =>
 
 export const getPublicExcursionById = (id) =>
   api.get(`/excursions/${id}`).then(normalizeId);
+
+export const getBurials = () =>
+  api.get('/burials').then(normalizeList);
+
+export const getPbCemeteries = () =>
+  api.get('/cemeteries').then(normalizeList);

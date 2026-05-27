@@ -10,5 +10,11 @@ export const ROUTES = {
   EXCURSIONS: '/excursions',
   EXCURSIONS_NEW: '/excursions/new',
   EXCURSIONS_EDIT: (id: string) => `/excursions/${id}`,
+  BURIALS: '/burials',
+  BURIALS_NEW: '/burials/new',
+  BURIALS_EDIT: (id: string) => `/burials/${id}`,
+  CEMETERIES: '/cemeteries-admin',
+  CEMETERIES_NEW: '/cemeteries-admin/new',
+  CEMETERIES_EDIT: (id: string) => `/cemeteries-admin/${id}`,
   USERS: '/users',
 } as const;

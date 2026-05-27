@@ -10,6 +10,10 @@ import { BuildingsListPage } from 'pages/buildings/BuildingsListPage';
 import { BuildingEditPage } from 'pages/buildings/BuildingEditPage';
 import { ExcursionsListPage } from 'pages/excursions/ExcursionsListPage';
 import { ExcursionEditPage } from 'pages/excursions/ExcursionEditPage';
+import { BurialsListPage } from 'pages/burials/BurialsListPage';
+import { BurialEditPage } from 'pages/burials/BurialEditPage';
+import { CemeteriesListPage } from 'pages/cemeteries-admin/CemeteriesListPage';
+import { CemeteryEditPage } from 'pages/cemeteries-admin/CemeteryEditPage';
 import { UsersListPage } from 'pages/users/UsersListPage';
 
 const router = createBrowserRouter(
@@ -93,6 +97,54 @@ const router = createBrowserRouter(
           element: (
             <RoleGuard roles={['ADMIN']}>
               <ExcursionEditPage mode="edit" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'cemeteries-admin',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <CemeteriesListPage />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'cemeteries-admin/new',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <CemeteryEditPage mode="create" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'cemeteries-admin/:id',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <CemeteryEditPage mode="edit" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'burials',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BurialsListPage />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'burials/new',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BurialEditPage mode="create" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'burials/:id',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BurialEditPage mode="edit" />
             </RoleGuard>
           ),
         },
