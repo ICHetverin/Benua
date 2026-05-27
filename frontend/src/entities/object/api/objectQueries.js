@@ -6,10 +6,10 @@ export const objectKeys = {
   detail: (id) => ['objects', id],
 };
 
-export const useObjects = () =>
+export const useObjects = (search = '') =>
   useQuery({
-    queryKey: objectKeys.all,
-    queryFn: getObjects,
+    queryKey: [...objectKeys.all, search],
+    queryFn: () => getObjects(search),
   });
 
 export const useObjectById = (id) =>

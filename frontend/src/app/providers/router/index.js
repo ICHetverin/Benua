@@ -14,6 +14,7 @@ import { Catalog } from "pages/catalog";
 import { Game } from "pages/game";
 import { PersonDetail } from "pages/person-detail";
 import { ObjectDetail } from "pages/object-detail";
+import { SearchPage } from "pages/search";
 import { NotFound } from "pages/not-found";
 
 export const router = createBrowserRouter([
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       { path: "objects/:id", element: <ObjectDetail /> },
       { path: "persons", element: <Persons /> },
       { path: "persons/:id", element: <PersonDetail /> },
+      { path: "search", element: <SearchPage /> },
       { path: "excursions", element: <Excursions /> },
       { path: "excursions/:id", element: <ExcursionDetails /> },
       { path: "about", element: <About /> },
