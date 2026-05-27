@@ -1,0 +1,37 @@
+.mapWrapper {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 3rem;
+}
+
+.worldImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Фоновый контур (path с inline stroke) — не интерактивен */
+.worldImg path[stroke] {
+  fill: none;
+  pointer-events: none;
+}
+
+/* Страны */
+.worldImg path:not([stroke]) {
+  fill: var(--darker-beige);
+  stroke: var(--beige);
+  stroke-width: 0.4px;
+  transition: fill 0.2s ease;
+}
+
+/* Ховер → синий (только страны) */
+.worldImg path:not([stroke]):hover {
+  fill: var(--dark-blue);
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .mapWrapper {
+    margin-bottom: 2rem;
+  }
+}
