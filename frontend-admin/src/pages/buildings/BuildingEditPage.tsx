@@ -61,6 +61,8 @@ const BUILDING_CATEGORIES = [
     subcategories: [
       { value: 'factories', label: 'Заводы и фабрики' },
       { value: 'railway', label: 'Железнодорожные объекты' },
+      { value: 'infrastructure', label: 'Инфраструктура' },
+      { value: 'transport', label: 'Транспорт' },
     ],
   },
   {

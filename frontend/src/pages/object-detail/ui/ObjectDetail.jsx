@@ -74,6 +74,14 @@ export function ObjectDetail() {
 
       {/* ── 5. Sources ── */}
       <SourcesList sources={object.sources ?? []} />
+
+      {/* ── 6. Authors ── */}
+      {object.authors?.length > 0 && (
+        <div className={styles.authors}>
+          <span className={styles.authorsLabel}>Поиск и отбор информации: </span>
+          {object.authors.join(', ')}
+        </div>
+      )}
     </>
   );
 }
