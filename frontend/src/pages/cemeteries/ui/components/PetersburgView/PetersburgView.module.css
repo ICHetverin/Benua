@@ -8,7 +8,6 @@
   margin-bottom: 0.5rem;
 }
 
-/* Название кладбища — красная черта снизу */
 .cemeteryTitle {
   font-family: var(--font-decor);
   font-size: 1.3rem;
@@ -17,35 +16,43 @@
   margin: 0 0 0.5rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--dark-red);
+  text-align: right;
   line-height: 1.2;
+}
+
+/* Два столбика: описание слева, фото справа */
+.infoRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+  align-items: start;
 }
 
 .briefInfo {
   font-size: 0.92rem;
-  color: var(--gray, #666);
-  margin: 0.25rem 0 0.5rem;
-  line-height: 1.5;
+  color: var(--black);
+  line-height: 1.6;
+  margin: 0;
 }
 
-/* Сетка карточек + фото */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0 2.5rem;
-  margin-top: 0.75rem;
-}
-
-.photoCard {
+.photoWrap {
   display: flex;
-  align-items: flex-start;
+  justify-content: flex-end;
 }
 
 .photo {
   width: 100%;
-  height: 180px;
+  max-height: 260px;
   object-fit: cover;
   border-radius: 2px;
-  margin-top: 0.55rem;
+}
+
+/* Сетка карточек захоронений */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 2.5rem;
 }
 
 @media (max-width: 1024px) {
@@ -60,12 +67,17 @@
     font-size: 1.1rem;
   }
 
-  .grid {
+  .infoRow {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 1rem;
   }
 
   .photo {
-    height: 140px;
+    max-height: 200px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 }

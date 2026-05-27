@@ -32,6 +32,7 @@ function groupByCityAndCemetery(burials) {
     cityEntry.cemeteries.get(cKey).persons.push({
       name: b.name,
       dates: b.life_years ?? null,
+      photo: b.images?.[0]?.url_to_s3 ?? null,
       description: b.brief_info ?? "",
       personId: b.connected_person_id ?? null,
     });
@@ -58,6 +59,7 @@ function buildPetersburgData(pbCemeteries, burials) {
       .map((b) => ({
         name: b.name,
         dates: b.life_years ?? null,
+        photo: b.images?.[0]?.url_to_s3 ?? null,
         description: b.brief_info ?? "",
         personId: b.connected_person_id ?? null,
       })),
