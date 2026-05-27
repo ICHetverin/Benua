@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { petersburgCemeteriesData } from "../model/petersburgCemeteriesData";
-import { cemeteriesData }           from "../model/cemeteriesData";
 import { worldCemeteriesData }      from "../model/worldCemeteriesData";
+import { getBurials }               from "shared/api/benuaApi";
 import { PetersburgView } from "./components/PetersburgView/PetersburgView";
 import { CityAccordion }  from "./components/CityAccordion/CityAccordion";
 import { PageInfo }       from "./components/PageInfo/PageInfo";
@@ -11,14 +11,43 @@ import leftArrow  from "shared/assets/icons/left.svg";
 import rightArrow from "shared/assets/icons/right.svg";
 import styles from "./Cemeteries.module.css";
 
+function groupBurialsToRussiaData(burials) {
+  const cityMap = new Map();
+  for (const b of burials) {
+    if (!cityMap.has(b.city)) {
+      cityMap.set(b.city, { id: b.city.toLowerCase().replace(/\s+/g, "-"), city: b.city, cemeteries: new Map() });
+    }
+    const cityEntry = cityMap.get(b.city);
+    const cemeteryKey = b.cemetery_name ?? null;
+    if (!cityEntry.cemeteries.has(cemeteryKey)) {
+      cityEntry.cemeteries.set(cemeteryKey, { name: cemeteryKey, persons: [] });
+    }
+    cityEntry.cemeteries.get(cemeteryKey).persons.push({
+      name: b.name,
+      dates: b.life_years ?? null,
+      description: b.brief_info ?? "",
+      personId: b.connected_person_id ?? null,
+    });
+  }
+  return Array.from(cityMap.values()).map((c) => ({
+    ...c,
+    cemeteries: Array.from(c.cemeteries.values()),
+  }));
+}
+
 const VIEWS = [
-  { key: "peterburg", label: "ПЕТЕРБУРГЕ", layout: "peterburg", data: petersburgCemeteriesData },
-  { key: "russia",    label: "РОССИИ",    layout: "cities",    data: cemeteriesData },
-  { key: "world",     label: "МИРЕ",       layout: "cities",    data: worldCemeteriesData },
+  { key: "peterburg", label: "ПЕТЕРБУРГЕ", layout: "peterburg" },
+  { key: "russia",    label: "РОССИИ",    layout: "cities" },
+  { key: "world",     label: "МИРЕ",       layout: "cities" },
 ];
 
 export function Cemeteries() {
   const [viewIndex, setViewIndex] = useState(0);
+  const [russiaData, setRussiaData] = useState([]);
+
+  useEffect(() => {
+    getBurials().then((data) => setRussiaData(groupBurialsToRussiaData(data))).catch(() => {});
+  }, []);
   // exitDir  — направление выхода  текущего слова: "toLeft" | "toRight" | null
   // enterDir — направление входа   нового слова:   "fromRight" | "fromLeft" | null
   const [exitDir,  setExitDir]  = useState(null);
@@ -50,7 +79,11 @@ export function Cemeteries() {
     }, 240);
   };
 
-  const { label, layout, data, key: viewKey } = VIEWS[viewIndex];
+  const { label, layout, key: viewKey } = VIEWS[viewIndex];
+  const currentData =
+    viewKey === "russia"    ? russiaData :
+    viewKey === "world"     ? worldCemeteriesData :
+    petersburgCemeteriesData;
 
   return (
     <div className={styles.page}>
@@ -95,15 +128,14 @@ export function Cemeteries() {
 
       {/* ── Контент ── */}
       {layout === "peterburg" ? (
-        <PetersburgView cemeteries={data} />
+        <PetersburgView cemeteries={currentData} />
       ) : (
         <>
-          {/* Карта России — только для вида "россия" */}
           {viewKey === "russia" && <RussiaMap />}
           {viewKey === "world"  && <WorldMap />}
 
           <div className={styles.citiesList}>
-            {data.map((cityData) => (
+            {currentData.map((cityData) => (
               <CityAccordion
                 key={cityData.id}
                 cityData={cityData}

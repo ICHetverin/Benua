@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/objects/**", "/persons/**", "/excursions/**", "/public-excursions/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/objects/**", "/persons/**", "/excursions/**", "/public-excursions/**", "/burials/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/activity").authenticated()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/users/**").hasRole("ADMIN")

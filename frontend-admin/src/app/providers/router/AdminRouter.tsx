@@ -10,6 +10,8 @@ import { BuildingsListPage } from 'pages/buildings/BuildingsListPage';
 import { BuildingEditPage } from 'pages/buildings/BuildingEditPage';
 import { ExcursionsListPage } from 'pages/excursions/ExcursionsListPage';
 import { ExcursionEditPage } from 'pages/excursions/ExcursionEditPage';
+import { BurialsListPage } from 'pages/burials/BurialsListPage';
+import { BurialEditPage } from 'pages/burials/BurialEditPage';
 import { UsersListPage } from 'pages/users/UsersListPage';
 
 const router = createBrowserRouter(
@@ -93,6 +95,30 @@ const router = createBrowserRouter(
           element: (
             <RoleGuard roles={['ADMIN']}>
               <ExcursionEditPage mode="edit" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'burials',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BurialsListPage />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'burials/new',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BurialEditPage mode="create" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'burials/:id',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <BurialEditPage mode="edit" />
             </RoleGuard>
           ),
         },
