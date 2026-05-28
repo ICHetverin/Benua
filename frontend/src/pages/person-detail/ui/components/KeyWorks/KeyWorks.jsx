@@ -48,7 +48,7 @@ const KeyWorkCard = ({ objectId, fallbackName }) => {
     >
       <div className={styles.imageWrapper}>
         {image ? (
-          <img src={image.url_to_s3} alt={name} className={styles.image} loading="lazy" />
+          <img src={image.url_to_s3} alt={name} className={styles.image} loading="lazy" data-no-lightbox="true" />
         ) : (
           <div className={styles.imagePlaceholder} />
         )}

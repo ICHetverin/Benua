@@ -8,7 +8,10 @@ const IMAGE_EXT_RE = /\.(jpe?g|png|webp|gif)(\?.*)?$/i;
 /** Collects all photo <img> elements within a container into a flat list */
 function collectImages(container) {
   return Array.from(container.querySelectorAll('img'))
-    .filter((img) => IMAGE_EXT_RE.test(img.getAttribute('src') || ''))
+    .filter((img) =>
+      IMAGE_EXT_RE.test(img.getAttribute('src') || '') &&
+      img.dataset.noLightbox !== 'true'
+    )
     .map((img) => ({ src: img.src, alt: img.alt || '' }));
 }
 
@@ -25,7 +28,7 @@ export function LightboxProvider({ children }) {
   // stopPropagation prevents the card's onClick from also triggering navigation.
   const handleClick = useCallback((e) => {
     const img = e.target.closest('img');
-    if (!img || !IMAGE_EXT_RE.test(img.getAttribute('src') || '')) return;
+    if (!img || !IMAGE_EXT_RE.test(img.getAttribute('src') || '') || img.dataset.noLightbox === 'true') return;
 
     e.stopPropagation();
 
