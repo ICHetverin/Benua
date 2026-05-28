@@ -1,29 +1,12 @@
 import { Link } from "react-router-dom";
+import { useInfographics } from "entities/infographic";
 import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./InfographicsSection.module.css";
 
-const INFOGRAPHICS = [
-  {
-    id: 1,
-    title: "Серебрякова З. Б.",
-    subtitle: "Зинаида Евгеньевна Серебрякова",
-    modifier: "serebryakova",
-  },
-  {
-    id: 2,
-    title: "Гербовник семьи Бенуа",
-    subtitle: "Знаковое семейство",
-    modifier: "gerb",
-  },
-  {
-    id: 3,
-    title: "Театральный мир",
-    subtitle: "Театральный мир",
-    modifier: "theater",
-  },
-];
-
 export const InfographicsSection = () => {
+  const { data: infographics = [], isLoading } = useInfographics();
+  const preview = infographics.slice(0, 3);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -35,23 +18,36 @@ export const InfographicsSection = () => {
               из семьи Бенуа и общую образовательную графику по истории династии.
             </p>
           </div>
-          <Link to="/catalog" className={styles.seeAllLink}>
+          <Link to="/infographics" className={styles.seeAllLink}>
             Смотреть все инфографики <ArrowIcon width={14} height={14} />
           </Link>
         </div>
 
-        <div className={styles.grid}>
-          {INFOGRAPHICS.map((item) => (
-            <article key={item.id} className={`${styles.card} ${styles[item.modifier]}`}>
-              <div className={styles.cardImageWrapper}>
-                <div className={styles.cardImagePlaceholder} />
-              </div>
-              <div className={styles.cardFooter}>
-                <p className={styles.cardTitle}>{item.title.toUpperCase()}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+        {isLoading ? (
+          <p>Загрузка...</p>
+        ) : (
+          <div className={styles.grid}>
+            {preview.map((item) => (
+              <article key={item._id} className={styles.card}>
+                <Link to={`/infographics/${item._id}`} className={styles.cardImageWrapper}>
+                  {item.file_url ? (
+                    <img
+                      src={item.file_url}
+                      alt={item.name}
+                      className={styles.cardImage}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className={styles.cardImagePlaceholder} />
+                  )}
+                </Link>
+                <div className={styles.cardFooter}>
+                  <p className={styles.cardTitle}>{item.name?.toUpperCase()}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
