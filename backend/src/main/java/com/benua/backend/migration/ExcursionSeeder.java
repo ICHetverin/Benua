@@ -49,6 +49,7 @@ public class ExcursionSeeder implements CommandLineRunner {
                     src._id(), src.name(), src.description(), src.time(), src.guide(),
                     src.passingMethods(), src.keyPoints(), textContent,
                     src.coverPhoto(), src.routePhoto(), sources,
+                    null, null,
                     src.isPublished(), src.sortOrder(),
                     now, now, "seeder"
             );
