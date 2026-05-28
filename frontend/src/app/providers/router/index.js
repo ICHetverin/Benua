@@ -17,6 +17,8 @@ import { ObjectDetail } from "pages/object-detail";
 import { SearchPage } from "pages/search";
 import { NotFound } from "pages/not-found";
 import { Cemeteries } from "pages/cemeteries";
+import { Infographics } from "pages/infographics";
+import { InfographicDetail } from "pages/infographic-detail";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +38,8 @@ export const router = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "game", element: <Game /> },
       { path: "cemeteries", element: <Cemeteries /> },
+      { path: "infographics", element: <Infographics /> },
+      { path: "infographics/:id", element: <InfographicDetail /> },
       { path: "*", element: <NotFound /> },
     ],
   },

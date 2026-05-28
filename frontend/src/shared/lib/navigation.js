@@ -6,4 +6,5 @@ export const NAV_ITEMS = [
   { href: "/excursions", label: "Экскурсии" },
   { href: "/game", label: "Игра" },
   { href: "/cemeteries", label: "Кладбища" },
+  { href: "/infographics", label: "Инфографика" },
 ];

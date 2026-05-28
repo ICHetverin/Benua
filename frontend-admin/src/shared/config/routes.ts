@@ -17,4 +17,7 @@ export const ROUTES = {
   CEMETERIES_NEW: '/cemeteries-admin/new',
   CEMETERIES_EDIT: (id: string) => `/cemeteries-admin/${id}`,
   USERS: '/users',
+  INFOGRAPHICS: '/infographics',
+  INFOGRAPHICS_NEW: '/infographics/new',
+  INFOGRAPHICS_EDIT: (id: string) => `/infographics/${id}`,
 } as const;
