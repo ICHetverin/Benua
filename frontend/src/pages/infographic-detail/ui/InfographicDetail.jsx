@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useInfographicById } from 'entities/infographic';
 import { usePersonById } from 'entities/person';
 import { useObjectById } from 'entities/object';
+import { LightboxProvider } from 'shared/ui/Lightbox';
 import { ArrowIcon } from 'shared/assets/icons/ArrowIcon';
 import styles from './InfographicDetail.module.css';
 
@@ -71,7 +72,8 @@ export function InfographicDetail() {
     infographic.connected_objects?.length > 0;
 
   return (
-    <div className={styles.page}>
+    <LightboxProvider>
+      <div className={styles.page}>
       {/* ── Заголовок ── */}
       <section className={styles.hero}>
         <h1 className={styles.title}>{infographic.name}</h1>
@@ -136,6 +138,7 @@ export function InfographicDetail() {
           </div>
         </section>
       )}
-    </div>
+      </div>
+    </LightboxProvider>
   );
 }

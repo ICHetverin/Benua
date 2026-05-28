@@ -1,0 +1,117 @@
+/* ── Overlay ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: lb-fade 0.22s ease;
+  cursor: pointer;
+}
+
+@keyframes lb-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Close button ── */
+.closeBtn {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 9001;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.75rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.closeBtn:hover {
+  color: #fff;
+}
+
+/* ── Navigation buttons (left / right) ── */
+.navBtn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9001;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 2.5rem;
+  line-height: 1;
+  padding: 0.25rem 0.75rem 0.35rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+}
+
+.navBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.navLeft  { left: 1rem; }
+.navRight { right: 1rem; }
+
+/* ── Image area (centered block, stops overlay click) ── */
+.imageArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 90vw;
+  cursor: default;
+}
+
+/* ── Image ── */
+.image {
+  display: block;
+  max-width: 90vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 2px;
+  animation: lb-zoom 0.2s ease;
+}
+
+@keyframes lb-zoom {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Caption below image ── */
+.caption {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-lora);
+  font-size: 0.85rem;
+  text-align: center;
+  max-width: 70ch;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .navBtn {
+    font-size: 2rem;
+    padding: 0.2rem 0.5rem 0.3rem;
+  }
+
+  .navLeft  { left: 0.4rem; }
+  .navRight { right: 0.4rem; }
+
+  .closeBtn {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+}
