@@ -15,6 +15,8 @@ import { BurialEditPage } from 'pages/burials/BurialEditPage';
 import { CemeteriesListPage } from 'pages/cemeteries-admin/CemeteriesListPage';
 import { CemeteryEditPage } from 'pages/cemeteries-admin/CemeteryEditPage';
 import { UsersListPage } from 'pages/users/UsersListPage';
+import { InfographicsListPage } from 'pages/infographics/InfographicsListPage';
+import { InfographicEditPage } from 'pages/infographics/InfographicEditPage';
 
 const router = createBrowserRouter(
   [
@@ -153,6 +155,30 @@ const router = createBrowserRouter(
           element: (
             <RoleGuard roles={['ADMIN']}>
               <UsersListPage />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'infographics',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <InfographicsListPage />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'infographics/new',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <InfographicEditPage mode="create" />
+            </RoleGuard>
+          ),
+        },
+        {
+          path: 'infographics/:id',
+          element: (
+            <RoleGuard roles={['ADMIN']}>
+              <InfographicEditPage mode="edit" />
             </RoleGuard>
           ),
         },

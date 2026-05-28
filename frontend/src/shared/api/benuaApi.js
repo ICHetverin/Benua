@@ -49,3 +49,8 @@ export const getBurials = () =>
 
 export const getPbCemeteries = () =>
   api.get('/cemeteries').then(normalizeList);
+
+export const getInfographics = () =>
+  api.get('/infographics', { params: { size: 1000 } }).then(normalizeList);
+
+export const getInfographicById = (id) => api.get(`/infographics/${id}`).then(normalizeId);

@@ -8,6 +8,7 @@ import {
   TeamOutlined,
   LogoutOutlined,
   EnvironmentOutlined,
+  PictureOutlined,
 } from '@ant-design/icons';
 import { useAuth } from 'app/providers/auth/AuthContext';
 import { ROUTES } from 'shared/config/routes';
@@ -35,6 +36,9 @@ export function AdminLayout() {
       : []),
     ...(isAdmin
       ? [{ key: '/burials', icon: <EnvironmentOutlined />, label: 'Захоронения' }]
+      : []),
+    ...(isAdmin
+      ? [{ key: '/infographics', icon: <PictureOutlined />, label: 'Инфографика' }]
       : []),
     ...(isAdmin
       ? [{ key: '/users', icon: <TeamOutlined />, label: 'Пользователи' }]
