@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { usePersons } from 'entities/person/queries';
 import { useBuildings } from 'entities/building/queries';
 import { useExcursions } from 'entities/excursion/queries';
+import { useBurials } from 'entities/burial/queries';
+import { useInfographics } from 'entities/infographic/queries';
 import { useActivity } from 'entities/activity/queries';
 import type { ActivityItem, EntityType } from 'entities/activity/types';
 import { ROUTES } from 'shared/config/routes';
@@ -31,12 +33,16 @@ export function DashboardPage() {
   const { data: persons } = usePersons();
   const { data: buildings } = useBuildings();
   const { data: excursions } = useExcursions();
+  const { data: burials } = useBurials();
+  const { data: infographics } = useInfographics();
   const { data: activity, isLoading: activityLoading } = useActivity(20);
 
   const stats = [
     { title: 'Персоны', value: persons?.length ?? 0 },
     { title: 'Объекты', value: buildings?.length ?? 0 },
     { title: 'Экскурсии', value: excursions?.length ?? 0 },
+    { title: 'Захоронения', value: burials?.length ?? 0 },
+    { title: 'Инфографика', value: infographics?.length ?? 0 },
   ];
 
   const columns = [
@@ -77,10 +83,10 @@ export function DashboardPage() {
 
   return (
     <>
-      <Typography.Title level={3}>Дашборд</Typography.Title>
-      <Row gutter={16} style={{ marginBottom: 24 }}>
+      <Typography.Title level={3} style={{ marginTop: 0 }}>Дашборд</Typography.Title>
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         {stats.map((s) => (
-          <Col key={s.title} xs={24} sm={8}>
+          <Col key={s.title} xs={12} sm={8} md={6} lg={5}>
             <Card>
               <Statistic title={s.title} value={s.value} />
             </Card>
