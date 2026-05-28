@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { getBurials, getPbCemeteries } from "shared/api/benuaApi";
 import { PetersburgView } from "./components/PetersburgView/PetersburgView";
 import { CityAccordion }  from "./components/CityAccordion/CityAccordion";
 import { PageInfo }       from "./components/PageInfo/PageInfo";
 import { RussiaMap }      from "./components/RussiaMap/RussiaMap";
 import { WorldMap }       from "./components/WorldMap/WorldMap";
+import { RUSSIA_CITY_COORDS } from "../model/russiaRegions";
 import leftArrow  from "shared/assets/icons/left.svg";
 import rightArrow from "shared/assets/icons/right.svg";
 import styles from "./Cemeteries.module.css";
@@ -18,9 +19,12 @@ function groupByCityAndCemetery(burials) {
   for (const b of burials) {
     const cityKey = b.city ?? "Неизвестный город";
     if (!cityMap.has(cityKey)) {
+      const coords = RUSSIA_CITY_COORDS[cityKey.toLowerCase()] ?? {};
       cityMap.set(cityKey, {
         id: cityKey.toLowerCase().replace(/\s+/g, "-"),
         city: cityKey,
+        lat: coords.lat ?? null,
+        lon: coords.lon ?? null,
         cemeteries: new Map(),
       });
     }
@@ -40,6 +44,7 @@ function groupByCityAndCemetery(burials) {
   return Array.from(cityMap.values()).map((c) => ({
     ...c,
     cemeteries: Array.from(c.cemeteries.values()),
+    burialCount: Array.from(c.cemeteries.values()).reduce((s, cem) => s + cem.persons.length, 0),
   }));
 }
 
@@ -83,6 +88,8 @@ export function Cemeteries() {
   const [russiaData, setRussiaData] = useState([]);
   const [worldData,  setWorldData]  = useState([]);
 
+  const [highlightedCity, setHighlightedCity] = useState(null);
+
   useEffect(() => {
     Promise.all([getBurials(), getPbCemeteries()])
       .then(([burials, pbCemeteries]) => {
@@ -91,6 +98,15 @@ export function Cemeteries() {
         setWorldData(groupByCityAndCemetery(burials.filter((b) => b.region === "WORLD")));
       })
       .catch(() => {});
+  }, []);
+
+  const handleCityClick = useCallback((cityId) => {
+    setHighlightedCity(cityId);
+    const el = document.getElementById(`city-${cityId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setTimeout(() => setHighlightedCity(null), 2500);
   }, []);
 
   const navigate = (dir) => {
@@ -146,11 +162,17 @@ export function Cemeteries() {
         <PetersburgView cemeteries={currentData} />
       ) : (
         <>
-          {viewKey === "russia" && <RussiaMap />}
+          {viewKey === "russia" && (
+            <RussiaMap cities={russiaData} onCityClick={handleCityClick} />
+          )}
           {viewKey === "world"  && <WorldMap />}
           <div className={styles.citiesList}>
             {currentData.map((cityData) => (
-              <CityAccordion key={cityData.id} cityData={cityData} />
+              <CityAccordion
+                key={cityData.id}
+                cityData={cityData}
+                isHighlighted={cityData.id === highlightedCity}
+              />
             ))}
           </div>
         </>
