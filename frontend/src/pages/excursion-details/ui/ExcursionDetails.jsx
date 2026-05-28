@@ -37,10 +37,7 @@ export function ExcursionDetails() {
     <LightboxProvider>
       <ExcursionHero excursion={excursion} />
 
-      <ExcursionRoute
-        buildings={excursion.buildings ?? []}
-        excursionImages={excursion.images ?? []}
-      />
+      <ExcursionRoute points={excursion.points ?? []} />
 
       <AudioGuide audioUrl={audioUrl} />
     </LightboxProvider>

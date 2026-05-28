@@ -20,6 +20,8 @@ public record Excursion(
         @Field("cover_photo") String coverPhoto,
         @Field("route_photo") String routePhoto,
         List<ExcursionSource> sources,
+        String type,
+        List<ExcursionPoint> points,
         @Field("is_published") Boolean isPublished,
         @Field("sort_order") Integer sortOrder,
         @Field("created_at") Instant createdAt,
@@ -28,4 +30,11 @@ public record Excursion(
 ) {
     public record ContentSection(String topic, String content) {}
     public record ExcursionSource(String source, String url) {}
+    public record ExcursionPoint(
+            String address,
+            @Field("object_id") String objectId,
+            String description,
+            @Field("photo_url") String photoUrl,
+            @Field("audio_url") String audioUrl
+    ) {}
 }

@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface StorageService {
     UploadedObject upload(MultipartFile file);
+    UploadedObject uploadAudio(MultipartFile file);
     void delete(String key);
     String publicUrl(String key);
 

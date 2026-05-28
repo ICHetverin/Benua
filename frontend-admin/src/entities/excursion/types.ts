@@ -1,4 +1,5 @@
 export type PassingMethod = 'on_foot' | 'by_bus' | 'mixed';
+export type ExcursionType = 'on_foot' | 'by_car' | 'by_bike';
 
 export interface ContentSection {
   topic: string;
@@ -8,6 +9,14 @@ export interface ContentSection {
 export interface ExcursionSource {
   source: string;
   url: string;
+}
+
+export interface ExcursionPoint {
+  address: string;
+  object_id?: string;
+  description?: string;
+  photo_url?: string;
+  audio_url?: string;
 }
 
 export interface ExcursionDto {
@@ -22,6 +31,8 @@ export interface ExcursionDto {
   cover_photo?: string;
   route_photo?: string;
   sources?: ExcursionSource[];
+  type?: ExcursionType;
+  points?: ExcursionPoint[];
   is_published?: boolean;
   sort_order?: number;
   created_at?: string;
@@ -39,6 +50,8 @@ export interface ExcursionCreateDto {
   cover_photo?: string;
   route_photo?: string;
   sources?: ExcursionSource[];
+  type?: ExcursionType;
+  points?: ExcursionPoint[];
   sort_order?: number;
   is_published?: boolean;
 }

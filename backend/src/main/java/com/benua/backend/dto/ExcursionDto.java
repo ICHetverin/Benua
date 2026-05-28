@@ -18,6 +18,8 @@ public record ExcursionDto(
         String coverPhoto,
         String routePhoto,
         List<Excursion.ExcursionSource> sources,
+        String type,
+        List<Excursion.ExcursionPoint> points,
         Boolean isPublished,
         Integer sortOrder,
         Instant createdAt,

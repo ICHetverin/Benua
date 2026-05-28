@@ -18,6 +18,8 @@ public record ExcursionCreateDto(
         @JsonProperty("cover_photo") String coverPhoto,
         @JsonProperty("route_photo") String routePhoto,
         @JsonProperty("sources") List<Excursion.ExcursionSource> sources,
+        @JsonProperty("type") String type,
+        @JsonProperty("points") List<Excursion.ExcursionPoint> points,
         @JsonProperty("sort_order") Integer sortOrder,
         @JsonProperty("is_published") Boolean isPublished
 ) {}

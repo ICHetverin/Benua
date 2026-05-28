@@ -64,6 +64,7 @@ public class ExcursionService {
                 null, dto.name(), dto.description(), dto.time(), dto.guide(),
                 dto.passingMethods(), dto.keyPoints(), dto.textContent(),
                 dto.coverPhoto(), dto.routePhoto(), dto.sources(),
+                dto.type(), dto.points(),
                 dto.isPublished() != null ? dto.isPublished() : false,
                 dto.sortOrder(), Instant.now(), Instant.now(), updatedBy
         );
@@ -84,6 +85,8 @@ public class ExcursionService {
                 patch.coverPhoto() != null ? patch.coverPhoto() : existing.coverPhoto(),
                 patch.routePhoto() != null ? patch.routePhoto() : existing.routePhoto(),
                 patch.sources() != null ? patch.sources() : existing.sources(),
+                patch.type() != null ? patch.type() : existing.type(),
+                patch.points() != null ? patch.points() : existing.points(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 existing.createdAt(), Instant.now(), updatedBy
@@ -102,6 +105,7 @@ public class ExcursionService {
                 existing._id(), existing.name(), existing.description(), existing.time(),
                 existing.guide(), existing.passingMethods(), existing.keyPoints(), existing.textContent(),
                 existing.coverPhoto(), existing.routePhoto(), existing.sources(),
+                existing.type(), existing.points(),
                 value, existing.sortOrder(), existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(updated));
@@ -124,6 +128,7 @@ public class ExcursionService {
                 e._id(), e.name(), e.description(), e.time(), e.guide(),
                 e.passingMethods(), e.keyPoints(), e.textContent(),
                 e.coverPhoto(), e.routePhoto(), e.sources(),
+                e.type(), e.points(),
                 e.isPublished(), e.sortOrder(), e.createdAt(), e.updatedAt()
         );
     }

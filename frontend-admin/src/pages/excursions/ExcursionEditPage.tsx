@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import {
   Form,
   Input,
@@ -10,10 +11,11 @@ import {
   Divider,
   Switch,
 } from 'antd';
-import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useExcursion, useCreateExcursion, useUpdateExcursion } from 'entities/excursion/queries';
-import type { ExcursionCreateDto } from 'entities/excursion/types';
+import type { ExcursionCreateDto, ExcursionPoint } from 'entities/excursion/types';
+import { uploadMultipart } from 'shared/api/adminApi';
 import { ROUTES } from 'shared/config/routes';
 
 interface Props {
@@ -25,6 +27,63 @@ const PASSING_METHOD_OPTIONS = [
   { value: 'by_bus', label: 'Автобусная' },
   { value: 'mixed', label: 'Смешанная' },
 ];
+
+const TYPE_OPTIONS = [
+  { value: 'on_foot', label: 'Пешком' },
+  { value: 'by_car', label: 'На машине' },
+  { value: 'by_bike', label: 'На велосипеде' },
+];
+
+/* ── Inline file upload input ── */
+interface FileInputProps {
+  value?: string;
+  onChange?: (url: string) => void;
+  endpoint: string;
+  responseKey: string;
+  accept: string;
+  placeholder?: string;
+}
+
+function FileInput({ value, onChange, endpoint, responseKey, accept, placeholder }: FileInputProps) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await uploadMultipart<Record<string, string>>(endpoint, fd);
+      onChange?.(res[responseKey]);
+    } catch {
+      message.error('Ошибка загрузки файла');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  return (
+    <Space.Compact style={{ width: '100%' }}>
+      <Input
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        placeholder={placeholder}
+        style={{ flex: 1 }}
+      />
+      <Button
+        loading={uploading}
+        icon={<UploadOutlined />}
+        onClick={() => inputRef.current?.click()}
+      >
+        {uploading ? '' : 'Загрузить'}
+      </Button>
+      <input ref={inputRef} type="file" accept={accept} style={{ display: 'none' }} onChange={handleFile} />
+    </Space.Compact>
+  );
+}
 
 export function ExcursionEditPage({ mode }: Props) {
   const { id } = useParams<{ id: string }>();
@@ -46,15 +105,17 @@ export function ExcursionEditPage({ mode }: Props) {
           description: existing.description,
           time: existing.time,
           guide: existing.guide,
+          type: existing.type,
           passing_methods: existing.passing_methods ?? [],
           key_points: existing.key_points ?? [],
           text_content: existing.text_content ?? [],
           cover_photo: existing.cover_photo,
           route_photo: existing.route_photo,
           sources: existing.sources ?? [],
+          points: existing.points ?? [],
           is_published: existing.is_published ?? false,
         }
-      : { passing_methods: [], key_points: [], text_content: [], sources: [], is_published: false };
+      : { passing_methods: [], key_points: [], text_content: [], sources: [], points: [], is_published: false };
 
   const onFinish = async (values: Record<string, unknown>) => {
     const dto: ExcursionCreateDto = {
@@ -62,6 +123,7 @@ export function ExcursionEditPage({ mode }: Props) {
       description: values.description as string | undefined,
       time: values.time as string | undefined,
       guide: values.guide as string | undefined,
+      type: values.type as ExcursionCreateDto['type'],
       passing_methods: values.passing_methods as string[] | undefined,
       key_points: (values.key_points as string[] | undefined)?.filter(Boolean),
       text_content: (values.text_content as { topic?: string; content?: string }[] | undefined)
@@ -72,6 +134,15 @@ export function ExcursionEditPage({ mode }: Props) {
       sources: (values.sources as { source?: string; url?: string }[] | undefined)
         ?.filter((s) => s?.source || s?.url)
         .map((s) => ({ source: s.source ?? '', url: s.url ?? '' })),
+      points: (values.points as Partial<ExcursionPoint>[] | undefined)
+        ?.filter((p) => p?.address)
+        .map((p) => ({
+          address: p.address ?? '',
+          object_id: p.object_id || undefined,
+          description: p.description || undefined,
+          photo_url: p.photo_url || undefined,
+          audio_url: p.audio_url || undefined,
+        })),
       is_published: values.is_published as boolean,
     };
     try {
@@ -108,6 +179,9 @@ export function ExcursionEditPage({ mode }: Props) {
           <Form.Item name="time" label="Продолжительность" style={{ width: 200 }}>
             <Input placeholder="2,5 часа" />
           </Form.Item>
+          <Form.Item name="type" label="Тип" style={{ width: 200 }}>
+            <Select options={TYPE_OPTIONS} placeholder="Выбрать..." allowClear />
+          </Form.Item>
           <Form.Item name="passing_methods" label="Способ проведения" style={{ width: 280 }}>
             <Select mode="multiple" options={PASSING_METHOD_OPTIONS} placeholder="Выбрать..." />
           </Form.Item>
@@ -121,17 +195,50 @@ export function ExcursionEditPage({ mode }: Props) {
           <Input.TextArea rows={5} />
         </Form.Item>
 
-        <Divider>Ключевые точки</Divider>
-        <Form.List name="key_points">
+        <Divider>Точки маршрута</Divider>
+        <Form.List name="points">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name }) => (
-                <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 4 }}>
-                  <Form.Item name={name} style={{ flex: 1, marginBottom: 0, width: 580 }}>
-                    <Input placeholder="Точка маршрута" />
+                <div
+                  key={key}
+                  style={{ marginBottom: 16, padding: '16px', background: '#fafafa', borderRadius: 6, border: '1px solid #e8e8e8' }}
+                >
+                  <Space align="start" style={{ width: '100%', justifyContent: 'space-between', marginBottom: 12 }}>
+                    <Typography.Text strong>Точка {name + 1}</Typography.Text>
+                    <MinusCircleOutlined onClick={() => remove(name)} style={{ color: '#ff4d4f' }} />
+                  </Space>
+
+                  <Form.Item name={[name, 'address']} label="Адрес" rules={[{ required: true, message: 'Укажите адрес' }]}>
+                    <Input placeholder="ул. Пушкина, д. 1" />
                   </Form.Item>
-                  <MinusCircleOutlined onClick={() => remove(name)} />
-                </Space>
+
+                  <Form.Item name={[name, 'object_id']} label="ID объекта (необязательно)">
+                    <Input placeholder="ID здания из базы" />
+                  </Form.Item>
+
+                  <Form.Item name={[name, 'description']} label="Описание точки">
+                    <Input.TextArea rows={3} placeholder="Что посмотреть, что узнать..." />
+                  </Form.Item>
+
+                  <Form.Item name={[name, 'photo_url']} label="Фото места">
+                    <FileInput
+                      endpoint="/admin/images"
+                      responseKey="url_to_s3"
+                      accept="image/jpeg,image/png,image/webp"
+                      placeholder="URL фото или загрузите файл"
+                    />
+                  </Form.Item>
+
+                  <Form.Item name={[name, 'audio_url']} label="Аудиофайл">
+                    <FileInput
+                      endpoint="/admin/files/audio"
+                      responseKey="url"
+                      accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
+                      placeholder="URL аудио или загрузите файл"
+                    />
+                  </Form.Item>
+                </div>
               ))}
               <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
                 Добавить точку
@@ -161,6 +268,25 @@ export function ExcursionEditPage({ mode }: Props) {
               ))}
               <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
                 Добавить раздел
+              </Button>
+            </>
+          )}
+        </Form.List>
+
+        <Divider>Ключевые точки (устаревшее)</Divider>
+        <Form.List name="key_points">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name }) => (
+                <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 4 }}>
+                  <Form.Item name={name} style={{ flex: 1, marginBottom: 0, width: 580 }}>
+                    <Input placeholder="Точка маршрута" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Button icon={<PlusOutlined />} onClick={() => add()} size="small">
+                Добавить точку
               </Button>
             </>
           )}
