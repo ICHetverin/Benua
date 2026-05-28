@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { usePersonById } from 'entities/person';
+import { LightboxProvider } from 'shared/ui/Lightbox';
 import { PersonHero } from './components/PersonHero/PersonHero';
 import { InterestingFacts } from './components/InterestingFacts/InterestingFacts';
 import { TextSection } from './components/TextSection/TextSection';
@@ -42,7 +43,7 @@ export function PersonDetail() {
   const carouselImages = person.images?.slice(1) ?? [];
 
   return (
-    <>
+    <LightboxProvider>
       <PersonHero person={person} />
 
       <InterestingFacts facts={person.interesting_facts ?? []} />
@@ -66,6 +67,6 @@ export function PersonDetail() {
       <KeyWorks objects={person.connected_objects ?? []} />
 
       <SourcesList sources={person.sources ?? []} />
-    </>
+    </LightboxProvider>
   );
 }
