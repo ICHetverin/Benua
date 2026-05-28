@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useObjectById } from "entities/object";
+import { LightboxProvider } from "shared/ui/Lightbox";
 import { ObjectHero } from "./components/ObjectHero/ObjectHero";
 import { InterestingFacts } from "./components/InterestingFacts/InterestingFacts";
 import { TextSection } from "./components/TextSection/TextSection";
@@ -32,7 +33,7 @@ export function ObjectDetail() {
   }
 
   return (
-    <>
+    <LightboxProvider>
       {/* ── 1. Hero ── */}
       <ObjectHero object={object} />
 
@@ -80,6 +81,6 @@ export function ObjectDetail() {
 
       {/* ── 5. Sources ── */}
       <SourcesList sources={object.sources ?? []} />
-    </>
+    </LightboxProvider>
   );
 }

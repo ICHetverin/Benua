@@ -1,0 +1,4 @@
+/* Give all child images a zoom cursor to signal they're clickable */
+.zone img {
+  cursor: zoom-in;
+}
