@@ -21,7 +21,6 @@ export function LoginPage() {
   const onFinish = async (values: FormValues) => {
     try {
       await login(values.username, values.password);
-      navigate(ROUTES.DASHBOARD, { replace: true });
     } catch {
       message.error('Неверный логин или пароль');
     }
