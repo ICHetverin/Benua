@@ -29,17 +29,13 @@ export function ExcursionDetails() {
     );
   }
 
-  const audioUrl = excursion.sources?.find((s) =>
-    /\.(mp3|wav|ogg|m4a)(\?.*)?$/i.test(s.url ?? "")
-  )?.url ?? null;
-
   return (
     <LightboxProvider>
       <ExcursionHero excursion={excursion} />
 
       <ExcursionRoute points={excursion.points ?? []} />
 
-      <AudioGuide audioUrl={audioUrl} />
+      <AudioGuide audioUrl={excursion.audio_url ?? null} />
     </LightboxProvider>
   );
 }

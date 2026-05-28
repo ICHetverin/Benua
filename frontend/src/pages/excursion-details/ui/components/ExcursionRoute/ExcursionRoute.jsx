@@ -1,99 +1,52 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import styles from "./ExcursionRoute.module.css";
 
-/* ── Inline audio player per stop ──────────────────── */
-const formatTime = (s) => {
-  if (!isFinite(s) || isNaN(s)) return "0:00";
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${sec.toString().padStart(2, "0")}`;
-};
+/* ── Photo gallery for a single stop ──────────────── */
+const PhotoGallery = ({ urls = [] }) => {
+  const [idx, setIdx] = useState(0);
 
-const PlayIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-    <path d="M8 5v14l11-7z" />
-  </svg>
-);
-const PauseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-  </svg>
-);
+  if (urls.length === 0) return <div className={styles.photoPlaceholder} />;
 
-const StopAudioPlayer = ({ audioUrl }) => {
-  const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoaded = () => setDuration(audio.duration);
-    const onEnded = () => setIsPlaying(false);
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("loadedmetadata", onLoaded);
-    audio.addEventListener("ended", onEnded);
-    return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("loadedmetadata", onLoaded);
-      audio.removeEventListener("ended", onEnded);
-    };
-  }, []);
-
-  const toggle = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) { audio.pause(); } else { audio.play(); }
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleSeek = (e) => {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    audio.currentTime = ratio * duration;
-    setCurrentTime(audio.currentTime);
-  };
-
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const prev = () => setIdx((i) => (i - 1 + urls.length) % urls.length);
+  const next = () => setIdx((i) => (i + 1) % urls.length);
 
   return (
-    <div className={styles.audioPlayer}>
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
-      <button className={styles.audioPlayBtn} onClick={toggle} aria-label={isPlaying ? "Пауза" : "Играть"}>
-        {isPlaying ? <PauseIcon /> : <PlayIcon />}
-      </button>
-      <div className={styles.audioTimeline}>
-        <span className={styles.audioTime}>{formatTime(currentTime)}</span>
-        <div className={styles.audioTrack} onClick={handleSeek} role="slider" aria-valuemin={0} aria-valuemax={duration} aria-valuenow={currentTime} tabIndex={0}>
-          <div className={styles.audioFill} style={{ width: `${progress}%` }} />
-          <div className={styles.audioThumb} style={{ left: `${progress}%` }} />
-        </div>
-        <span className={styles.audioTime}>{formatTime(duration)}</span>
+    <div className={styles.gallery}>
+      <div className={styles.photoWrapper}>
+        <img
+          key={urls[idx]}
+          src={urls[idx]}
+          alt=""
+          className={styles.photo}
+          loading="lazy"
+          data-no-lightbox="true"
+        />
       </div>
+      {urls.length > 1 && (
+        <div className={styles.galleryControls}>
+          <button className={styles.galleryArrow} onClick={prev} aria-label="Предыдущее фото">
+            <ArrowIcon width={14} height={14} style={{ transform: "rotate(180deg)" }} />
+          </button>
+          <span className={styles.galleryCounter}>{idx + 1} / {urls.length}</span>
+          <button className={styles.galleryArrow} onClick={next} aria-label="Следующее фото">
+            <ArrowIcon width={14} height={14} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-/* ── Stop content ──────────────────────────────── */
+/* ── Stop content ──────────────────────────────────── */
 const StopContent = ({ point }) => {
   const navigate = useNavigate();
 
   return (
     <div className={styles.stopContent}>
       <div className={styles.photoColumn}>
-        {point.photo_url ? (
-          <div className={styles.photoWrapper}>
-            <img src={point.photo_url} alt={point.address} className={styles.photo} loading="lazy" />
-          </div>
-        ) : (
-          <div className={styles.photoPlaceholder} />
-        )}
+        <PhotoGallery urls={point.photo_urls ?? []} />
       </div>
 
       <div className={styles.textColumn}>
@@ -102,24 +55,36 @@ const StopContent = ({ point }) => {
         )}
 
         {point.object_id && (
-          <button className={styles.objectLink} onClick={() => navigate(`/objects/${point.object_id}`)}>
+          <button
+            className={styles.objectLink}
+            onClick={() => navigate(`/objects/${point.object_id}`)}
+          >
             Подробнее об объекте →
           </button>
         )}
 
-        {point.audio_url && (
-          <StopAudioPlayer audioUrl={point.audio_url} />
+        {point.lat && point.lng && (
+          <a
+            className={styles.mapLink}
+            href={`https://maps.google.com/?q=${point.lat},${point.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Открыть на карте →
+          </a>
         )}
 
-        {!point.description && !point.object_id && !point.audio_url && (
-          <p className={styles.emptyDescription}>Описание этой точки маршрута скоро появится.</p>
+        {!point.description && !point.object_id && (
+          <p className={styles.emptyDescription}>
+            Описание этой точки маршрута скоро появится.
+          </p>
         )}
       </div>
     </div>
   );
 };
 
-/* ── Main component ────────────────────────────── */
+/* ── Main component ────────────────────────────────── */
 export const ExcursionRoute = ({ points = [] }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
 

@@ -149,8 +149,44 @@
     padding-top: 0.25rem;
 }
 
-/* ── Object link ── */
-.objectLink {
+/* ── Photo gallery ── */
+.gallery {
+    display: flex;
+    flex-direction: column;
+}
+
+.galleryControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.6rem 0;
+}
+
+.galleryArrow {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--black);
+    padding: 0.25rem 0.4rem;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.galleryArrow:hover {
+    opacity: 0.5;
+}
+
+.galleryCounter {
+    font-family: var(--font-lora);
+    font-size: 0.72rem;
+    color: var(--black);
+}
+
+/* ── Object/map links ── */
+.objectLink,
+.mapLink {
     background: none;
     border: none;
     font-family: var(--font-lora);
@@ -159,79 +195,14 @@
     cursor: pointer;
     padding: 0;
     text-align: left;
+    text-decoration: none;
     transition: opacity 0.2s;
+    display: inline-block;
 }
 
-.objectLink:hover {
+.objectLink:hover,
+.mapLink:hover {
     opacity: 0.7;
-}
-
-/* ── Inline audio player ── */
-.audioPlayer {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background-color: var(--darker-beige);
-}
-
-.audioPlayBtn {
-    background: none;
-    border: none;
-    color: var(--black);
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    transition: opacity 0.2s;
-}
-
-.audioPlayBtn:hover {
-    opacity: 0.6;
-}
-
-.audioTimeline {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-    min-width: 0;
-}
-
-.audioTime {
-    font-family: var(--font-lora);
-    font-size: 0.7rem;
-    color: var(--black);
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.audioTrack {
-    flex: 1;
-    height: 3px;
-    background-color: #ccc;
-    position: relative;
-    cursor: pointer;
-    border-radius: 2px;
-}
-
-.audioFill {
-    height: 100%;
-    background-color: var(--dark-blue);
-    border-radius: 2px;
-    transition: width 0.1s linear;
-}
-
-.audioThumb {
-    position: absolute;
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--dark-blue);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
 }
 
 .descriptionParagraph {

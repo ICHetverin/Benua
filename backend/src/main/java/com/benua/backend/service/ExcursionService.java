@@ -61,10 +61,9 @@ public class ExcursionService {
 
     public ExcursionDto create(ExcursionCreateDto dto, String updatedBy) {
         Excursion excursion = new Excursion(
-                null, dto.name(), dto.description(), dto.time(), dto.guide(),
-                dto.passingMethods(), dto.keyPoints(), dto.textContent(),
-                dto.coverPhoto(), dto.routePhoto(), dto.sources(),
-                dto.type(), dto.points(),
+                null, dto.name(), dto.description(), dto.time(),
+                dto.passingMethods(), dto.coverPhoto(), dto.routePhoto(), dto.sources(),
+                dto.points(), dto.audioUrl(), dto.authors(),
                 dto.isPublished() != null ? dto.isPublished() : false,
                 dto.sortOrder(), Instant.now(), Instant.now(), updatedBy
         );
@@ -78,15 +77,13 @@ public class ExcursionService {
                 patch.name() != null ? patch.name() : existing.name(),
                 patch.description() != null ? patch.description() : existing.description(),
                 patch.time() != null ? patch.time() : existing.time(),
-                patch.guide() != null ? patch.guide() : existing.guide(),
                 patch.passingMethods() != null ? patch.passingMethods() : existing.passingMethods(),
-                patch.keyPoints() != null ? patch.keyPoints() : existing.keyPoints(),
-                patch.textContent() != null ? patch.textContent() : existing.textContent(),
                 patch.coverPhoto() != null ? patch.coverPhoto() : existing.coverPhoto(),
                 patch.routePhoto() != null ? patch.routePhoto() : existing.routePhoto(),
                 patch.sources() != null ? patch.sources() : existing.sources(),
-                patch.type() != null ? patch.type() : existing.type(),
                 patch.points() != null ? patch.points() : existing.points(),
+                patch.audioUrl() != null ? patch.audioUrl() : existing.audioUrl(),
+                patch.authors() != null ? patch.authors() : existing.authors(),
                 patch.isPublished() != null ? patch.isPublished() : existing.isPublished(),
                 patch.sortOrder() != null ? patch.sortOrder() : existing.sortOrder(),
                 existing.createdAt(), Instant.now(), updatedBy
@@ -103,9 +100,8 @@ public class ExcursionService {
         Excursion existing = getExcursion(id);
         Excursion updated = new Excursion(
                 existing._id(), existing.name(), existing.description(), existing.time(),
-                existing.guide(), existing.passingMethods(), existing.keyPoints(), existing.textContent(),
-                existing.coverPhoto(), existing.routePhoto(), existing.sources(),
-                existing.type(), existing.points(),
+                existing.passingMethods(), existing.coverPhoto(), existing.routePhoto(), existing.sources(),
+                existing.points(), existing.audioUrl(), existing.authors(),
                 value, existing.sortOrder(), existing.createdAt(), Instant.now(), updatedBy
         );
         return toDto(excursionRepository.save(updated));
@@ -125,10 +121,9 @@ public class ExcursionService {
 
     public ExcursionDto toDto(Excursion e) {
         return new ExcursionDto(
-                e._id(), e.name(), e.description(), e.time(), e.guide(),
-                e.passingMethods(), e.keyPoints(), e.textContent(),
-                e.coverPhoto(), e.routePhoto(), e.sources(),
-                e.type(), e.points(),
+                e._id(), e.name(), e.description(), e.time(),
+                e.passingMethods(), e.coverPhoto(), e.routePhoto(), e.sources(),
+                e.points(), e.audioUrl(), e.authors(),
                 e.isPublished(), e.sortOrder(), e.createdAt(), e.updatedAt()
         );
     }

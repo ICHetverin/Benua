@@ -1,9 +1,8 @@
-import { PASSING_METHOD_LABELS, TYPE_LABELS } from "entities/excursions";
+import { PASSING_METHOD_LABELS } from "entities/excursions";
 import styles from "./ExcursionHero.module.css";
 
 export const ExcursionHero = ({ excursion }) => {
   const tags = [
-    excursion.type ? (TYPE_LABELS[excursion.type] ?? excursion.type) : null,
     ...(excursion.passing_methods ?? []).map((m) => PASSING_METHOD_LABELS[m] ?? m),
     excursion.time ?? null,
   ].filter(Boolean);

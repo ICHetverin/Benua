@@ -37,19 +37,14 @@ public class ExcursionSeeder implements CommandLineRunner {
                 log.info("Excursion already exists, skipping: {}", src._id());
                 continue;
             }
-            List<Excursion.ContentSection> textContent = src.textContent() == null ? List.of() :
-                    src.textContent().stream()
-                            .map(s -> new Excursion.ContentSection(s.topic(), s.content()))
-                            .toList();
             List<Excursion.ExcursionSource> sources = src.sources() == null ? List.of() :
                     src.sources().stream()
                             .map(s -> new Excursion.ExcursionSource(s.source(), s.url()))
                             .toList();
             Excursion excursion = new Excursion(
-                    src._id(), src.name(), src.description(), src.time(), src.guide(),
-                    src.passingMethods(), src.keyPoints(), textContent,
-                    src.coverPhoto(), src.routePhoto(), sources,
-                    null, null,
+                    src._id(), src.name(), src.description(), src.time(),
+                    src.passingMethods(), src.coverPhoto(), src.routePhoto(), sources,
+                    null, null, null,
                     src.isPublished(), src.sortOrder(),
                     now, now, "seeder"
             );
