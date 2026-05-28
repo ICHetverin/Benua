@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useExcursionById } from "entities/excursions";
+import { LightboxProvider } from "shared/ui/Lightbox";
 import { ExcursionHero } from "./components/ExcursionHero/ExcursionHero";
 import { ExcursionRoute } from "./components/ExcursionRoute/ExcursionRoute";
 import { AudioGuide } from "./components/AudioGuide/AudioGuide";
@@ -33,7 +34,7 @@ export function ExcursionDetails() {
   )?.url ?? null;
 
   return (
-    <>
+    <LightboxProvider>
       <ExcursionHero excursion={excursion} />
 
       <ExcursionRoute
@@ -42,6 +43,6 @@ export function ExcursionDetails() {
       />
 
       <AudioGuide audioUrl={audioUrl} />
-    </>
+    </LightboxProvider>
   );
 }

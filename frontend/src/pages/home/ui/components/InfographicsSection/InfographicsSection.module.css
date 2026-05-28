@@ -72,27 +72,28 @@
 }
 
 .cardImageWrapper {
+    display: block;
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background-color: var(--darker-beige);
+}
+
+.cardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+}
+
+.card:hover .cardImage {
+    transform: scale(1.04);
 }
 
 .cardImagePlaceholder {
     width: 100%;
     height: 100%;
     background-color: #c8bfaf;
-}
-
-.serebryakova .cardImagePlaceholder {
-    background-color: #8a7060;
-}
-
-.gerb .cardImagePlaceholder {
-    background-color: #b0a070;
-}
-
-.theater .cardImagePlaceholder {
-    background-color: #7a8a9a;
 }
 
 .cardFooter {

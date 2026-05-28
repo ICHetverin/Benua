@@ -1,0 +1,54 @@
+.section p {
+    margin: 14px;
+    max-width: 80%;
+    font-size: medium;
+    text-align: justify;
+}
+
+.section h1 {
+    margin-left: 14px;
+}
+
+.wcircle {
+    display: inline-block;
+    vertical-align: middle;
+    background-color: #F4E7CE;
+    border: 2px solid black;
+    height: 15px;
+    width: 15px;
+    border-radius: 45%;
+}
+
+.bcircle {
+    display: inline-block;
+    vertical-align: middle;
+    background-color: #001F53;
+    border: 2px solid black;
+    height: 15px;
+    width: 15px;
+    border-radius: 45%;
+}
+
+.rcircle {
+    display: inline-block;
+    vertical-align: middle;
+    background-color: #8A3033;
+    border: 2px solid black;
+    height: 15px;
+    width: 15px;
+    border-radius: 45%;
+}
+
+@media (max-width: 640px) {
+    .section p {
+        margin: 14px;
+        max-width: 100%;
+        font-size: medium;
+        text-align: justify;
+    }
+
+    .section h1 {
+        margin-left: 14px;
+        text-align: center;
+    }
+}
