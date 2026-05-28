@@ -21,9 +21,13 @@ export function LightboxProvider({ children }) {
   const containerRef = useRef(null);
   const [lightbox, setLightbox] = useState({ open: false, images: [], index: 0 });
 
+  // Capture phase: fires before any child bubble-phase handlers (e.g. navigate cards).
+  // stopPropagation prevents the card's onClick from also triggering navigation.
   const handleClick = useCallback((e) => {
     const img = e.target.closest('img');
     if (!img || !IMAGE_EXT_RE.test(img.getAttribute('src') || '')) return;
+
+    e.stopPropagation();
 
     const images = collectImages(containerRef.current);
     const index = images.findIndex((item) => item.src === img.src);
@@ -43,7 +47,7 @@ export function LightboxProvider({ children }) {
   }, []);
 
   return (
-    <div ref={containerRef} onClick={handleClick} className={styles.zone}>
+    <div ref={containerRef} onClickCapture={handleClick} className={styles.zone}>
       {children}
 
       {lightbox.open &&
