@@ -53,7 +53,7 @@ public class LocalStorageService implements StorageService {
             @Value("${app.local-storage.path:./local-uploads}") String storagePath,
             @Value("${app.local-storage.public-base-url:http://localhost:8080/api/files}") String publicBaseUrl) {
         this.rootDir = Paths.get(storagePath).toAbsolutePath().normalize();
-        this.publicBaseUrl = publicBaseUrl.stripTrailing("/");
+        this.publicBaseUrl = publicBaseUrl.replaceAll("/+$", "");
         try {
             Files.createDirectories(this.rootDir);
         } catch (IOException e) {
