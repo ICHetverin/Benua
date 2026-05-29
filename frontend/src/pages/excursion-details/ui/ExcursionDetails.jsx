@@ -11,6 +11,7 @@ import styles from "./ExcursionDetails.module.css";
 export function ExcursionDetails() {
   const { id } = useParams();
   const { data: excursion, isLoading, isError } = useExcursionById(id);
+  const audioManager = useRef({ playing: null });
 
   if (isLoading) {
     return (
@@ -30,8 +31,6 @@ export function ExcursionDetails() {
       </div>
     );
   }
-
-  const audioManager = useRef({ playing: null });
 
   return (
     <LightboxProvider>
