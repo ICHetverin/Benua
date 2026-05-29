@@ -3,6 +3,7 @@ import type { ImageDto } from 'entities/image/types';
 export interface BurialDto {
   _id: string;
   region?: string;
+  russia_region?: string;
   cemetery_id?: string;
   city?: string;
   cemetery_name?: string;
@@ -21,6 +22,7 @@ export interface BurialDto {
 
 export interface BurialCreateDto {
   region?: string;
+  russia_region?: string;
   cemetery_id?: string;
   city?: string;
   cemetery_name?: string;
@@ -33,6 +35,7 @@ export interface BurialCreateDto {
 
 export interface BurialUpdateDto {
   region?: string;
+  russia_region?: string;
   cemetery_id?: string;
   city?: string;
   cemetery_name?: string;

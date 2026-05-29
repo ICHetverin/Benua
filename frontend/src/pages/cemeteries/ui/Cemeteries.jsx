@@ -21,10 +21,15 @@ function groupByCityAndCemetery(burials) {
       cityMap.set(cityKey, {
         id: cityKey.toLowerCase().replace(/\s+/g, "-"),
         city: cityKey,
+        russiaRegion: b.russia_region ?? null,
         cemeteries: new Map(),
       });
     }
     const cityEntry = cityMap.get(cityKey);
+    // Если регион ещё не задан, ставим из первого захоронения
+    if (!cityEntry.russiaRegion && b.russia_region) {
+      cityEntry.russiaRegion = b.russia_region;
+    }
     const cKey = b.cemetery_name ?? null;
     if (!cityEntry.cemeteries.has(cKey)) {
       cityEntry.cemeteries.set(cKey, { name: cKey, persons: [] });
@@ -146,7 +151,7 @@ export function Cemeteries() {
         <PetersburgView cemeteries={currentData} />
       ) : (
         <>
-          {viewKey === "russia" && <RussiaMap />}
+          {viewKey === "russia" && <RussiaMap russiaData={russiaData} />}
           {viewKey === "world"  && <WorldMap />}
           <div className={styles.citiesList}>
             {currentData.map((cityData) => (

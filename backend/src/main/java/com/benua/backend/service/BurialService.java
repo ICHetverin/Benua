@@ -52,6 +52,7 @@ public class BurialService {
         Burial burial = new Burial(
                 null,
                 dto.region(),
+                dto.russiaRegion(),
                 blankToNull(dto.cemeteryId()),
                 dto.city(),
                 dto.cemeteryName(),
@@ -79,6 +80,7 @@ public class BurialService {
         Burial updated = new Burial(
                 existing._id(),
                 dto.region() != null ? dto.region() : existing.region(),
+                dto.russiaRegion() != null ? dto.russiaRegion() : existing.russiaRegion(),
                 dto.cemeteryId() == null ? existing.cemeteryId() : blankToNull(dto.cemeteryId()),
                 dto.city() != null ? dto.city() : existing.city(),
                 dto.cemeteryName() == null ? existing.cemeteryName() : (dto.cemeteryName().isBlank() ? null : dto.cemeteryName()),
@@ -104,7 +106,7 @@ public class BurialService {
     public BurialDto setPublished(String id, boolean value, String updatedBy) {
         Burial existing = findById(id);
         Burial updated = new Burial(
-                existing._id(), existing.region(), existing.cemeteryId(),
+                existing._id(), existing.region(), existing.russiaRegion(), existing.cemeteryId(),
                 existing.city(), existing.cemeteryName(), existing.name(),
                 existing.lifeYears(), existing.briefInfo(), existing.connectedPersonId(),
                 existing.images(), value, existing.sortOrder(),
@@ -132,7 +134,7 @@ public class BurialService {
         }
 
         return new BurialDto(
-                b._id(), b.region(), b.cemeteryId(), b.city(), cemeteryName,
+                b._id(), b.region(), b.russiaRegion(), b.cemeteryId(), b.city(), cemeteryName,
                 b.name(), b.lifeYears(), b.briefInfo(),
                 b.connectedPersonId(), personName,
                 imageService.toDtoList(b.images()),
