@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useExcursionById } from "entities/excursions";
 import { LightboxProvider } from "shared/ui/Lightbox";
 import { ExcursionHero } from "./components/ExcursionHero/ExcursionHero";
+import { ExcursionRouteMap } from "./components/ExcursionRouteMap/ExcursionRouteMap";
 import { ExcursionRoute } from "./components/ExcursionRoute/ExcursionRoute";
 import { AudioGuide } from "./components/AudioGuide/AudioGuide";
 import { AudioManagerContext } from "./AudioManagerContext";
@@ -36,6 +37,8 @@ export function ExcursionDetails() {
     <LightboxProvider>
       <AudioManagerContext.Provider value={audioManager}>
         <ExcursionHero excursion={excursion} />
+
+        <ExcursionRouteMap points={excursion.points ?? []} />
 
         <ExcursionRoute points={excursion.points ?? []} />
 
