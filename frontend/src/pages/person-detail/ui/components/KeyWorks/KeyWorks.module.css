@@ -14,20 +14,18 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
 }
 
 .card {
   display: flex;
   flex-direction: column;
+  background: var(--darker-beige);
+  padding: 10px;
   cursor: pointer;
   outline: none;
   transition: background-color 0.2s ease;
-}
-
-.card:hover {
-  background-color: var(--darker-beige);
 }
 
 .card:focus-visible {
@@ -36,7 +34,7 @@
 
 .imageWrapper {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
 }
 
@@ -54,7 +52,7 @@
 .imagePlaceholder {
   width: 100%;
   height: 100%;
-  background-color: #b8b4ac;
+  background-color: #c8c4bc;
 }
 
 .cardContent {
@@ -106,6 +104,12 @@
 
 .showAll:hover {
   opacity: 0.7;
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 1024px) {

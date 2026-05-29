@@ -115,93 +115,174 @@
     align-items: start;
 }
 
-/* ── Carousel ── */
-.carouselColumn {
+/* ── Photo column ── */
+.photoColumn {
     display: flex;
     flex-direction: column;
 }
 
-.carousel {
-    display: flex;
-    flex-direction: column;
-}
-
-.carouselImageWrapper {
+.photoWrapper {
     width: 100%;
     aspect-ratio: 4 / 3;
     overflow: hidden;
     background-color: var(--darker-beige);
 }
 
-.carouselImage {
+.photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: opacity 0.2s ease;
 }
 
-.carouselPlaceholder {
+.photoPlaceholder {
     width: 100%;
     aspect-ratio: 4 / 3;
     background-color: #c8bfaf;
-}
-
-.carouselControls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    padding: 0.75rem 0;
-}
-
-.carouselArrow {
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    color: var(--black);
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    transition: opacity 0.2s;
-    font-family: var(--font-lora);
-}
-
-.carouselArrow:disabled {
-    opacity: 0.3;
-    cursor: default;
-}
-
-.carouselArrow:not(:disabled):hover {
-    opacity: 0.6;
-}
-
-.carouselDots {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: 1.5px solid var(--black);
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-    transition: background-color 0.2s ease;
-}
-
-.dotActive {
-    background-color: var(--black);
 }
 
 /* ── Text column ── */
 .textColumn {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
     padding-top: 0.25rem;
+}
+
+/* ── Photo gallery ── */
+.gallery {
+    display: flex;
+    flex-direction: column;
+}
+
+.galleryControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.6rem 0;
+}
+
+.galleryArrow {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--black);
+    padding: 0.25rem 0.4rem;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.galleryArrow:hover {
+    opacity: 0.5;
+}
+
+.galleryCounter {
+    font-family: var(--font-lora);
+    font-size: 0.72rem;
+    color: var(--black);
+}
+
+/* ── Point audio player ── */
+.pointAudio {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    background: rgba(0, 31, 83, 0.06);
+    border-radius: 4px;
+}
+
+.pointAudioBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.pointAudioBtn:hover {
+    opacity: 0.82;
+    transform: scale(1.05);
+}
+
+.pointAudioBtn:active {
+    transform: scale(0.97);
+}
+
+.pointAudioTimeline {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pointAudioTime {
+    font-family: var(--font-lora);
+    font-size: 0.7rem;
+    color: var(--black);
+    white-space: nowrap;
+    min-width: 2.4rem;
+}
+
+.pointAudioTime:last-child {
+    text-align: right;
+}
+
+.pointAudioTrack {
+    flex: 1;
+    height: 3px;
+    background-color: rgba(35, 28, 7, 0.2);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.pointAudioFill {
+    height: 100%;
+    background-color: var(--dark-blue);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.pointAudioThumb {
+    position: absolute;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: var(--dark-blue);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* ── Object/map links ── */
+.objectLink,
+.mapLink {
+    background: none;
+    border: none;
+    font-family: var(--font-lora);
+    font-size: 0.8rem;
+    color: var(--dark-red);
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    display: inline-block;
+}
+
+.objectLink:hover,
+.mapLink:hover {
+    opacity: 0.7;
 }
 
 .descriptionParagraph {

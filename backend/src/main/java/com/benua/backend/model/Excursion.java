@@ -13,19 +13,27 @@ public record Excursion(
         String name,
         String description,
         String time,
-        String guide,
         @Field("passing_methods") List<String> passingMethods,
-        @Field("key_points") List<String> keyPoints,
-        @Field("text_content") List<ContentSection> textContent,
         @Field("cover_photo") String coverPhoto,
         @Field("route_photo") String routePhoto,
         List<ExcursionSource> sources,
+        List<ExcursionPoint> points,
+        @Field("audio_url") String audioUrl,
+        List<String> authors,
         @Field("is_published") Boolean isPublished,
         @Field("sort_order") Integer sortOrder,
         @Field("created_at") Instant createdAt,
         @Field("updated_at") Instant updatedAt,
         @Field("updated_by") String updatedBy
 ) {
-    public record ContentSection(String topic, String content) {}
     public record ExcursionSource(String source, String url) {}
+    public record ExcursionPoint(
+            String address,
+            @Field("object_id") String objectId,
+            String description,
+            @Field("photo_urls") List<String> photoUrls,
+            @Field("audio_url") String audioUrl,
+            Double lat,
+            Double lng
+    ) {}
 }

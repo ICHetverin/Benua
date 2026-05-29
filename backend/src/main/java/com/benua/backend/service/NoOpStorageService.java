@@ -14,6 +14,11 @@ public class NoOpStorageService implements StorageService {
     }
 
     @Override
+    public UploadedObject uploadAudio(MultipartFile file) {
+        throw new UnsupportedOperationException("Загрузка аудио недоступна: S3 не настроен");
+    }
+
+    @Override
     public void delete(String key) {
         // no-op: nothing to delete when S3 is not configured
     }

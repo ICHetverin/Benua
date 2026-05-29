@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
+import { AudioManagerContext } from "../../AudioManagerContext";
 import styles from "./AudioGuide.module.css";
 
 const formatTime = (seconds) => {
@@ -26,6 +27,7 @@ export const AudioGuide = ({ audioUrl }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -35,18 +37,27 @@ export const AudioGuide = ({ audioUrl }) => {
       if (!isDragging) setCurrentTime(audio.currentTime);
     };
     const onLoadedMetadata = () => setDuration(audio.duration);
-    const onEnded = () => setIsPlaying(false);
+    const onEnded = () => {
+      setIsPlaying(false);
+      if (manager?.current?.playing === audio) manager.current.playing = null;
+    };
+    const onPause = () => setIsPlaying(false);
+    const onPlay = () => setIsPlaying(true);
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("play", onPlay);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("play", onPlay);
     };
-  }, [isDragging]);
+  }, [isDragging, manager]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -54,9 +65,12 @@ export const AudioGuide = ({ audioUrl }) => {
     if (isPlaying) {
       audio.pause();
     } else {
+      if (manager?.current?.playing && manager.current.playing !== audio) {
+        manager.current.playing.pause();
+      }
+      if (manager?.current) manager.current.playing = audio;
       audio.play();
     }
-    setIsPlaying(!isPlaying);
   };
 
   const handleSeek = (e) => {

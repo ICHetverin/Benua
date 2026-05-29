@@ -34,6 +34,7 @@ const ConnectedPersonCard = ({ personId, fallbackName }) => {
             alt={name}
             className={styles.photo}
             loading="lazy"
+            data-no-lightbox="true"
           />
         ) : (
           <div className={styles.photoPlaceholder} />

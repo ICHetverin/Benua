@@ -19,6 +19,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -100,6 +102,45 @@ public class YandexS3StorageService implements StorageService {
         String url = s3Presigner.presignGetObject(presignRequest).url().toString();
         log.debug("Generated presigned URL for key={}, ttl={}s", s3Key, duration.getSeconds());
         return url;
+    }
+
+    private static final Set<String> AUDIO_MIMES = Set.of(
+            "audio/mpeg", "audio/wav", "audio/ogg", "audio/mp4", "audio/aac", "audio/x-m4a"
+    );
+    private static final Map<String, String> AUDIO_EXTENSIONS = Map.of(
+            "audio/mpeg", "mp3",
+            "audio/wav", "wav",
+            "audio/ogg", "ogg",
+            "audio/mp4", "m4a",
+            "audio/aac", "aac",
+            "audio/x-m4a", "m4a"
+    );
+
+    @Override
+    public UploadedObject uploadAudio(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !AUDIO_MIMES.contains(contentType.trim())) {
+            throw new IllegalArgumentException("Недопустимый тип аудиофайла: " + contentType);
+        }
+        String ext = AUDIO_EXTENSIONS.getOrDefault(contentType.trim(), "bin");
+        LocalDate today = LocalDate.now();
+        String key = String.format("audio/%d/%02d/%s.%s", today.getYear(), today.getMonthValue(), UUID.randomUUID(), ext);
+        try {
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(key)
+                            .contentType(contentType)
+                            .contentLength(file.getSize())
+                            .build(),
+                    RequestBody.fromBytes(file.getBytes())
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка чтения аудиофайла при загрузке", e);
+        }
+        String url = publicUrl(key);
+        log.info("Uploaded audio to S3: key={}, url={}", key, url);
+        return new UploadedObject(key, url);
     }
 
     private String extensionForMime(String mime) {
