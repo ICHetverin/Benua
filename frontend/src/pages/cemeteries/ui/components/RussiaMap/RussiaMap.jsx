@@ -37,6 +37,50 @@ export function RussiaMap({ russiaData = [] }) {
     }
   }, [russiaData]);
 
+  // Групповой ховер: подсвечиваем все части одного региона одновременно
+  useEffect(() => {
+    const svg = svgRef.current?.querySelector("svg");
+    if (!svg) return;
+
+    // regionName → [pathId, ...]
+    const regionToPaths = {};
+    for (const [pathId, regionName] of Object.entries(RUSSIA_REGIONS)) {
+      if (!regionToPaths[regionName]) regionToPaths[regionName] = [];
+      regionToPaths[regionName].push(pathId);
+    }
+
+    const getSiblings = (pathId) => {
+      const regionName = RUSSIA_REGIONS[pathId];
+      return regionName ? (regionToPaths[regionName] ?? [pathId]) : [pathId];
+    };
+
+    const handleMouseover = (e) => {
+      const path = e.target.closest("path");
+      if (!path?.id) return;
+      for (const pid of getSiblings(path.id)) {
+        svg.querySelector(`#${pid}`)?.setAttribute("data-hovered", "true");
+      }
+    };
+
+    const handleMouseout = (e) => {
+      const path = e.target.closest("path");
+      if (!path?.id) return;
+      // не снимаем ховер, если мышь перешла на соседнюю часть того же региона
+      const related = e.relatedTarget?.closest?.("path");
+      if (related && RUSSIA_REGIONS[related.id] === RUSSIA_REGIONS[path.id]) return;
+      for (const pid of getSiblings(path.id)) {
+        svg.querySelector(`#${pid}`)?.removeAttribute("data-hovered");
+      }
+    };
+
+    svg.addEventListener("mouseover", handleMouseover);
+    svg.addEventListener("mouseout", handleMouseout);
+    return () => {
+      svg.removeEventListener("mouseover", handleMouseover);
+      svg.removeEventListener("mouseout", handleMouseout);
+    };
+  }, []); // только на маунт — SVG статичный
+
   const handleSvgClick = useCallback((e) => {
     const path = e.target.closest("path[data-active]");
     if (!path) {

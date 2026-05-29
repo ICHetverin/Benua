@@ -20,10 +20,9 @@
 
 .russiaImg path[data-active] {
   fill: var(--dark-red);
-  cursor: pointer;
 }
 
-.russiaImg path:hover {
+.russiaImg path[data-hovered] {
   fill: var(--dark-blue);
   cursor: pointer;
 }
