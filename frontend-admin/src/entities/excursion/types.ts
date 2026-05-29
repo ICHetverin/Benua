@@ -10,6 +10,7 @@ export interface ExcursionPoint {
   object_id?: string;
   description?: string;
   photo_urls?: string[];
+  audio_url?: string;
   lat?: number;
   lng?: number;
 }

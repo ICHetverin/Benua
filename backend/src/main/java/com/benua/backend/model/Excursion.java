@@ -32,6 +32,7 @@ public record Excursion(
             @Field("object_id") String objectId,
             String description,
             @Field("photo_urls") List<String> photoUrls,
+            @Field("audio_url") String audioUrl,
             Double lat,
             Double lng
     ) {}

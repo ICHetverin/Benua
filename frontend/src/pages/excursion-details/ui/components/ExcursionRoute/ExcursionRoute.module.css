@@ -184,6 +184,86 @@
     color: var(--black);
 }
 
+/* ── Point audio player ── */
+.pointAudio {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    background: rgba(0, 31, 83, 0.06);
+    border-radius: 4px;
+}
+
+.pointAudioBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.pointAudioBtn:hover {
+    opacity: 0.82;
+    transform: scale(1.05);
+}
+
+.pointAudioBtn:active {
+    transform: scale(0.97);
+}
+
+.pointAudioTimeline {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pointAudioTime {
+    font-family: var(--font-lora);
+    font-size: 0.7rem;
+    color: var(--black);
+    white-space: nowrap;
+    min-width: 2.4rem;
+}
+
+.pointAudioTime:last-child {
+    text-align: right;
+}
+
+.pointAudioTrack {
+    flex: 1;
+    height: 3px;
+    background-color: rgba(35, 28, 7, 0.2);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.pointAudioFill {
+    height: 100%;
+    background-color: var(--dark-blue);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.pointAudioThumb {
+    position: absolute;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: var(--dark-blue);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
 /* ── Object/map links ── */
 .objectLink,
 .mapLink {

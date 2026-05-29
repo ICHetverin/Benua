@@ -1,9 +1,11 @@
+import { useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useExcursionById } from "entities/excursions";
 import { LightboxProvider } from "shared/ui/Lightbox";
 import { ExcursionHero } from "./components/ExcursionHero/ExcursionHero";
 import { ExcursionRoute } from "./components/ExcursionRoute/ExcursionRoute";
 import { AudioGuide } from "./components/AudioGuide/AudioGuide";
+import { AudioManagerContext } from "./AudioManagerContext";
 import styles from "./ExcursionDetails.module.css";
 
 export function ExcursionDetails() {
@@ -29,13 +31,17 @@ export function ExcursionDetails() {
     );
   }
 
+  const audioManager = useRef({ playing: null });
+
   return (
     <LightboxProvider>
-      <ExcursionHero excursion={excursion} />
+      <AudioManagerContext.Provider value={audioManager}>
+        <ExcursionHero excursion={excursion} />
 
-      <ExcursionRoute points={excursion.points ?? []} />
+        <ExcursionRoute points={excursion.points ?? []} />
 
-      <AudioGuide audioUrl={excursion.audio_url ?? null} />
+        <AudioGuide audioUrl={excursion.audio_url ?? null} />
+      </AudioManagerContext.Provider>
     </LightboxProvider>
   );
 }

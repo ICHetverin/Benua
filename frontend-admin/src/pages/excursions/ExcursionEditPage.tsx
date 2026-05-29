@@ -130,6 +130,7 @@ export function ExcursionEditPage({ mode }: Props) {
           object_id: p.object_id || undefined,
           description: p.description || undefined,
           photo_urls: (p.photo_urls as string[] | undefined)?.filter(Boolean) ?? [],
+          audio_url: p.audio_url || undefined,
           lat: p.lat ?? undefined,
           lng: p.lng ?? undefined,
         })),
@@ -218,6 +219,16 @@ export function ExcursionEditPage({ mode }: Props) {
                     <Input.TextArea rows={3} />
                   </Form.Item>
 
+                  {/* ── Аудиогид точки ── */}
+                  <Form.Item name={[name, 'audio_url']} label="Аудиогид точки">
+                    <FileInput
+                      endpoint="/admin/files/audio"
+                      responseKey="url"
+                      accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
+                      placeholder="URL аудио или загрузите файл"
+                    />
+                  </Form.Item>
+
                   {/* ── Координаты ── */}
                   <Space align="start">
                     <Form.Item name={[name, 'lat']} label="Широта">
@@ -263,14 +274,22 @@ export function ExcursionEditPage({ mode }: Props) {
 
         {/* ── Фото обложки / маршрута ── */}
         <Divider>Обложка</Divider>
-        <Space style={{ width: '100%' }} align="start">
-          <Form.Item name="cover_photo" label="Фото обложки" style={{ width: 360 }}>
-            <Input placeholder="benua_garden.jpg" />
-          </Form.Item>
-          <Form.Item name="route_photo" label="Фото маршрута" style={{ width: 360 }}>
-            <Input placeholder="route_map.jpg" />
-          </Form.Item>
-        </Space>
+        <Form.Item name="cover_photo" label="Фото обложки">
+          <FileInput
+            endpoint="/admin/images"
+            responseKey="url_to_s3"
+            accept="image/jpeg,image/png,image/webp"
+            placeholder="URL фото обложки или загрузите файл"
+          />
+        </Form.Item>
+        <Form.Item name="route_photo" label="Фото маршрута">
+          <FileInput
+            endpoint="/admin/images"
+            responseKey="url_to_s3"
+            accept="image/jpeg,image/png,image/webp"
+            placeholder="URL фото маршрута или загрузите файл"
+          />
+        </Form.Item>
 
         {/* ── Источники ── */}
         <Divider>Источники</Divider>
