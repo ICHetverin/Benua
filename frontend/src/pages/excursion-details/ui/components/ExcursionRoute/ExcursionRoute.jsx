@@ -104,7 +104,7 @@ const PointAudioPlayer = ({ audioUrl }) => {
 
   return (
     <div className={styles.pointAudio}>
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      <audio ref={audioRef} src={audioUrl} preload="auto" />
       <button
         className={styles.pointAudioBtn}
         onClick={togglePlay}

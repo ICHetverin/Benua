@@ -113,7 +113,7 @@ export const AudioGuide = ({ audioUrl }) => {
           <p className={styles.errorText}>Не удалось загрузить аудиофайл.</p>
         ) : (
         <div className={styles.player}>
-          <audio ref={audioRef} src={audioUrl} preload="metadata" />
+          <audio ref={audioRef} src={audioUrl} preload="auto" />
 
           <button
             className={styles.playButton}
