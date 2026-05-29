@@ -1,4 +1,5 @@
 import { PASSING_METHOD_LABELS } from "entities/excursions";
+import { ExcursionRouteMap } from "../ExcursionRouteMap/ExcursionRouteMap";
 import styles from "./ExcursionHero.module.css";
 
 export const ExcursionHero = ({ excursion }) => {
@@ -33,9 +34,7 @@ export const ExcursionHero = ({ excursion }) => {
           </div>
 
           <div className={styles.mapColumn}>
-            <div className={styles.mapPlaceholder}>
-              <p className={styles.mapPlaceholderText}>Карта маршрута</p>
-            </div>
+            <ExcursionRouteMap points={excursion.points ?? []} />
           </div>
         </div>
       </div>

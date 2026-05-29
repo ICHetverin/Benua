@@ -8,8 +8,8 @@ const COLOR_MID   = "#001F53";
 const LINE_COLOR  = "#001F53";
 
 function pinColor(index, total) {
-  if (index === 0)          return COLOR_FIRST;
-  if (index === total - 1)  return COLOR_LAST;
+  if (index === 0)         return COLOR_FIRST;
+  if (index === total - 1) return COLOR_LAST;
   return COLOR_MID;
 }
 
@@ -34,6 +34,10 @@ function createPinLayout(ymaps, number, color) {
   `);
 }
 
+/**
+ * Embeddable route map — fills its container.
+ * Sizing and border-radius are controlled by the parent (mapColumn in ExcursionHero).
+ */
 export function ExcursionRouteMap({ points = [] }) {
   const containerRef = useRef(null);
   const mapRef       = useRef(null);
@@ -64,12 +68,10 @@ export function ExcursionRouteMap({ points = [] }) {
         [point.lat, point.lng],
         {
           hintContent: point.address,
-          balloonContent: `
-            <span style="
-              font-family:'Lora',Georgia,serif;
-              font-size:14px;font-weight:600;color:#231C07;
-            ">${idx + 1}. ${point.address}</span>
-          `,
+          balloonContent: `<span style="
+            font-family:'Lora',Georgia,serif;
+            font-size:14px;font-weight:600;color:#231C07;
+          ">${idx + 1}. ${point.address}</span>`,
         },
         {
           iconLayout: PinLayout,
@@ -106,21 +108,14 @@ export function ExcursionRouteMap({ points = [] }) {
     };
   }, [ymaps, geoPoints]);
 
-  if (geoPoints.length === 0) return null;
-
   return (
-    <section className={styles.section}>
-      <div className={styles.container}>
-        <h2 className={styles.title}>Карта маршрута</h2>
-        <div className={styles.mapWrapper}>
-          {!ymaps && (
-            <div className={styles.overlay}>
-              <span className={styles.overlayText}>Инициализация карты…</span>
-            </div>
-          )}
-          <div ref={containerRef} className={styles.map} />
+    <div className={styles.wrapper}>
+      {!ymaps && geoPoints.length > 0 && (
+        <div className={styles.overlay}>
+          <span className={styles.overlayText}>Инициализация карты…</span>
         </div>
-      </div>
-    </section>
+      )}
+      <div ref={containerRef} className={styles.map} />
+    </div>
   );
 }
