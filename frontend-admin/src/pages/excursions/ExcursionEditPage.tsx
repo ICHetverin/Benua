@@ -1,4 +1,3 @@
-import { useRef, useState } from 'react';
 import {
   Form,
   Input,
@@ -12,12 +11,12 @@ import {
   Divider,
   Switch,
 } from 'antd';
-import { PlusOutlined, MinusCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useExcursion, useCreateExcursion, useUpdateExcursion } from 'entities/excursion/queries';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
+import { FileUploader } from 'features/file-uploader/FileUploader';
 import type { ExcursionCreateDto, ExcursionPoint } from 'entities/excursion/types';
-import { uploadMultipart } from 'shared/api/adminApi';
 import { ROUTES } from 'shared/config/routes';
 
 interface Props {
@@ -32,52 +31,8 @@ const PASSING_METHOD_OPTIONS = [
   { value: 'mixed', label: 'Смешанная' },
 ];
 
-/* ── Inline file upload input ── */
-interface FileInputProps {
-  value?: string;
-  onChange?: (url: string) => void;
-  endpoint: string;
-  responseKey: string;
-  accept: string;
-  placeholder?: string;
-}
-
-function FileInput({ value, onChange, endpoint, responseKey, accept, placeholder }: FileInputProps) {
-  const [uploading, setUploading] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await uploadMultipart<Record<string, string>>(endpoint, fd);
-      onChange?.(res[responseKey]);
-    } catch {
-      message.error('Ошибка загрузки файла');
-    } finally {
-      setUploading(false);
-      if (inputRef.current) inputRef.current.value = '';
-    }
-  };
-
-  return (
-    <Space.Compact style={{ width: '100%' }}>
-      <Input
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-        placeholder={placeholder}
-        style={{ flex: 1 }}
-      />
-      <Button loading={uploading} icon={<UploadOutlined />} onClick={() => inputRef.current?.click()}>
-        {uploading ? '' : 'Загрузить'}
-      </Button>
-      <input ref={inputRef} type="file" accept={accept} style={{ display: 'none' }} onChange={handleFile} />
-    </Space.Compact>
-  );
-}
+const AUDIO_ACCEPT = 'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac,audio/x-m4a,.m4a,.mp3,.wav,.ogg,.aac';
+const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
 
 export function ExcursionEditPage({ mode }: Props) {
   const { id } = useParams<{ id: string }>();
@@ -184,11 +139,11 @@ export function ExcursionEditPage({ mode }: Props) {
         {/* ── Аудиогид (один на всю экскурсию) ── */}
         <Divider>Аудиогид</Divider>
         <Form.Item name="audio_url" label="Аудиофайл">
-          <FileInput
+          <FileUploader
             endpoint="/admin/files/audio"
             responseKey="url"
-            accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
-            placeholder="URL аудио или загрузите файл"
+            accept={AUDIO_ACCEPT}
+            hint="MP3, WAV, OGG, M4A, AAC · до 10 МБ"
           />
         </Form.Item>
 
@@ -221,11 +176,11 @@ export function ExcursionEditPage({ mode }: Props) {
 
                   {/* ── Аудиогид точки ── */}
                   <Form.Item name={[name, 'audio_url']} label="Аудиогид точки">
-                    <FileInput
+                    <FileUploader
                       endpoint="/admin/files/audio"
                       responseKey="url"
-                      accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
-                      placeholder="URL аудио или загрузите файл"
+                      accept={AUDIO_ACCEPT}
+                      hint="MP3, WAV, OGG, M4A, AAC · до 10 МБ"
                     />
                   </Form.Item>
 
@@ -247,11 +202,11 @@ export function ExcursionEditPage({ mode }: Props) {
                         {photoFields.map(({ key: pk, name: pn }) => (
                           <Space key={pk} align="baseline" style={{ display: 'flex', marginBottom: 6 }}>
                             <Form.Item name={pn} style={{ flex: 1, marginBottom: 0, width: 560 }}>
-                              <FileInput
+                              <FileUploader
                                 endpoint="/admin/images"
                                 responseKey="url_to_s3"
-                                accept="image/jpeg,image/png,image/webp"
-                                placeholder="URL фото"
+                                accept={IMAGE_ACCEPT}
+                                hint="JPG, PNG, WebP · до 10 МБ"
                               />
                             </Form.Item>
                             <MinusCircleOutlined onClick={() => removePhoto(pn)} style={{ color: '#ff4d4f' }} />
@@ -275,19 +230,19 @@ export function ExcursionEditPage({ mode }: Props) {
         {/* ── Фото обложки / маршрута ── */}
         <Divider>Обложка</Divider>
         <Form.Item name="cover_photo" label="Фото обложки">
-          <FileInput
+          <FileUploader
             endpoint="/admin/images"
             responseKey="url_to_s3"
-            accept="image/jpeg,image/png,image/webp"
-            placeholder="URL фото обложки или загрузите файл"
+            accept={IMAGE_ACCEPT}
+            hint="JPG, PNG, WebP · до 10 МБ"
           />
         </Form.Item>
         <Form.Item name="route_photo" label="Фото маршрута">
-          <FileInput
+          <FileUploader
             endpoint="/admin/images"
             responseKey="url_to_s3"
-            accept="image/jpeg,image/png,image/webp"
-            placeholder="URL фото маршрута или загрузите файл"
+            accept={IMAGE_ACCEPT}
+            hint="JPG, PNG, WebP · до 10 МБ"
           />
         </Form.Item>
 
