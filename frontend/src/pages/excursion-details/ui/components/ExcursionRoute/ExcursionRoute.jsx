@@ -29,36 +29,48 @@ const PointAudioPlayer = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [loadError, setLoadError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+      setLoadError(false);
+    };
     const onEnded = () => {
       setIsPlaying(false);
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
     const onPlay = () => setIsPlaying(true);
+    const onError = () => {
+      setIsPlaying(false);
+      setLoadError(true);
+      if (manager?.current?.playing === audio) manager.current.playing = null;
+      console.error("[PointAudioPlayer] Failed to load audio:", audioUrl);
+    };
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("play", onPlay);
+    audio.addEventListener("error", onError);
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("error", onError);
     };
-  }, [manager]);
+  }, [manager, audioUrl]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || loadError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -66,7 +78,12 @@ const PointAudioPlayer = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play();
+      audio.play().catch((err) => {
+        console.error("[PointAudioPlayer] play() rejected:", err);
+        setIsPlaying(false);
+        setLoadError(true);
+        if (manager?.current) manager.current.playing = null;
+      });
     }
   };
 
@@ -80,6 +97,10 @@ const PointAudioPlayer = ({ audioUrl }) => {
   };
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  if (loadError) {
+    return <p className={styles.pointAudioError}>Аудио недоступно</p>;
+  }
 
   return (
     <div className={styles.pointAudio}>

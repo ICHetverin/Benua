@@ -27,6 +27,7 @@ export const AudioGuide = ({ audioUrl }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
@@ -36,19 +37,29 @@ export const AudioGuide = ({ audioUrl }) => {
     const onTimeUpdate = () => {
       if (!isDragging) setCurrentTime(audio.currentTime);
     };
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+      setLoadError(false);
+    };
     const onEnded = () => {
       setIsPlaying(false);
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
     const onPlay = () => setIsPlaying(true);
+    const onError = () => {
+      setIsPlaying(false);
+      setLoadError(true);
+      if (manager?.current?.playing === audio) manager.current.playing = null;
+      console.error("[AudioGuide] Failed to load audio:", audioUrl);
+    };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("play", onPlay);
+    audio.addEventListener("error", onError);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
@@ -56,12 +67,13 @@ export const AudioGuide = ({ audioUrl }) => {
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("error", onError);
     };
-  }, [isDragging, manager]);
+  }, [isDragging, manager, audioUrl]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || loadError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -69,8 +81,10 @@ export const AudioGuide = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play().catch(() => {
+      audio.play().catch((err) => {
+        console.error("[AudioGuide] play() rejected:", err);
         setIsPlaying(false);
+        setLoadError(true);
         if (manager?.current) manager.current.playing = null;
       });
     }
@@ -95,6 +109,9 @@ export const AudioGuide = ({ audioUrl }) => {
       <div className={styles.container}>
         <h2 className={styles.title}>Аудиогид</h2>
 
+        {loadError ? (
+          <p className={styles.errorText}>Не удалось загрузить аудиофайл.</p>
+        ) : (
         <div className={styles.player}>
           <audio ref={audioRef} src={audioUrl} preload="metadata" />
 
@@ -131,6 +148,7 @@ export const AudioGuide = ({ audioUrl }) => {
             <span className={styles.time}>{formatTime(duration)}</span>
           </div>
         </div>
+        )}
       </div>
     </section>
   );

@@ -31,6 +31,8 @@ services:
       MONGO_URI: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/benua?authSource=admin"
     ports:
       - "8080:8080"
+    volumes:
+      - local_uploads:/app/local-uploads
     depends_on:
       mongodb:
         condition: service_healthy
@@ -79,6 +81,7 @@ services:
 
 volumes:
   mongodb_data:
+  local_uploads:
 
 networks:
   benua-net:
