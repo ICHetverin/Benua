@@ -56,15 +56,15 @@
 .tooltipCity {
   margin: 0 0 2px;
   font-family: var(--font-lora);
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 400;
   color: var(--black);
   letter-spacing: 0.01em;
 }
 
 .tooltipCount {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.6rem;
   color: rgba(35, 28, 7, 0.6);
 }
 
