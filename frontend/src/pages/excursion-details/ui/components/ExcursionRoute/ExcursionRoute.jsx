@@ -167,17 +167,6 @@ const StopContent = ({ point }) => {
           </button>
         )}
 
-        {point.lat && point.lng && (
-          <a
-            className={styles.mapLink}
-            href={`https://maps.google.com/?q=${point.lat},${point.lng}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Открыть на карте →
-          </a>
-        )}
-
         {!point.description && !point.object_id && !point.audio_url && (
           <p className={styles.emptyDescription}>
             Описание этой точки маршрута скоро появится.

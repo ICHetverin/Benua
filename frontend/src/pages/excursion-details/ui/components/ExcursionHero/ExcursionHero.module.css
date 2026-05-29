@@ -83,10 +83,10 @@
     width: 100%;
     font-family: var(--font-lora);
     font-size: 0.8rem;
-    font-style: italic;
-    color: #C4956A;
-    background-color: var(--beige);
-    border: 1.5px solid #C4956A;
+    line-height: 1.7;
+    color: var(--beige);
+    background-color: transparent;
+    border: 1.5px solid var(--beige);
     border-radius: 50px;
     padding: 0.65rem 1.5rem;
     text-decoration: none;
@@ -97,7 +97,8 @@
 }
 
 .yandexButton:hover {
-    background-color: var(--darker-beige);
+    background-color: var(--beige);
+    color: var(--dark-red);
 }
 
 .mapButton {
