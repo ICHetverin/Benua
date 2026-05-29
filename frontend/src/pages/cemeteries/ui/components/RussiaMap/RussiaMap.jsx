@@ -3,17 +3,12 @@ import { ReactComponent as RussiaSvg } from "shared/assets/images/russia_map.svg
 import { RUSSIA_REGIONS } from "pages/cemeteries/model/russiaRegions";
 import styles from "./RussiaMap.module.css";
 
-const HEADER_HEIGHT = 72;
+const HEADER_HEIGHT = 71;
 
-/**
- * @param {{ russiaData: Array<{ id: string, city: string, russiaRegion: string|null }> }} props
- */
 export function RussiaMap({ russiaData = [] }) {
   const [tooltip, setTooltip] = useState(null);
   const svgRef = useRef(null);
   const wrapperRef = useRef(null);
-
-  // regionId → { count, cityIds[] }
   const regionStats = useRef({});
 
   useEffect(() => {
@@ -24,61 +19,43 @@ export function RussiaMap({ russiaData = [] }) {
       const count = cityData.cemeteries
         ? cityData.cemeteries.reduce((s, c) => s + c.persons.length, 0)
         : 0;
-      if (!stats[rid]) stats[rid] = { count: 0, cityId: cityData.id };
+      if (!stats[rid]) stats[rid] = { count: 0, cityId: cityData.id, cityName: cityData.city };
       stats[rid].count += count;
     }
     regionStats.current = stats;
   }, [russiaData]);
 
-  // Красим регионы после монтирования SVG
   useEffect(() => {
     const svg = svgRef.current?.querySelector("svg");
     if (!svg) return;
-
-    // Сбрасываем data-атрибут у всех путей
     svg.querySelectorAll("path[data-active]").forEach((p) =>
       p.removeAttribute("data-active")
     );
-
     for (const rid of Object.keys(regionStats.current)) {
       const el = svg.querySelector(`#${rid}`);
       if (el) el.setAttribute("data-active", "true");
     }
   }, [russiaData]);
 
-  const hideTooltip = useCallback(() => setTooltip(null), []);
+  const handleSvgClick = useCallback((e) => {
+    const path = e.target.closest("path[data-active]");
+    if (!path) {
+      setTooltip(null);
+      return;
+    }
+    const rid = path.id;
+    const stat = regionStats.current[rid];
+    if (!stat) return;
 
-  const handleSvgClick = useCallback(
-    (e) => {
-      const path = e.target.closest("path[data-active]");
-      if (!path) {
-        setTooltip(null);
-        return;
-      }
+    const wrapperRect = wrapperRef.current.getBoundingClientRect();
+    const pathRect = path.getBoundingClientRect();
+    const x = pathRect.left + pathRect.width / 2 - wrapperRect.left;
+    const y = pathRect.top + pathRect.height / 2 - wrapperRect.top;
 
-      const rid = path.id;
-      const stat = regionStats.current[rid];
-      if (!stat) return;
+    setTooltip({ rid, cityId: stat.cityId, cityName: stat.cityName, count: stat.count, x, y });
+  }, []);
 
-      const wrapperRect = wrapperRef.current.getBoundingClientRect();
-      const pathRect = path.getBoundingClientRect();
-
-      const x = pathRect.left + pathRect.width / 2 - wrapperRect.left;
-      const y = pathRect.top + pathRect.height / 2 - wrapperRect.top;
-
-      setTooltip({
-        rid,
-        regionName: RUSSIA_REGIONS[rid] ?? rid,
-        count: stat.count,
-        cityId: stat.cityId,
-        x,
-        y,
-      });
-    },
-    []
-  );
-
-  const handleScrollToCity = useCallback(() => {
+  const handleTooltipClick = useCallback(() => {
     if (!tooltip) return;
     const el = document.getElementById(`city-${tooltip.cityId}`);
     if (!el) return;
@@ -97,22 +74,12 @@ export function RussiaMap({ russiaData = [] }) {
         <div
           className={styles.tooltip}
           style={{ left: tooltip.x, top: tooltip.y }}
+          onClick={handleTooltipClick}
         >
-          <button
-            className={styles.tooltipClose}
-            onClick={hideTooltip}
-            aria-label="Закрыть"
-          >
-            ×
-          </button>
-          <p className={styles.tooltipRegion}>{tooltip.regionName}</p>
+          <p className={styles.tooltipCity}>{(tooltip.cityName ?? RUSSIA_REGIONS[tooltip.rid] ?? tooltip.rid).toUpperCase()}</p>
           <p className={styles.tooltipCount}>
-            {tooltip.count}{" "}
-            {plural(tooltip.count, "захоронение", "захоронения", "захоронений")}
+            {tooltip.count} {plural(tooltip.count, "персона", "персоны", "персон")}
           </p>
-          <button className={styles.tooltipBtn} onClick={handleScrollToCity}>
-            Перейти →
-          </button>
         </div>
       )}
     </div>

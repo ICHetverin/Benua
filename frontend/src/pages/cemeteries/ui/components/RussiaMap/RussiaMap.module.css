@@ -23,27 +23,23 @@
   cursor: pointer;
 }
 
-.russiaImg path[data-active]:hover {
+.russiaImg path:hover {
   fill: var(--dark-blue);
-}
-
-.russiaImg path:not([data-active]):hover {
-  fill: var(--darker-beige);
+  cursor: pointer;
 }
 
 /* ── Тултип ── */
 .tooltip {
   position: absolute;
-  transform: translate(-50%, -100%) translateY(-12px);
+  transform: translate(-50%, -100%) translateY(-14px);
   background: var(--beige);
-  border: 1.5px solid var(--dark-red);
-  border-radius: 6px;
-  padding: 10px 14px 10px 14px;
-  min-width: 180px;
-  max-width: 240px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.13);
   z-index: 10;
+  cursor: pointer;
   pointer-events: auto;
+  white-space: nowrap;
 }
 
 .tooltip::after {
@@ -52,61 +48,28 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border: 7px solid transparent;
-  border-top-color: var(--dark-red);
+  border: 8px solid transparent;
+  border-top-color: var(--beige);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.07));
 }
 
-.tooltipClose {
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  background: none;
-  border: none;
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
-  color: var(--dark-red);
-  padding: 0;
-}
-
-.tooltipRegion {
+.tooltipCity {
   margin: 0 0 2px;
-  font-family: var(--font-decor);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-family: var(--font-lora);
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--black);
-  padding-right: 18px;
+  letter-spacing: 0.01em;
 }
 
 .tooltipCount {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 0.82rem;
-  color: var(--dark-red);
-}
-
-.tooltipBtn {
-  display: inline-block;
-  background: var(--dark-red);
-  color: var(--beige);
-  border: none;
-  border-radius: 4px;
-  padding: 5px 12px;
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.tooltipBtn:hover {
-  opacity: 0.85;
+  color: rgba(35, 28, 7, 0.6);
 }
 
 @media (max-width: 768px) {
   .mapWrapper {
     margin-bottom: 2rem;
-  }
-
-  .tooltip {
-    min-width: 150px;
-    font-size: 0.85rem;
   }
 }
