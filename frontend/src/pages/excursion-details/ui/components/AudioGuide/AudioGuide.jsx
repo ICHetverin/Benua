@@ -69,7 +69,10 @@ export const AudioGuide = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play();
+      audio.play().catch(() => {
+        setIsPlaying(false);
+        if (manager?.current) manager.current.playing = null;
+      });
     }
   };
 
