@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useObjectById } from 'entities/object';
 import styles from './KeyWorks.module.css';
 
-const INITIAL_VISIBLE = 3;
+const INITIAL_VISIBLE = 4;
 
 const PinIcon = () => (
   <svg viewBox="0 0 14 18" fill="currentColor" className={styles.cardIcon}>
@@ -28,7 +28,10 @@ const KeyWorkCard = ({ objectId, fallbackName }) => {
   const { data: object } = useObjectById(objectId);
 
   const name = object?.name ?? fallbackName;
-  const image = object?.images?.[0];
+  const image =
+    (object?.featured_image_id &&
+      object?.images?.find((img) => img._id === object.featured_image_id)) ||
+    object?.images?.[0];
 
   return (
     <article
@@ -45,7 +48,7 @@ const KeyWorkCard = ({ objectId, fallbackName }) => {
     >
       <div className={styles.imageWrapper}>
         {image ? (
-          <img src={image.url_to_s3} alt={name} className={styles.image} loading="lazy" />
+          <img src={image.url_to_s3} alt={name} className={styles.image} loading="lazy" data-no-lightbox="true" />
         ) : (
           <div className={styles.imagePlaceholder} />
         )}

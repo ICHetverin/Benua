@@ -6,6 +6,7 @@ import java.util.List;
 
 public record BurialCreateDto(
         @JsonProperty("region") String region,
+        @JsonProperty("russia_region") String russiaRegion,
         @JsonProperty("cemetery_id") String cemeteryId,
         @JsonProperty("city") String city,
         @JsonProperty("cemetery_name") String cemeteryName,

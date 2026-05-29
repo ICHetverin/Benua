@@ -8,6 +8,7 @@ import java.util.List;
 public record BurialDto(
         @JsonProperty("_id") String _id,
         String region,
+        @JsonProperty("russia_region") String russiaRegion,
         @JsonProperty("cemetery_id") String cemeteryId,
         String city,
         @JsonProperty("cemetery_name") String cemeteryName,
