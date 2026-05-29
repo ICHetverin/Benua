@@ -21,6 +21,7 @@ import java.util.List;
 public record Burial(
         @Id String _id,
         String region,
+        @Field("russia_region") String russiaRegion,
         @Field("cemetery_id") String cemeteryId,
         String city,
         @Field("cemetery_name") @Size(max = 255) String cemeteryName,

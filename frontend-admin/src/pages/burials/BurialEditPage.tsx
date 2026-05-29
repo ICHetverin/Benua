@@ -18,6 +18,88 @@ const REGION_OPTIONS = [
   { value: 'WORLD',      label: 'Мир' },
 ];
 
+const RUSSIA_REGION_OPTIONS = [
+  { value: 'r-99',                             label: 'Мурманская обл.' },
+  { value: 'r-215',                            label: 'Респ. Карелия' },
+  { value: 'r-51',                             label: 'Ленинградская обл.' },
+  { value: 'r-40',                             label: 'Новгородская обл.' },
+  { value: 'r-37',                             label: 'Псковская обл.' },
+  { value: 'r-106',                            label: 'Калининградская обл.' },
+  { value: 'r-74',                             label: 'Тверская обл.' },
+  { value: 'r-77',                             label: 'Смоленская обл.' },
+  { value: 'r-100',                            label: 'Московская обл.' },
+  { value: 'r-110',                            label: 'Брянская обл.' },
+  { value: 'r-105',                            label: 'Калужская обл.' },
+  { value: 'r-4',                              label: 'Тульская обл.' },
+  { value: 'r-95',                             label: 'Орловская обл.' },
+  { value: 'r-5',                              label: 'Рязанская обл.' },
+  { value: 'r-0',                              label: 'Ярославская обл.' },
+  { value: 'r-28',                             label: 'Владимирская обл.' },
+  { value: 'r-102',                            label: 'Курская обл.' },
+  { value: 'r-101',                            label: 'Липецкая обл.' },
+  { value: 'r-75',                             label: 'Тамбовская обл.' },
+  { value: 'r-111',                            label: 'Белгородская обл.' },
+  { value: 'r-108',                            label: 'Воронежская обл.' },
+  { value: 'r-70',                             label: 'ЛНР' },
+  { value: 'r-69',                             label: 'ДНР' },
+  { value: 'r-67',                             label: 'Запорожская обл.' },
+  { value: 'r-223',                            label: 'Херсонская обл.' },
+  { value: 'r-224',                            label: 'Респ. Крым' },
+  { value: 'r-172',                            label: 'Краснодарский край' },
+  { value: 'r-222',                            label: 'Респ. Адыгея' },
+  { value: 'r-93',                             label: 'Ростовская обл.' },
+  { value: 'r-109',                            label: 'Волгоградская обл.' },
+  { value: 'r-65',                             label: 'Респ. Калмыкия' },
+  { value: 'r-112',                            label: 'Астраханская обл.' },
+  { value: 'r-76',                             label: 'Ставропольский край' },
+  { value: 'r-23',                             label: 'Саратовская обл.' },
+  { value: 'r-94',                             label: 'Пензенская обл.' },
+  { value: 'r-211',                            label: 'Респ. Мордовия' },
+  { value: 'r-98',                             label: 'Нижегородская обл.' },
+  { value: 'r-1',                              label: 'Костромская обл.' },
+  { value: 'r-57',                             label: 'Ивановская обл.' },
+  { value: 'r-54',                             label: 'Вологодская обл.' },
+  { value: 'r-113',                            label: 'Архангельская обл.' },
+  { value: 'r-191',                            label: 'Ненецкий АО' },
+  { value: 'r-213',                            label: 'Респ. Коми' },
+  { value: 'r-64',                             label: 'Кировская обл.' },
+  { value: 'r-212',                            label: 'Респ. Марий Эл' },
+  { value: 'r-194',                            label: 'Чувашская Респ.' },
+  { value: 'r-72',                             label: 'Ульяновская обл.' },
+  { value: 'r-96',                             label: 'Оренбургская обл.' },
+  { value: 'r-199',                            label: 'Респ. Татарстан' },
+  { value: 'r-197',                            label: 'Удмуртская Респ.' },
+  { value: 'r-220',                            label: 'Респ. Башкортостан' },
+  { value: 'r-71',                             label: 'Челябинская обл.' },
+  { value: 'r-147',                            label: 'Пермский край' },
+  { value: 'r-78',                             label: 'Свердловская обл.' },
+  { value: 'r-103',                            label: 'Курганская обл.' },
+  { value: 'r-189',                            label: 'Ханты-Мансийский АО — Югра' },
+  { value: 'r-178',                            label: 'Ямало-Ненецкий АО' },
+  { value: 'r-73',                             label: 'Тюменская обл.' },
+  { value: 'r-97',                             label: 'Омская обл.' },
+  { value: 'r-7',                              label: 'Томская обл.' },
+  { value: 'r-10',                             label: 'Новосибирская обл.' },
+  { value: 'r-177',                            label: 'Алтайский край' },
+  { value: 'r-104',                            label: 'Кемеровская обл. — Кузбасс' },
+  { value: 'r-221',                            label: 'Респ. Алтай' },
+  { value: 'r-196',                            label: 'Респ. Хакасия' },
+  { value: 'r-198',                            label: 'Респ. Тыва' },
+  { value: 'r-148',                            label: 'Красноярский край' },
+  { value: 'r-50',                             label: 'Респ. Саха (Якутия)' },
+  { value: 'r-107',                            label: 'Иркутская обл.' },
+  { value: 'r-219',                            label: 'Респ. Бурятия' },
+  { value: 'r-176',                            label: 'Забайкальский край' },
+  { value: 'r-142',                            label: 'Амурская обл.' },
+  { value: 'r-190',                            label: 'Еврейская АО' },
+  { value: 'r-146',                            label: 'Приморский край' },
+  { value: 'r-143',                            label: 'Хабаровский край' },
+  { value: 'r-89',                             label: 'Сахалинская обл.' },
+  { value: 'r-47',                             label: 'Магаданская обл.' },
+  { value: 'r-173',                            label: 'Камчатский край' },
+  { value: 'r-186',                            label: 'Чукотский АО' },
+];
+
 interface Props {
   mode: 'create' | 'edit';
 }
@@ -78,6 +160,7 @@ export function BurialEditPage({ mode }: Props) {
     mode === 'edit' && existing
       ? {
           region: existing.region ?? 'RUSSIA',
+          russia_region: existing.russia_region,
           cemetery_id: existing.cemetery_id,
           city: existing.city,
           cemetery_name: existing.cemetery_name,
@@ -105,6 +188,7 @@ export function BurialEditPage({ mode }: Props) {
       if (mode === 'create') {
         const dto: BurialCreateDto = {
           region: r,
+          russia_region: r === 'RUSSIA' ? (values.russia_region as string | undefined) : undefined,
           cemetery_id: r === 'PETERSBURG' ? (values.cemetery_id as string | undefined) : undefined,
           city: r !== 'PETERSBURG' ? (values.city as string | undefined) : undefined,
           cemetery_name: r !== 'PETERSBURG' ? (values.cemetery_name as string | undefined) : undefined,
@@ -119,6 +203,7 @@ export function BurialEditPage({ mode }: Props) {
       } else {
         const dto: BurialUpdateDto = {
           region: r,
+          russia_region: r === 'RUSSIA' ? (values.russia_region as string | undefined) : undefined,
           cemetery_id: r === 'PETERSBURG' ? (values.cemetery_id as string | undefined) ?? '' : '',
           city: r !== 'PETERSBURG' ? (values.city as string | undefined) : undefined,
           cemetery_name: r !== 'PETERSBURG' ? ((values.cemetery_name as string | undefined) ?? '') : '',
@@ -153,9 +238,23 @@ export function BurialEditPage({ mode }: Props) {
         <Form.Item name="region" label="Регион" rules={[{ required: true }]}>
           <Select
             options={REGION_OPTIONS}
-            onChange={(v) => setRegion(v)}
+            onChange={(v) => { setRegion(v); if (v !== 'RUSSIA') form.setFieldValue('russia_region', undefined); }}
           />
         </Form.Item>
+
+        {region === 'RUSSIA' && (
+          <Form.Item name="russia_region" label="Субъект РФ (для отображения на карте)">
+            <Select
+              options={RUSSIA_REGION_OPTIONS}
+              placeholder="Выберите регион..."
+              showSearch
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              allowClear
+            />
+          </Form.Item>
+        )}
 
         {region === 'PETERSBURG' ? (
           <Form.Item
