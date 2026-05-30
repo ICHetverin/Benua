@@ -17,94 +17,90 @@
 /* ── Stops navigation ── */
 .stopsNav {
     display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 0;
+    align-items: flex-end;
     overflow-x: auto;
-    padding-bottom: 0.25rem;
     scrollbar-width: none;
+    padding-top: 2.5rem;   /* room above for the address label */
+    padding-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .stopsNav::-webkit-scrollbar {
     display: none;
 }
 
+/* Wrapper for pin + floating address */
 .stopItem {
-    display: flex;
-    align-items: center;
+    position: relative;
     flex-shrink: 0;
 }
 
-.stopCircle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 2px solid var(--dark-blue);
-    background: transparent;
-    color: var(--dark-blue);
-    font-family: var(--font-lora);
-    font-size: 0.8rem;
-    font-weight: 600;
+/* Pin button — matches SVG dimensions */
+.pinBtn {
+    position: relative;
+    display: block;
+    width: 31px;
+    height: 46px;
+    padding: 0;
+    background: none;
+    border: none;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.pinBtn:hover {
+    opacity: 0.7;
+}
+
+/* Number in the circular head of the pin (center ≈ top 30%) */
+.pinNumber {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30%;
+    transform: translateY(-50%);
+    text-align: center;
+    font-family: var(--font-lora);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #001F53;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+}
+
+.pinNumberActive {
+    color: var(--beige);
+}
+
+/* Horizontal line connecting pin tips */
+.connector {
     flex-shrink: 0;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    width: 44px;
+    height: 1.5px;
+    background-color: #001F53;
+    align-self: flex-end;
+    margin-bottom: 2px;
 }
 
-.stopCircle:hover:not(.stopCircleActive) {
-    background-color: rgba(0, 31, 83, 0.08);
-}
-
-.stopCircleActive {
-    background-color: var(--dark-blue);
-    color: var(--white);
-}
-
-.stopLabel {
-    margin-left: 0.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-}
-
-.stopName {
+/* Address label next to the active pin */
+.pinAddress {
+    position: absolute;
+    top: 30%;
+    transform: translateY(-50%);
+    left: calc(100% + 10px);
+    white-space: nowrap;
     font-family: var(--font-lora);
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--black);
-    white-space: nowrap;
+    pointer-events: none;
 }
 
-.stopConnector {
-    width: 32px;
-    height: 1px;
-    background-color: var(--dark-blue);
-    flex-shrink: 0;
-    margin: 0 2px;
-}
-
-/* ── Active stop address ── */
-.activeStopInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    margin: 1.25rem 0 2rem;
-    padding-left: 0.25rem;
-}
-
-.activeStopName {
-    font-family: var(--font-lora);
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: var(--black);
-}
-
-.activeStopAddress {
-    font-family: var(--font-lora);
-    font-size: 0.75rem;
-    color: #666;
+/* Last stop: address flips to the left */
+.pinAddressLeft {
+    left: auto;
+    right: calc(100% + 10px);
 }
 
 /* ── Stop content ── */
@@ -320,8 +316,8 @@
         gap: 1.5rem;
     }
 
-    .stopConnector {
-        width: 20px;
+    .connector {
+        width: 24px;
     }
 
     .descriptionParagraph {
