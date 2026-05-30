@@ -2,7 +2,7 @@
     background: var(--beige);
     display: flex;
     flex-direction: column;
-    height: 360px;
+
     cursor: pointer;
     outline: none;
     transition: background-color 0.2s ease;
@@ -19,9 +19,9 @@
 /* ── Image ── */
 .imageWrapper {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
-    flex-shrink: 0;
 }
 
 .image {
@@ -47,7 +47,8 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
-    flex: 1;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .name {
