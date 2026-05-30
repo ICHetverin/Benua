@@ -40,23 +40,32 @@ interface FileInputProps {
   responseKey: string;
   accept: string;
   placeholder?: string;
+  maxSizeMb?: number;
 }
 
-function FileInput({ value, onChange, endpoint, responseKey, accept, placeholder }: FileInputProps) {
+function FileInput({ value, onChange, endpoint, responseKey, accept, placeholder, maxSizeMb }: FileInputProps) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (maxSizeMb && file.size > maxSizeMb * 1024 * 1024) {
+      message.error(`Файл слишком большой. Максимальный размер: ${maxSizeMb} МБ`);
+      if (inputRef.current) inputRef.current.value = '';
+      return;
+    }
+
     setUploading(true);
     const fd = new FormData();
     fd.append('file', file);
     try {
       const res = await uploadMultipart<Record<string, string>>(endpoint, fd);
       onChange?.(res[responseKey]);
-    } catch {
-      message.error('Ошибка загрузки файла');
+    } catch (err: unknown) {
+      const detail = (err as { detail?: string })?.detail;
+      message.error(detail ?? 'Ошибка загрузки файла');
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
@@ -189,6 +198,7 @@ export function ExcursionEditPage({ mode }: Props) {
             responseKey="url"
             accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
             placeholder="URL аудио или загрузите файл"
+            maxSizeMb={15}
           />
         </Form.Item>
 
@@ -226,6 +236,7 @@ export function ExcursionEditPage({ mode }: Props) {
                       responseKey="url"
                       accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
                       placeholder="URL аудио или загрузите файл"
+                      maxSizeMb={15}
                     />
                   </Form.Item>
 
