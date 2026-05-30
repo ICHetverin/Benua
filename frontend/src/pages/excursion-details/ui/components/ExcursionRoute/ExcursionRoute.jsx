@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext, Fragment } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowIcon } from "shared/assets/icons/ArrowIcon";
 import { AudioManagerContext } from "../../AudioManagerContext";
@@ -194,50 +194,42 @@ export const ExcursionRoute = ({ points = [] }) => {
         <div className={styles.stopsNav}>
           {points.map((point, idx) => {
             const isActive = idx === selectedIdx;
-            const isLast = idx === points.length - 1;
             return (
-              <Fragment key={idx}>
-                {/* Pin marker */}
-                <div className={styles.stopItem}>
-                  <button
-                    className={styles.pinBtn}
-                    onClick={() => setSelectedIdx(idx)}
-                    aria-label={`Точка ${idx + 1}: ${point.address}`}
+              <div key={idx} className={styles.stopItem}>
+                <button
+                  className={styles.pinBtn}
+                  onClick={() => setSelectedIdx(idx)}
+                  aria-label={`Точка ${idx + 1}: ${point.address}`}
+                >
+                  <svg width="31" height="46" viewBox="0 0 31 46" fill="none" aria-hidden="true">
+                    <path
+                      d="M15.5 0C11.3891 0 7.44666 1.69624 4.53984 4.71558C1.63303 7.73492 0 11.83 0 16.1C0 28.175 15.5 46 15.5 46C15.5 46 31 28.175 31 16.1C31 11.83 29.367 7.73492 26.4602 4.71558C23.5533 1.69624 19.6109 0 15.5 0Z"
+                      fill={isActive ? "#001F53" : "transparent"}
+                      stroke={isActive ? "none" : "#001F53"}
+                      strokeWidth={isActive ? undefined : "1.5"}
+                    />
+                  </svg>
+                  <span
+                    className={`${styles.pinNumber} ${isActive ? styles.pinNumberActive : ""}`}
+                    aria-hidden="true"
                   >
-                    <svg width="31" height="46" viewBox="0 0 31 46" fill="none" aria-hidden="true">
-                      <path
-                        d="M15.5 0C11.3891 0 7.44666 1.69624 4.53984 4.71558C1.63303 7.73492 0 11.83 0 16.1C0 28.175 15.5 46 15.5 46C15.5 46 31 28.175 31 16.1C31 11.83 29.367 7.73492 26.4602 4.71558C23.5533 1.69624 19.6109 0 15.5 0Z"
-                        fill={isActive ? "#001F53" : "transparent"}
-                        stroke={isActive ? "none" : "#001F53"}
-                        strokeWidth={isActive ? undefined : "1.5"}
-                      />
-                    </svg>
-                    <span
-                      className={`${styles.pinNumber} ${isActive ? styles.pinNumberActive : ""}`}
-                      aria-hidden="true"
-                    >
-                      {idx + 1}
-                    </span>
-                  </button>
-
-                  {/* Last active stop: address to the left (no right connector) */}
-                  {isActive && isLast && (
-                    <span className={styles.pinAddressLeft}>{point.address}</span>
-                  )}
-                </div>
-
-                {/* Connector line — stretches to fit address text when active */}
-                {!isLast && (
-                  <div className={styles.connector}>
-                    {isActive && (
-                      <span className={styles.pinAddress}>{point.address}</span>
-                    )}
-                    <div className={styles.connectorLine} />
+                    {idx + 1}
+                  </span>
+                </button>
+                {isActive && (
+                  <div className={styles.stopLabel}>
+                    <span className={styles.stopName}>{point.address}</span>
                   </div>
                 )}
-              </Fragment>
+                {idx < points.length - 1 && <div className={styles.stopConnector} />}
+              </div>
             );
           })}
+        </div>
+
+        {/* ── Active stop address ── */}
+        <div className={styles.activeStopInfo}>
+          <span className={styles.activeStopAddress}>{selectedPoint.address}</span>
         </div>
 
         {/* ── Stop detail ── */}
