@@ -29,7 +29,7 @@ const PointAudioPlayer = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [loadError, setLoadError] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
@@ -45,13 +45,8 @@ const PointAudioPlayer = ({ audioUrl }) => {
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
-    const onPlay = () => setIsPlaying(true);
-    const onError = () => {
-      setIsPlaying(false);
-      setLoadError(true);
-      if (manager?.current?.playing === audio) manager.current.playing = null;
-      console.error("[PointAudioPlayer] Failed to load audio:", audioUrl);
-    };
+    const onPlay = () => { setIsPlaying(true); setHasError(false); };
+    const onError = () => { setIsPlaying(false); setHasError(true); };
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
@@ -78,11 +73,9 @@ const PointAudioPlayer = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play().catch((err) => {
-        console.error("[PointAudioPlayer] play() rejected:", err);
+      audio.play().catch(() => {
         setIsPlaying(false);
-        setLoadError(true);
-        if (manager?.current) manager.current.playing = null;
+        setHasError(true);
       });
     }
   };
@@ -109,6 +102,8 @@ const PointAudioPlayer = ({ audioUrl }) => {
         className={styles.pointAudioBtn}
         onClick={togglePlay}
         aria-label={isPlaying ? "Пауза" : "Аудиогид точки"}
+        disabled={hasError}
+        title={hasError ? "Аудио недоступно" : undefined}
       >
         {isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>

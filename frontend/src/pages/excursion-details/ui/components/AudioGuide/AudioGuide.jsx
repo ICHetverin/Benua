@@ -27,7 +27,7 @@ export const AudioGuide = ({ audioUrl }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [loadError, setLoadError] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
@@ -46,13 +46,8 @@ export const AudioGuide = ({ audioUrl }) => {
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
-    const onPlay = () => setIsPlaying(true);
-    const onError = () => {
-      setIsPlaying(false);
-      setLoadError(true);
-      if (manager?.current?.playing === audio) manager.current.playing = null;
-      console.error("[AudioGuide] Failed to load audio:", audioUrl);
-    };
+    const onPlay = () => { setIsPlaying(true); setHasError(false); };
+    const onError = () => { setIsPlaying(false); setHasError(true); };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
@@ -81,11 +76,9 @@ export const AudioGuide = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play().catch((err) => {
-        console.error("[AudioGuide] play() rejected:", err);
+      audio.play().catch(() => {
         setIsPlaying(false);
-        setLoadError(true);
-        if (manager?.current) manager.current.playing = null;
+        setHasError(true);
       });
     }
   };
@@ -119,6 +112,8 @@ export const AudioGuide = ({ audioUrl }) => {
             className={styles.playButton}
             onClick={togglePlay}
             aria-label={isPlaying ? "Пауза" : "Играть"}
+            disabled={hasError}
+            title={hasError ? "Аудио недоступно" : undefined}
           >
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>

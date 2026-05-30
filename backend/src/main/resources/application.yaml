@@ -14,7 +14,7 @@ spring:
   servlet:
     multipart:
       max-file-size: 15MB
-      max-request-size: 20MB
+      max-request-size: 16MB
 
 server:
   port: ${SERVER_PORT:8080}
@@ -38,7 +38,7 @@ app:
     # TTL presigned URL в секундах (по умолчанию 1 час)
     presigned-url-ttl-seconds: ${YC_S3_PRESIGNED_TTL:3600}
   uploads:
-    max-size-mb: 10
+    max-size-mb: 15
     allowed-mime: image/jpeg,image/png,image/webp
   local-storage:
     path: ${LOCAL_STORAGE_PATH:./local-uploads}

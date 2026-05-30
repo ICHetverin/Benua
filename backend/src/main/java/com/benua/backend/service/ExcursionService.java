@@ -44,12 +44,19 @@ public class ExcursionService {
         this.presignedUrlTtlSeconds = presignedUrlTtlSeconds;
     }
 
-    // Если URL хранится как публичный S3-адрес — заменяем presigned'ом.
-    // Для локального хранилища (s3PublicBaseUrl пустой) возвращаем как есть.
+    /**
+     * Генерирует свежий presigned URL из сохранённого audio URL.
+     * Работает как с plain public URL, так и с уже истёкшим presigned URL в базе:
+     * перед передачей ключа в S3 отбрасываем query-параметры (?X-Amz-...).
+     * Для локального хранилища (s3PublicBaseUrl пустой) возвращает URL как есть.
+     */
     private String presignAudio(String url) {
         if (url == null || url.isBlank() || s3PublicBaseUrl.isBlank()) return url;
         if (url.startsWith(s3PublicBaseUrl)) {
-            String key = url.substring(s3PublicBaseUrl.length()).replaceAll("^/+", "");
+            String path = url.substring(s3PublicBaseUrl.length()).replaceAll("^/+", "");
+            // Отрезаем query-параметры — они появляются, если в базе лежит старый presigned URL
+            int queryIdx = path.indexOf('?');
+            String key = queryIdx >= 0 ? path.substring(0, queryIdx) : path;
             return storageService.generatePresignedUrl(key, Duration.ofSeconds(presignedUrlTtlSeconds));
         }
         return url;
