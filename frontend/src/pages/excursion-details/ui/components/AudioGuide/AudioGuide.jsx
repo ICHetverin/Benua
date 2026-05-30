@@ -27,6 +27,7 @@ export const AudioGuide = ({ audioUrl }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
@@ -42,13 +43,15 @@ export const AudioGuide = ({ audioUrl }) => {
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
-    const onPlay = () => setIsPlaying(true);
+    const onPlay = () => { setIsPlaying(true); setHasError(false); };
+    const onError = () => { setIsPlaying(false); setHasError(true); };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("play", onPlay);
+    audio.addEventListener("error", onError);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
@@ -56,6 +59,7 @@ export const AudioGuide = ({ audioUrl }) => {
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("error", onError);
     };
   }, [isDragging, manager]);
 
@@ -69,7 +73,10 @@ export const AudioGuide = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play();
+      audio.play().catch(() => {
+        setIsPlaying(false);
+        setHasError(true);
+      });
     }
   };
 
@@ -99,6 +106,8 @@ export const AudioGuide = ({ audioUrl }) => {
             className={styles.playButton}
             onClick={togglePlay}
             aria-label={isPlaying ? "Пауза" : "Играть"}
+            disabled={hasError}
+            title={hasError ? "Аудио недоступно" : undefined}
           >
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>

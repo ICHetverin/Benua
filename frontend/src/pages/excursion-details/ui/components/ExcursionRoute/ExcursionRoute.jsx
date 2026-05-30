@@ -29,6 +29,7 @@ const PointAudioPlayer = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [hasError, setHasError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
@@ -41,18 +42,21 @@ const PointAudioPlayer = ({ audioUrl }) => {
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
-    const onPlay = () => setIsPlaying(true);
+    const onPlay = () => { setIsPlaying(true); setHasError(false); };
+    const onError = () => { setIsPlaying(false); setHasError(true); };
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("play", onPlay);
+    audio.addEventListener("error", onError);
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("error", onError);
     };
   }, [manager]);
 
@@ -66,7 +70,10 @@ const PointAudioPlayer = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play();
+      audio.play().catch(() => {
+        setIsPlaying(false);
+        setHasError(true);
+      });
     }
   };
 
@@ -88,6 +95,8 @@ const PointAudioPlayer = ({ audioUrl }) => {
         className={styles.pointAudioBtn}
         onClick={togglePlay}
         aria-label={isPlaying ? "Пауза" : "Аудиогид точки"}
+        disabled={hasError}
+        title={hasError ? "Аудио недоступно" : undefined}
       >
         {isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>
