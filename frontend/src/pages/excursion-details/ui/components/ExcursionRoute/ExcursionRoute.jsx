@@ -197,6 +197,7 @@ export const ExcursionRoute = ({ points = [] }) => {
             const isLast = idx === points.length - 1;
             return (
               <Fragment key={idx}>
+                {/* Pin marker */}
                 <div className={styles.stopItem}>
                   <button
                     className={styles.pinBtn}
@@ -219,14 +220,21 @@ export const ExcursionRoute = ({ points = [] }) => {
                     </span>
                   </button>
 
-                  {isActive && (
-                    <span className={`${styles.pinAddress} ${isLast ? styles.pinAddressLeft : ""}`}>
-                      {point.address}
-                    </span>
+                  {/* Last active stop: address to the left (no right connector) */}
+                  {isActive && isLast && (
+                    <span className={styles.pinAddressLeft}>{point.address}</span>
                   )}
                 </div>
 
-                {!isLast && <div className={styles.connector} />}
+                {/* Connector line — stretches to fit address text when active */}
+                {!isLast && (
+                  <div className={styles.connector}>
+                    {isActive && (
+                      <span className={styles.pinAddress}>{point.address}</span>
+                    )}
+                    <div className={styles.connectorLine} />
+                  </div>
+                )}
               </Fragment>
             );
           })}

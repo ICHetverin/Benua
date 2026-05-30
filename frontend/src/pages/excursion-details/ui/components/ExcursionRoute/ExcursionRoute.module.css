@@ -20,7 +20,6 @@
     align-items: flex-end;
     overflow-x: auto;
     scrollbar-width: none;
-    padding-top: 2.5rem;   /* room above for the address label */
     padding-bottom: 2rem;
     margin-bottom: 1.5rem;
 }
@@ -29,7 +28,7 @@
     display: none;
 }
 
-/* Wrapper for pin + floating address */
+/* Pin wrapper */
 .stopItem {
     position: relative;
     flex-shrink: 0;
@@ -52,13 +51,13 @@
     opacity: 0.7;
 }
 
-/* Number in the circular head of the pin (center ≈ top 30%) */
+/* Number: bottom of digit aligns with the pin head centre (≈ top 35%) */
 .pinNumber {
     position: absolute;
     left: 0;
     right: 0;
-    top: 30%;
-    transform: translateY(-50%);
+    top: 35%;
+    transform: translateY(-100%);
     text-align: center;
     font-family: var(--font-lora);
     font-size: 0.68rem;
@@ -73,34 +72,45 @@
     color: var(--beige);
 }
 
-/* Horizontal line connecting pin tips */
+/*
+ * Connector: flex column, address on top → line at bottom.
+ * With align-self:flex-end the line bottom aligns with the pin tip.
+ * Width is determined naturally by the address text (white-space:nowrap).
+ */
 .connector {
-    flex-shrink: 0;
-    width: 44px;
-    height: 1.5px;
-    background-color: #001F53;
+    display: flex;
+    flex-direction: column;
     align-self: flex-end;
-    margin-bottom: 2px;
+    flex-shrink: 0;
+    min-width: 44px;
 }
 
-/* Address label next to the active pin */
+.connectorLine {
+    height: 1.5px;
+    background-color: #001F53;
+}
+
+/* Address above the connector line (for non-last active stop) */
 .pinAddress {
-    position: absolute;
-    top: 30%;
-    transform: translateY(-50%);
-    left: calc(100% + 10px);
     white-space: nowrap;
     font-family: var(--font-lora);
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--black);
-    pointer-events: none;
+    padding-bottom: 10px;   /* gap between text and the line */
 }
 
-/* Last stop: address flips to the left */
+/* Last stop: address to the left of the pin */
 .pinAddressLeft {
-    left: auto;
+    position: absolute;
+    white-space: nowrap;
+    font-family: var(--font-lora);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--black);
     right: calc(100% + 10px);
+    top: 35%;
+    transform: translateY(-100%);  /* bottom of text at head centre */
 }
 
 /* ── Stop content ── */
