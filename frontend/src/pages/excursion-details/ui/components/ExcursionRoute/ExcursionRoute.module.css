@@ -185,6 +185,13 @@
 }
 
 /* ── Point audio player ── */
+.pointAudioError {
+    font-size: 0.8rem;
+    color: var(--dark-red, #8b1a1a);
+    opacity: 0.75;
+    margin: 0 0 0.5rem;
+}
+
 .pointAudio {
     display: flex;
     align-items: center;

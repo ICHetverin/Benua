@@ -36,7 +36,10 @@ const PointAudioPlayer = ({ audioUrl }) => {
     const audio = audioRef.current;
     if (!audio) return;
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+      setLoadError(false);
+    };
     const onEnded = () => {
       setIsPlaying(false);
       if (manager?.current?.playing === audio) manager.current.playing = null;
@@ -58,11 +61,11 @@ const PointAudioPlayer = ({ audioUrl }) => {
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("error", onError);
     };
-  }, [manager]);
+  }, [manager, audioUrl]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || loadError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -88,9 +91,13 @@ const PointAudioPlayer = ({ audioUrl }) => {
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  if (loadError) {
+    return <p className={styles.pointAudioError}>Аудио недоступно</p>;
+  }
+
   return (
     <div className={styles.pointAudio}>
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      <audio ref={audioRef} src={audioUrl} preload="auto" />
       <button
         className={styles.pointAudioBtn}
         onClick={togglePlay}

@@ -37,7 +37,10 @@ export const AudioGuide = ({ audioUrl }) => {
     const onTimeUpdate = () => {
       if (!isDragging) setCurrentTime(audio.currentTime);
     };
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+      setLoadError(false);
+    };
     const onEnded = () => {
       setIsPlaying(false);
       if (manager?.current?.playing === audio) manager.current.playing = null;
@@ -61,11 +64,11 @@ export const AudioGuide = ({ audioUrl }) => {
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("error", onError);
     };
-  }, [isDragging, manager]);
+  }, [isDragging, manager, audioUrl]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || loadError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -99,8 +102,11 @@ export const AudioGuide = ({ audioUrl }) => {
       <div className={styles.container}>
         <h2 className={styles.title}>Аудиогид</h2>
 
+        {loadError ? (
+          <p className={styles.errorText}>Не удалось загрузить аудиофайл.</p>
+        ) : (
         <div className={styles.player}>
-          <audio ref={audioRef} src={audioUrl} preload="metadata" />
+          <audio ref={audioRef} src={audioUrl} preload="auto" />
 
           <button
             className={styles.playButton}
@@ -137,6 +143,7 @@ export const AudioGuide = ({ audioUrl }) => {
             <span className={styles.time}>{formatTime(duration)}</span>
           </div>
         </div>
+        )}
       </div>
     </section>
   );
