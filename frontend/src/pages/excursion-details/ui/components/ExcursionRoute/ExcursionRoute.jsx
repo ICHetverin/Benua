@@ -227,11 +227,6 @@ export const ExcursionRoute = ({ points = [] }) => {
           })}
         </div>
 
-        {/* ── Active stop address ── */}
-        <div className={styles.activeStopInfo}>
-          <span className={styles.activeStopAddress}>{selectedPoint.address}</span>
-        </div>
-
         {/* ── Stop detail ── */}
         <StopContent key={selectedIdx} point={selectedPoint} />
       </div>
