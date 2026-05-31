@@ -38,7 +38,7 @@ const PointAudioPlayer = ({ audioUrl }) => {
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
     const onLoadedMetadata = () => {
       setDuration(audio.duration);
-      setLoadError(false);
+      setHasError(false);
     };
     const onEnded = () => {
       setIsPlaying(false);
@@ -65,7 +65,7 @@ const PointAudioPlayer = ({ audioUrl }) => {
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio || loadError) return;
+    if (!audio || hasError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -91,7 +91,7 @@ const PointAudioPlayer = ({ audioUrl }) => {
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
-  if (loadError) {
+  if (hasError) {
     return <p className={styles.pointAudioError}>Аудио недоступно</p>;
   }
 

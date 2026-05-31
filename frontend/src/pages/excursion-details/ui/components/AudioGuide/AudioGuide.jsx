@@ -39,7 +39,7 @@ export const AudioGuide = ({ audioUrl }) => {
     };
     const onLoadedMetadata = () => {
       setDuration(audio.duration);
-      setLoadError(false);
+      setHasError(false);
     };
     const onEnded = () => {
       setIsPlaying(false);
@@ -68,7 +68,7 @@ export const AudioGuide = ({ audioUrl }) => {
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio || loadError) return;
+    if (!audio || hasError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -102,7 +102,7 @@ export const AudioGuide = ({ audioUrl }) => {
       <div className={styles.container}>
         <h2 className={styles.title}>Аудиогид</h2>
 
-        {loadError ? (
+        {hasError ? (
           <p className={styles.errorText}>Не удалось загрузить аудиофайл.</p>
         ) : (
         <div className={styles.player}>
