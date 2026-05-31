@@ -5,6 +5,7 @@ import com.benua.backend.dto.ExcursionDto;
 import com.benua.backend.dto.ExcursionUpdateDto;
 import com.benua.backend.model.Excursion;
 import com.benua.backend.repository.ExcursionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +27,39 @@ public class ExcursionService {
 
     private final ExcursionRepository excursionRepository;
     private final MongoTemplate mongoTemplate;
+    private final StorageService storageService;
+    private final String s3PublicBaseUrl;
+    private final long presignedUrlTtlSeconds;
 
-    public ExcursionService(ExcursionRepository excursionRepository, MongoTemplate mongoTemplate) {
+    public ExcursionService(
+            ExcursionRepository excursionRepository,
+            MongoTemplate mongoTemplate,
+            StorageService storageService,
+            @Value("${app.s3.public-base-url:}") String s3PublicBaseUrl,
+            @Value("${app.s3.presigned-url-ttl-seconds:3600}") long presignedUrlTtlSeconds) {
         this.excursionRepository = excursionRepository;
         this.mongoTemplate = mongoTemplate;
+        this.storageService = storageService;
+        this.s3PublicBaseUrl = s3PublicBaseUrl.replaceAll("/+$", "");
+        this.presignedUrlTtlSeconds = presignedUrlTtlSeconds;
+    }
+
+    /**
+     * Генерирует свежий presigned URL из сохранённого audio URL.
+     * Работает как с plain public URL, так и с уже истёкшим presigned URL в базе:
+     * перед передачей ключа в S3 отбрасываем query-параметры (?X-Amz-...).
+     * Для локального хранилища (s3PublicBaseUrl пустой) возвращает URL как есть.
+     */
+    private String presignAudio(String url) {
+        if (url == null || url.isBlank() || s3PublicBaseUrl.isBlank()) return url;
+        if (url.startsWith(s3PublicBaseUrl)) {
+            String path = url.substring(s3PublicBaseUrl.length()).replaceAll("^/+", "");
+            // Отрезаем query-параметры — они появляются, если в базе лежит старый presigned URL
+            int queryIdx = path.indexOf('?');
+            String key = queryIdx >= 0 ? path.substring(0, queryIdx) : path;
+            return storageService.generatePresignedUrl(key, Duration.ofSeconds(presignedUrlTtlSeconds));
+        }
+        return url;
     }
 
     public Excursion getExcursion(String id) {
@@ -120,10 +151,15 @@ public class ExcursionService {
     }
 
     public ExcursionDto toDto(Excursion e) {
+        List<Excursion.ExcursionPoint> points = e.points() == null ? null :
+                e.points().stream().map(p -> new Excursion.ExcursionPoint(
+                        p.address(), p.objectId(), p.description(), p.photoUrls(),
+                        presignAudio(p.audioUrl()), p.lat(), p.lng()
+                )).toList();
         return new ExcursionDto(
                 e._id(), e.name(), e.description(), e.time(),
                 e.passingMethods(), e.coverPhoto(), e.routePhoto(), e.sources(),
-                e.points(), e.audioUrl(), e.authors(),
+                points, presignAudio(e.audioUrl()), e.authors(),
                 e.isPublished(), e.sortOrder(), e.createdAt(), e.updatedAt()
         );
     }

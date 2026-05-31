@@ -29,36 +29,43 @@ const PointAudioPlayer = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [hasError, setHasError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+      setHasError(false);
+    };
     const onEnded = () => {
       setIsPlaying(false);
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
-    const onPlay = () => setIsPlaying(true);
+    const onPlay = () => { setIsPlaying(true); setHasError(false); };
+    const onError = () => { setIsPlaying(false); setHasError(true); };
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("play", onPlay);
+    audio.addEventListener("error", onError);
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("error", onError);
     };
-  }, [manager]);
+  }, [manager, audioUrl]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || hasError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -66,7 +73,10 @@ const PointAudioPlayer = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play();
+      audio.play().catch(() => {
+        setIsPlaying(false);
+        setHasError(true);
+      });
     }
   };
 
@@ -81,13 +91,19 @@ const PointAudioPlayer = ({ audioUrl }) => {
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  if (hasError) {
+    return <p className={styles.pointAudioError}>Аудио недоступно</p>;
+  }
+
   return (
     <div className={styles.pointAudio}>
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      <audio ref={audioRef} src={audioUrl} preload="auto" />
       <button
         className={styles.pointAudioBtn}
         onClick={togglePlay}
         aria-label={isPlaying ? "Пауза" : "Аудиогид точки"}
+        disabled={hasError}
+        title={hasError ? "Аудио недоступно" : undefined}
       >
         {isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>
@@ -197,11 +213,24 @@ export const ExcursionRoute = ({ points = [] }) => {
             return (
               <div key={idx} className={styles.stopItem}>
                 <button
-                  className={`${styles.stopCircle} ${isActive ? styles.stopCircleActive : ""}`}
+                  className={styles.pinBtn}
                   onClick={() => setSelectedIdx(idx)}
                   aria-label={`Точка ${idx + 1}: ${point.address}`}
                 >
-                  {idx + 1}
+                  <svg width="31" height="46" viewBox="0 0 31 46" fill="none" aria-hidden="true">
+                    <path
+                      d="M15.5 0C11.3891 0 7.44666 1.69624 4.53984 4.71558C1.63303 7.73492 0 11.83 0 16.1C0 28.175 15.5 46 15.5 46C15.5 46 31 28.175 31 16.1C31 11.83 29.367 7.73492 26.4602 4.71558C23.5533 1.69624 19.6109 0 15.5 0Z"
+                      fill={isActive ? "#001F53" : "transparent"}
+                      stroke={isActive ? "none" : "#001F53"}
+                      strokeWidth={isActive ? undefined : "1.5"}
+                    />
+                  </svg>
+                  <span
+                    className={`${styles.pinNumber} ${isActive ? styles.pinNumberActive : ""}`}
+                    aria-hidden="true"
+                  >
+                    {idx + 1}
+                  </span>
                 </button>
                 {isActive && (
                   <div className={styles.stopLabel}>
@@ -212,11 +241,6 @@ export const ExcursionRoute = ({ points = [] }) => {
               </div>
             );
           })}
-        </div>
-
-        {/* ── Active stop address ── */}
-        <div className={styles.activeStopInfo}>
-          <span className={styles.activeStopAddress}>{selectedPoint.address}</span>
         </div>
 
         {/* ── Stop detail ── */}

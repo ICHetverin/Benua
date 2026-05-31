@@ -27,6 +27,7 @@ export const AudioGuide = ({ audioUrl }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const manager = useContext(AudioManagerContext);
 
   useEffect(() => {
@@ -36,19 +37,24 @@ export const AudioGuide = ({ audioUrl }) => {
     const onTimeUpdate = () => {
       if (!isDragging) setCurrentTime(audio.currentTime);
     };
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onLoadedMetadata = () => {
+      setDuration(audio.duration);
+      setHasError(false);
+    };
     const onEnded = () => {
       setIsPlaying(false);
       if (manager?.current?.playing === audio) manager.current.playing = null;
     };
     const onPause = () => setIsPlaying(false);
-    const onPlay = () => setIsPlaying(true);
+    const onPlay = () => { setIsPlaying(true); setHasError(false); };
+    const onError = () => { setIsPlaying(false); setHasError(true); };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("play", onPlay);
+    audio.addEventListener("error", onError);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
@@ -56,12 +62,13 @@ export const AudioGuide = ({ audioUrl }) => {
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("error", onError);
     };
-  }, [isDragging, manager]);
+  }, [isDragging, manager, audioUrl]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || hasError) return;
     if (isPlaying) {
       audio.pause();
     } else {
@@ -69,7 +76,10 @@ export const AudioGuide = ({ audioUrl }) => {
         manager.current.playing.pause();
       }
       if (manager?.current) manager.current.playing = audio;
-      audio.play();
+      audio.play().catch(() => {
+        setIsPlaying(false);
+        setHasError(true);
+      });
     }
   };
 
@@ -92,13 +102,18 @@ export const AudioGuide = ({ audioUrl }) => {
       <div className={styles.container}>
         <h2 className={styles.title}>Аудиогид</h2>
 
+        {hasError ? (
+          <p className={styles.errorText}>Не удалось загрузить аудиофайл.</p>
+        ) : (
         <div className={styles.player}>
-          <audio ref={audioRef} src={audioUrl} preload="metadata" />
+          <audio ref={audioRef} src={audioUrl} preload="auto" />
 
           <button
             className={styles.playButton}
             onClick={togglePlay}
             aria-label={isPlaying ? "Пауза" : "Играть"}
+            disabled={hasError}
+            title={hasError ? "Аудио недоступно" : undefined}
           >
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>
@@ -128,6 +143,7 @@ export const AudioGuide = ({ audioUrl }) => {
             <span className={styles.time}>{formatTime(duration)}</span>
           </div>
         </div>
+        )}
       </div>
     </section>
   );
