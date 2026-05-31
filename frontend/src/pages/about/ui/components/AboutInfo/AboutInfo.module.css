@@ -1,46 +1,57 @@
-.section p {
-    width: 80%;
-    margin: 14px auto;
-    line-height: 28px;
-    font-size: medium;
-    text-align: justify;
+.section {
+    padding: var(--page-padding-y) var(--page-padding);
+    max-width: 2000px;
+    margin: 0 auto;
 }
 
-.section h1 {
-    margin-left: 14px;
+.title {
     text-align: center;
+    margin-bottom: 2rem;
 }
 
-.wcircle {
-    display: inline-block;
-    vertical-align: middle;
-    background-color: #F4E7CE;
-    border: 1px solid black;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
+/* Readable column, centred */
+.text {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
-.bcircle {
-    display: inline-block;
-    vertical-align: middle;
-    background-color: #001F53;
-    border: 1px solid black;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
+.text p {
+    font-family: var(--font-lora);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--black);
+    text-align: justify;
+    margin: 0;
+    text-indent: 2rem;
 }
 
-.rcircle {
+/* Colour swatches */
+.swatch {
     display: inline-block;
     vertical-align: middle;
-    background-color: #8A3033;
-    border: 1px solid black;
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
     border-radius: 50%;
+    border: 1px solid rgba(35, 28, 7, 0.25);
+    margin: 0 3px;
+    flex-shrink: 0;
 }
+
+.swatchBeige  { background-color: var(--beige); }
+.swatchBlue   { background-color: var(--dark-blue); }
+.swatchRed    { background-color: var(--dark-red); }
 
 .mail {
-    font-weight: bold;
+    font-weight: 700;
+    color: var(--dark-red);
+}
+
+@media (max-width: 768px) {
+    .text p {
+        text-indent: 0;
+        text-align: left;
+    }
 }
