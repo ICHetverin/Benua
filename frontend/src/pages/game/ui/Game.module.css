@@ -188,6 +188,7 @@
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
+  object-position: center top;
 }
 
 .resultContent {
@@ -235,16 +236,6 @@
 .primaryLink:hover {
   background: transparent;
   color: var(--dark-blue);
-}
-
-.primaryLink:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.primaryLink:disabled:hover {
-  background: var(--dark-blue);
-  color: var(--white);
 }
 
 @media (max-width: 1024px) {

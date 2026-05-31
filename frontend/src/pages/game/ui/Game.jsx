@@ -438,7 +438,10 @@ export function Game() {
   const openCard = (sitePath) => {
     if (sitePath) {
       navigate(sitePath);
+      return;
     }
+
+    navigate("/persons");
   };
 
   return (
@@ -542,7 +545,6 @@ export function Game() {
                   className={styles.primaryLink}
                   type="button"
                   onClick={() => openCard(resultSitePath)}
-                  disabled={!resultSitePath}
                 >
                   Открыть карточку
                 </button>
