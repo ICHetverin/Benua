@@ -31,61 +31,8 @@ const PASSING_METHOD_OPTIONS = [
   { value: 'mixed', label: 'Смешанная' },
 ];
 
-/* ── Inline file upload input ── */
-interface FileInputProps {
-  value?: string;
-  onChange?: (url: string) => void;
-  endpoint: string;
-  responseKey: string;
-  accept: string;
-  placeholder?: string;
-  maxSizeMb?: number;
-}
-
-function FileInput({ value, onChange, endpoint, responseKey, accept, placeholder, maxSizeMb }: FileInputProps) {
-  const [uploading, setUploading] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (maxSizeMb && file.size > maxSizeMb * 1024 * 1024) {
-      message.error(`Файл слишком большой. Максимальный размер: ${maxSizeMb} МБ`);
-      if (inputRef.current) inputRef.current.value = '';
-      return;
-    }
-
-    setUploading(true);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await uploadMultipart<Record<string, string>>(endpoint, fd);
-      onChange?.(res[responseKey]);
-    } catch (err: unknown) {
-      const detail = (err as { detail?: string })?.detail;
-      message.error(detail ?? 'Ошибка загрузки файла');
-    } finally {
-      setUploading(false);
-      if (inputRef.current) inputRef.current.value = '';
-    }
-  };
-
-  return (
-    <Space.Compact style={{ width: '100%' }}>
-      <Input
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-        placeholder={placeholder}
-        style={{ flex: 1 }}
-      />
-      <Button loading={uploading} icon={<UploadOutlined />} onClick={() => inputRef.current?.click()}>
-        {uploading ? '' : 'Загрузить'}
-      </Button>
-      <input ref={inputRef} type="file" accept={accept} style={{ display: 'none' }} onChange={handleFile} />
-    </Space.Compact>
-  );
-}
+const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp';
+const AUDIO_ACCEPT = 'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac';
 
 export function ExcursionEditPage({ mode }: Props) {
   const { id } = useParams<{ id: string }>();
@@ -195,8 +142,8 @@ export function ExcursionEditPage({ mode }: Props) {
           <FileUploader
             endpoint="/admin/files/audio"
             responseKey="url"
-            accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
-            placeholder="URL аудио или загрузите файл"
+            accept={AUDIO_ACCEPT}
+            hint="MP3, WAV, OGG · до 15 МБ"
             maxSizeMb={15}
           />
         </Form.Item>
@@ -289,7 +236,7 @@ export function ExcursionEditPage({ mode }: Props) {
             endpoint="/admin/images"
             responseKey="url_to_s3"
             accept={IMAGE_ACCEPT}
-            hint="JPG, PNG, WebP · до 10 МБ"
+            hint="JPG, PNG, WebP · до 15 МБ"
           />
         </Form.Item>
         <Form.Item name="route_photo" label="Фото маршрута">
@@ -297,7 +244,7 @@ export function ExcursionEditPage({ mode }: Props) {
             endpoint="/admin/images"
             responseKey="url_to_s3"
             accept={IMAGE_ACCEPT}
-            hint="JPG, PNG, WebP · до 10 МБ"
+            hint="JPG, PNG, WebP · до 15 МБ"
           />
         </Form.Item>
 

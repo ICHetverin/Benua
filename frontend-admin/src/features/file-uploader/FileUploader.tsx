@@ -17,12 +17,19 @@ interface Props {
   accept?: string;
   /** Short hint shown in the drop zone */
   hint?: string;
+  /** Client-side file size limit in MB */
+  maxSizeMb?: number;
 }
 
-export function FileUploader({ value, onChange, endpoint, responseKey, accept, hint }: Props) {
+export function FileUploader({ value, onChange, endpoint, responseKey, accept, hint, maxSizeMb }: Props) {
   const [uploading, setUploading] = useState(false);
 
   const handleUpload: UploadProps['customRequest'] = async ({ file, onSuccess, onError, onProgress }) => {
+    if (maxSizeMb && (file as File).size > maxSizeMb * 1024 * 1024) {
+      message.error(`Файл слишком большой. Максимальный размер: ${maxSizeMb} МБ`);
+      onError?.(new Error('too large'));
+      return;
+    }
     const fd = new FormData();
     fd.append('file', file as File);
     setUploading(true);
