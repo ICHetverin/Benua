@@ -180,8 +180,8 @@ export function ExcursionEditPage({ mode }: Props) {
                     <FileUploader
                       endpoint="/admin/files/audio"
                       responseKey="url"
-                      accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac"
-                      placeholder="URL аудио или загрузите файл"
+                      accept={AUDIO_ACCEPT}
+                      hint="MP3, WAV, OGG · до 15 МБ"
                       maxSizeMb={15}
                     />
                   </Form.Item>
