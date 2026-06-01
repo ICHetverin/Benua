@@ -29,13 +29,15 @@ public class LocalStorageService implements StorageService {
     private static final Logger log = LoggerFactory.getLogger(LocalStorageService.class);
 
     private static final Set<String> ALLOWED_IMAGE_MIMES = Set.of("image/jpeg", "image/png", "image/webp");
+    private static final Set<String> ALLOWED_INFOGRAPHIC_MIMES = Set.of("image/jpeg", "image/png", "image/webp", "application/pdf");
     private static final Set<String> ALLOWED_AUDIO_MIMES = Set.of(
             "audio/mpeg", "audio/wav", "audio/ogg", "audio/mp4", "audio/aac", "audio/x-m4a"
     );
     private static final Map<String, String> IMAGE_EXTENSIONS = Map.of(
             "image/jpeg", "jpg",
             "image/png", "png",
-            "image/webp", "webp"
+            "image/webp", "webp",
+            "application/pdf", "pdf"
     );
     private static final Map<String, String> AUDIO_EXTENSIONS = Map.of(
             "audio/mpeg", "mp3",
@@ -70,6 +72,16 @@ public class LocalStorageService implements StorageService {
         }
         String ext = IMAGE_EXTENSIONS.getOrDefault(contentType.trim(), "bin");
         return store(file, "images", ext);
+    }
+
+    @Override
+    public UploadedObject uploadInfographicFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_INFOGRAPHIC_MIMES.contains(contentType.trim())) {
+            throw new IllegalArgumentException("Недопустимый тип файла: " + contentType);
+        }
+        String ext = IMAGE_EXTENSIONS.getOrDefault(contentType.trim(), "bin");
+        return store(file, "infographic-files", ext);
     }
 
     @Override

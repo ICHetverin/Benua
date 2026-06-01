@@ -20,10 +20,21 @@ public class FileController {
 
     record FileDto(String url, String key) {}
 
+    record InfographicFileUploadDto(String url, String key, String type) {}
+
     @PostMapping(value = "/audio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public FileDto uploadAudio(@RequestPart("file") MultipartFile file) {
         StorageService.UploadedObject uploaded = storageService.uploadAudio(file);
         return new FileDto(uploaded.publicUrl(), uploaded.key());
+    }
+
+    @PostMapping(value = "/infographic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public InfographicFileUploadDto uploadInfographicFile(@RequestPart("file") MultipartFile file) {
+        StorageService.UploadedObject uploaded = storageService.uploadInfographicFile(file);
+        String contentType = file.getContentType();
+        String type = "application/pdf".equals(contentType) ? "PDF" : "IMAGE";
+        return new InfographicFileUploadDto(uploaded.publicUrl(), uploaded.key(), type);
     }
 }

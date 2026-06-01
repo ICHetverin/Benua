@@ -79,14 +79,34 @@ export function InfographicDetail() {
         <h1 className={styles.title}>{infographic.name}</h1>
       </section>
 
-      {/* ── Работа ── */}
-      {infographic.file_url && (
+      {/* ── Файлы работы ── */}
+      {infographic.files?.length > 0 && (
         <section className={styles.workSection}>
-          <img
-            src={infographic.file_url}
-            alt={infographic.name}
-            className={styles.workImage}
-          />
+          {infographic.files.map((file, idx) =>
+            file.type === 'PDF' ? (
+              <a
+                key={file.key ?? idx}
+                href={file.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.pdfLink}
+              >
+                <span className={styles.pdfIcon}>
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11zm-5.5-6.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5v-6H11c.83 0 1.5.67 1.5 1.5v1zm4.5-1.5H16v1h1.5V15H16v2h-1.5v-6H18v1.5zm-9 0H8v1h1v.5H8v1h1.5V15H7v-4.5h2.5V12z"/>
+                  </svg>
+                </span>
+                {file.key?.split('/').pop() ?? 'Открыть PDF'}
+              </a>
+            ) : (
+              <img
+                key={file.key ?? idx}
+                src={file.url}
+                alt={`${infographic.name} — файл ${idx + 1}`}
+                className={styles.workImage}
+              />
+            )
+          )}
         </section>
       )}
 

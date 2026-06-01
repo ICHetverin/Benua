@@ -143,11 +143,41 @@ public class YandexS3StorageService implements StorageService {
         return new UploadedObject(key, url);
     }
 
+    private static final Set<String> ALLOWED_INFOGRAPHIC_MIMES =
+            Set.of("image/jpeg", "image/png", "image/webp", "application/pdf");
+
+    @Override
+    public UploadedObject uploadInfographicFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_INFOGRAPHIC_MIMES.contains(contentType.trim())) {
+            throw new IllegalArgumentException("Недопустимый тип файла: " + contentType);
+        }
+        String ext = extensionForMime(contentType);
+        LocalDate today = LocalDate.now();
+        String key = String.format("infographic-files/%d/%02d/%s.%s",
+                today.getYear(), today.getMonthValue(), UUID.randomUUID(), ext);
+        try {
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket).key(key)
+                            .contentType(contentType).contentLength(file.getSize())
+                            .build(),
+                    RequestBody.fromBytes(file.getBytes())
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка чтения файла при загрузке", e);
+        }
+        String url = publicUrl(key);
+        log.info("Uploaded infographic file to S3: key={}, url={}", key, url);
+        return new UploadedObject(key, url);
+    }
+
     private String extensionForMime(String mime) {
         return switch (mime.trim()) {
             case "image/jpeg" -> "jpg";
             case "image/png" -> "png";
             case "image/webp" -> "webp";
+            case "application/pdf" -> "pdf";
             default -> "bin";
         };
     }

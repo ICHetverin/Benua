@@ -19,6 +19,7 @@ public record Infographic(
         @DBRef List<Source> sources,
         @Field("file_url") String fileUrl,
         @Field("file_key") String fileKey,
+        @Field("files") List<InfographicFile> files,
         @Field("is_published") Boolean isPublished,
         @Field("sort_order") Integer sortOrder,
         @Field("created_at") Instant createdAt,

@@ -12,8 +12,7 @@ public record InfographicCreateDto(
         @JsonProperty("connected_persons") List<String> connectedPersons,
         @JsonProperty("connected_objects") List<String> connectedObjects,
         @JsonProperty("sources") List<SourceCreateDto> sources,
-        @JsonProperty("file_url") String fileUrl,
-        @JsonProperty("file_key") String fileKey,
+        @JsonProperty("files") List<InfographicFileDto> files,
         @JsonProperty("is_published") Boolean isPublished,
         @JsonProperty("sort_order") Integer sortOrder
 ) {}

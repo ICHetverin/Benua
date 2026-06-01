@@ -4,9 +4,8 @@ import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useInfographic, useCreateInfographic, useUpdateInfographic } from 'entities/infographic/queries';
 import { AjaxSelect } from 'features/ajax-select/AjaxSelect';
-import { ImageUploader } from 'features/image-uploader/ImageUploader';
-import type { InfographicCreateDto, InfographicUpdateDto } from 'entities/infographic/types';
-import type { ImageDto } from 'entities/image/types';
+import { InfographicFilesUploader } from 'features/infographic-files-uploader/InfographicFilesUploader';
+import type { InfographicCreateDto, InfographicUpdateDto, InfographicFileDto } from 'entities/infographic/types';
 import { ROUTES } from 'shared/config/routes';
 
 interface Props {
@@ -17,7 +16,7 @@ export function InfographicEditPage({ mode }: Props) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [workFile, setWorkFile] = useState<ImageDto | null>(null);
+  const [workFiles, setWorkFiles] = useState<InfographicFileDto[]>([]);
 
   const { data: existing, isLoading } = useInfographic(id ?? '');
   const createMutation = useCreateInfographic();
@@ -26,8 +25,8 @@ export function InfographicEditPage({ mode }: Props) {
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   useEffect(() => {
-    if (mode === 'edit' && existing?.file_url) {
-      setWorkFile({ _id: '', text: existing.name, url_to_s3: existing.file_url } as ImageDto);
+    if (mode === 'edit' && existing?.files) {
+      setWorkFiles(existing.files);
     }
   }, [mode, existing?._id]);
 
@@ -52,8 +51,6 @@ export function InfographicEditPage({ mode }: Props) {
 
   const onFinish = async (values: Record<string, unknown>) => {
     try {
-      const fileUrl = workFile?.url_to_s3 ?? undefined;
-
       if (mode === 'create') {
         const dto: InfographicCreateDto = {
           name: values.name as string,
@@ -64,7 +61,7 @@ export function InfographicEditPage({ mode }: Props) {
           sources: (values.sources as { text?: string; url?: string }[] | undefined)
             ?.filter((s) => s?.text || s?.url)
             .map((s) => ({ text: s.text ?? '', url: s.url ?? '' })),
-          file_url: fileUrl,
+          files: workFiles,
           is_published: values.is_published as boolean,
         };
         await createMutation.mutateAsync(dto);
@@ -79,7 +76,7 @@ export function InfographicEditPage({ mode }: Props) {
           sources: (values.sources as { text?: string; url?: string }[] | undefined)
             ?.filter((s) => s?.text || s?.url)
             .map((s) => ({ text: s.text ?? '', url: s.url ?? '' })),
-          file_url: fileUrl,
+          files: workFiles,
           is_published: values.is_published as boolean,
         };
         await updateMutation.mutateAsync(dto);
@@ -131,16 +128,12 @@ export function InfographicEditPage({ mode }: Props) {
           )}
         </Form.List>
 
-        {/* ── Файл работы ── */}
-        <Divider>Файл инфографики</Divider>
+        {/* ── Файлы инфографики ── */}
+        <Divider>Файлы инфографики</Divider>
         <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 12 }}>
-          Загрузите изображение работы (JPG, PNG, WebP). Один файл.
+          Загрузите изображения (JPG, PNG, WebP) или PDF-файлы. Можно добавить несколько.
         </Typography.Text>
-        <ImageUploader
-          value={workFile ? [workFile] : []}
-          onChange={(imgs) => setWorkFile(imgs[0] ?? null)}
-          maxCount={1}
-        />
+        <InfographicFilesUploader value={workFiles} onChange={setWorkFiles} />
 
         {/* ── Источники ── */}
         <Divider>Источники</Divider>
