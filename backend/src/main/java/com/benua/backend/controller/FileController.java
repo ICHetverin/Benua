@@ -1,11 +1,14 @@
 package com.benua.backend.controller;
 
 import com.benua.backend.service.StorageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/admin/files")
@@ -13,9 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileController {
 
     private final StorageService storageService;
+    private final long presignedUrlTtlSeconds;
 
-    public FileController(StorageService storageService) {
+    public FileController(
+            StorageService storageService,
+            @Value("${app.s3.presigned-url-ttl-seconds:3600}") long presignedUrlTtlSeconds) {
         this.storageService = storageService;
+        this.presignedUrlTtlSeconds = presignedUrlTtlSeconds;
     }
 
     record FileDto(String url, String key) {}
@@ -35,6 +42,9 @@ public class FileController {
         StorageService.UploadedObject uploaded = storageService.uploadInfographicFile(file);
         String contentType = file.getContentType();
         String type = "application/pdf".equals(contentType) ? "PDF" : "IMAGE";
-        return new InfographicFileUploadDto(uploaded.publicUrl(), uploaded.key(), type);
+        // Возвращаем presigned URL — сразу пригоден для отображения в adminке
+        String presignedUrl = storageService.generatePresignedUrl(
+                uploaded.key(), Duration.ofSeconds(presignedUrlTtlSeconds));
+        return new InfographicFileUploadDto(presignedUrl, uploaded.key(), type);
     }
 }

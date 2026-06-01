@@ -8,6 +8,7 @@ import com.benua.backend.model.Infographic;
 import com.benua.backend.model.InfographicFile;
 import com.benua.backend.model.Source;
 import com.benua.backend.repository.InfographicRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,11 +27,20 @@ public class InfographicService {
     private final InfographicRepository repository;
     private final ConnectionService cs;
     private final MongoTemplate mongoTemplate;
+    private final StorageService storageService;
+    private final long presignedUrlTtlSeconds;
 
-    public InfographicService(InfographicRepository repository, ConnectionService cs, MongoTemplate mongoTemplate) {
+    public InfographicService(
+            InfographicRepository repository,
+            ConnectionService cs,
+            MongoTemplate mongoTemplate,
+            StorageService storageService,
+            @Value("${app.s3.presigned-url-ttl-seconds:3600}") long presignedUrlTtlSeconds) {
         this.repository = repository;
         this.cs = cs;
         this.mongoTemplate = mongoTemplate;
+        this.storageService = storageService;
+        this.presignedUrlTtlSeconds = presignedUrlTtlSeconds;
     }
 
     public Infographic get(String id) {
@@ -108,10 +119,12 @@ public class InfographicService {
         List<InfographicFileDto> files;
         if (inf.files() != null && !inf.files().isEmpty()) {
             files = inf.files().stream()
-                    .map(f -> new InfographicFileDto(f.url(), f.key(), f.type()))
+                    .map(f -> new InfographicFileDto(presignedFileUrl(f.key(), f.url()), f.key(), f.type()))
                     .toList();
         } else if (inf.fileUrl() != null) {
-            files = List.of(new InfographicFileDto(inf.fileUrl(), inf.fileKey(), "IMAGE"));
+            // Backward compat: old records with single file_url / file_key
+            files = List.of(new InfographicFileDto(
+                    presignedFileUrl(inf.fileKey(), inf.fileUrl()), inf.fileKey(), "IMAGE"));
         } else {
             files = List.of();
         }
@@ -123,6 +136,16 @@ public class InfographicService {
                 inf.isPublished(), inf.sortOrder(),
                 inf.createdAt(), inf.updatedAt()
         );
+    }
+
+    /**
+     * Генерирует presigned URL если есть key, иначе возвращает сохранённый URL как есть.
+     */
+    private String presignedFileUrl(String key, String fallbackUrl) {
+        if (key != null && !key.isBlank()) {
+            return storageService.generatePresignedUrl(key, Duration.ofSeconds(presignedUrlTtlSeconds));
+        }
+        return fallbackUrl;
     }
 
     private List<InfographicFile> toModelFiles(List<InfographicFileDto> dtos) {
