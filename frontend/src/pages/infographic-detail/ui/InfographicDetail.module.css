@@ -51,30 +51,74 @@
     height: auto;
 }
 
-.pdfLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    background: var(--darker-beige);
-    color: var(--dark-red);
-    font-family: var(--font-lora);
-    font-size: 0.9rem;
-    border: 1px solid rgba(35, 28, 7, 0.2);
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-    align-self: flex-start;
+/* ── PDF embed ── */
+.pdfWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid rgba(35, 28, 7, 0.15);
 }
 
-.pdfLink:hover {
-    background: var(--dark-red);
-    color: var(--beige);
-}
-
-.pdfIcon {
+.pdfToolbar {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+    background: var(--darker-beige);
+    border-bottom: 1px solid rgba(35, 28, 7, 0.12);
+    flex-wrap: wrap;
+}
+
+.pdfFileName {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-lora);
+    font-size: 0.8rem;
+    color: var(--black);
+    opacity: 0.7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.pdfOpenLink {
+    font-family: var(--font-lora);
+    font-size: 0.8rem;
+    color: var(--dark-red);
+    text-decoration: none;
     flex-shrink: 0;
+    transition: opacity 0.2s;
+}
+
+.pdfOpenLink:hover {
+    opacity: 0.7;
+}
+
+.pdfEmbed {
+    width: 100%;
+    height: 78vh;
+    min-height: 500px;
+    border: none;
+    display: block;
+}
+
+.pdfFallbackHint {
+    font-family: var(--font-lora);
+    font-size: 0.75rem;
+    color: #888;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    background: var(--darker-beige);
+    border-top: 1px solid rgba(35, 28, 7, 0.08);
+}
+
+.pdfFallbackLink {
+    color: var(--dark-red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
 /* ── Meta (authors + description) ── */
